@@ -1,0 +1,86 @@
+// SpellSage Prisma 7 Schema
+// Updated for Prisma 7 conventions and best practices
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Card {
+  id             String   @id @db.Text
+  name           String
+  set            String
+  setId          String   @map("set_id")
+  collectorNum   String   @map("collector_num")
+  typeLine       String   @map("type_line")
+  supertypes     String[]
+  types          String[]
+  subtypes       String[]
+  isLegendary    Boolean  @map("is_legendary")
+  colors         String[]
+  colorIdentity  String[] @map("color_identity")
+  manaCost       String   @map("mana_cost")
+  cmc            Float
+  oracleText     String   @map("oracle_text")
+  layout         String
+  faces          Json?
+  power          String?
+  toughness      String?
+  keywords       String[]
+  producedMana   String[] @map("produced_mana")
+  gameChanger    Boolean  @map("game_changer")
+  imageUri       String   @map("image_uri")
+  rawJson        Json     @map("raw_json")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  collections    Collection[] @relation("CardCollections")
+  tags           CardTag[]     @relation("CardTags")
+
+  @@index([name])
+  @@index([set])
+  @@index([setId])
+  @@index([typeLine])
+  @@index([isLegendary])
+  @@index([gameChanger])
+}
+
+model Collection {
+  id         Int      @id @default(autoincrement())
+  userId     String   @map("user_id")
+  cardId     String   @map("card_id")
+  quantity   Int
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  card       Card     @relation("CardCollections", fields: [cardId], references: [id])
+
+  @@index([userId])
+  @@index([cardId])
+  @@unique([userId, cardId])
+}
+
+model CardTag {
+  id        Int      @id @default(autoincrement())
+  cardId    String   @map("card_id")
+  tag       String
+  source    String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  card      Card     @relation("CardTags", fields: [cardId], references: [id])
+
+  @@index([cardId])
+  @@index([tag])
+}
+
+model ScryfallSyncRun {
+  id             Int      @id @default(autoincrement())
+  startedAt      DateTime @map("started_at")
+  completedAt    DateTime? @map("completed_at")
+  status         String
+  cardsProcessed Int      @map("cards_processed")
+  errorMessage   String?  @map("error_message")
+}

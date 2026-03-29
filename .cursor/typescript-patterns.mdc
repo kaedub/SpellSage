@@ -1,0 +1,27 @@
+---
+description: Service, repository, request/command, and adapter patterns
+globs: "**/*.ts,**/*.tsx"
+alwaysApply: false
+---
+
+# TypeScript — Design Patterns
+
+## Service pattern
+- Prefer **interface + factory** with constructor-injected dependencies. No service locators or global singletons for core services.
+- Dependencies passed as a single object: `createXxxService({ db, client }): XxxService`. Implementation class is an implementation detail (not exported if not needed).
+- Example: `createDatabaseService({ db })`, `createAIService({ client })`.
+
+## Repository vs facade
+- For a clear **aggregate** (e.g. Project, FormRecord), prefer a small repository interface with methods returning `Result<T, E>` (or a typed error), not `T | null`.
+- Broad “database service” facades are acceptable for cross-entity or read-only use cases; keep them thin and delegate to repositories where an aggregate exists.
+
+## Request / command objects
+- For non-trivial or multi-step operations (especially across boundaries), use a **request/command object**: it holds dependencies and input and exposes a single `execute()` (or `run()`) returning a domain type or `Result<T, E>`.
+- Keeps handlers thin and logic testable without running full infra. Example: `ProjectOutlineGenerationRequest(client, project).execute()`.
+
+## Adapters at boundaries
+- One **adapter** per external system (or cohesive API surface): DB, OpenAI, queue, HTTP client. Adapter’s job: translate external types to domain (or shared) types; wrap failures in `Result` or a typed error.
+- Inside the app, domain and services see only domain types; they do not see `null` or raw API shapes from the adapter.
+
+## Composition over inheritance
+- Prefer small, single-purpose types and **composition** (e.g. services that depend on other services via interfaces) over deep class hierarchies. Flat services and composition over inheritance.
