@@ -85,6 +85,7 @@ model CardTag {
 
   @@index([cardId])
   @@index([tag])
+  @@unique([cardId, tag, source])
 }
 
 model ScryfallSyncRun {

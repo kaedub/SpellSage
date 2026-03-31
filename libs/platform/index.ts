@@ -8,6 +8,8 @@ export {
   insertCards,
   removeFromCollection,
   searchCards,
+  upsertCardTags,
   upsertCollectionEntries,
 } from './db/index';
+export type { CardTagError, UpsertCardTagsResult } from './db/index';
 export type { SearchError } from './db/index';

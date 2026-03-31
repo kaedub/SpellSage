@@ -1,4 +1,6 @@
 export { insertCards } from './card';
+export { upsertCardTags } from './card-tag';
+export type { CardTagError, UpsertCardTagsResult } from './card-tag';
 export {
   addToCollection,
   findCardsByCollectorInfo,
