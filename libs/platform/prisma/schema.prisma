@@ -29,6 +29,8 @@ model Card {
   faces          Json?
   power          String?
   toughness      String?
+  numericPower   Int?     @map("numeric_power")
+  numericToughness Int?   @map("numeric_toughness")
   keywords       String[]
   producedMana   String[] @map("produced_mana")
   gameChanger    Boolean  @map("game_changer")
@@ -47,6 +49,13 @@ model Card {
   @@index([typeLine])
   @@index([isLegendary])
   @@index([gameChanger])
+  @@index([cmc])
+  @@index([colors], type: Gin)
+  @@index([colorIdentity], type: Gin)
+  @@index([types], type: Gin)
+  @@index([subtypes], type: Gin)
+  @@index([keywords], type: Gin)
+  @@index([producedMana], type: Gin)
 }
 
 model Collection {

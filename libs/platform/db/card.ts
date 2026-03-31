@@ -25,6 +25,8 @@ function toPrismaData(card: Card) {
     faces: card.faces === null || card.faces === undefined ? Prisma.JsonNull : card.faces,
     power: card.power,
     toughness: card.toughness,
+    numericPower: card.numericPower ?? null,
+    numericToughness: card.numericToughness ?? null,
     keywords: card.keywords,
     producedMana: card.producedMana,
     gameChanger: card.gameChanger,

@@ -7,5 +7,7 @@ export {
   getCollection,
   insertCards,
   removeFromCollection,
+  searchCards,
   upsertCollectionEntries,
 } from './db/index';
+export type { SearchError } from './db/index';

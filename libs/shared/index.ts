@@ -2,3 +2,5 @@
 export * from './schemas';
 export * from './types';
 export * from './collection-text';
+export * from './result';
+export * from './search';

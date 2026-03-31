@@ -97,6 +97,8 @@ export const CardSchema = z.object({
     faces: z.array(CardFaceSchema).nullable(),
     power: z.string().nullable(),
     toughness: z.string().nullable(),
+    numericPower: z.number().int().nullable(),
+    numericToughness: z.number().int().nullable(),
     keywords: z.array(z.string()),
     producedMana: z.array(ColorSchema),
     gameChanger: z.boolean(),

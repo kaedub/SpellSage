@@ -3,7 +3,9 @@ import {
 	addToCollection,
 	getCollection,
 	removeFromCollection,
+	searchCards,
 } from '@platform/db';
+import { CardSearchFilterSchema } from '@shared/search';
 
 const app = Fastify();
 
@@ -39,6 +41,24 @@ app.delete('/collection', async (request, reply) => {
 	} catch (err) {
 		return reply.status(400).send({ error: err instanceof Error ? err.message : 'Failed to remove card' });
 	}
+});
+
+app.post('/cards/search', async (request, reply) => {
+	const parsed = CardSearchFilterSchema.safeParse(request.body);
+	if (!parsed.success) {
+		return reply.status(400).send({
+			error: 'Invalid search filter',
+			details: parsed.error.issues,
+		});
+	}
+
+	const result = await searchCards(parsed.data);
+	if (!result.ok) {
+		const status = result.error.kind === 'invalid_filter' ? 400 : 500;
+		return reply.status(status).send({ error: result.error.message });
+	}
+
+	return result.value;
 });
 
 const start = async () => {

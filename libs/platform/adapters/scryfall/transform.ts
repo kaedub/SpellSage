@@ -54,6 +54,12 @@ function transformFace(face: ScryfallCardFace): CardFace {
     };
 }
 
+function parseNumericStat(value: string | null | undefined): number | null {
+    if (value === null || value === undefined) return null;
+    const n = Number(value);
+    return Number.isInteger(n) ? n : null;
+}
+
 function uniqueColors(faces: ScryfallCardFace[]): string[] {
     const seen = new Set<string>();
     for (const face of faces) {
@@ -99,6 +105,8 @@ export function toCard(raw: ScryfallCard): Card {
         faces: raw.card_faces ? raw.card_faces.map(transformFace) : null,
         power: raw.power ?? null,
         toughness: raw.toughness ?? null,
+        numericPower: parseNumericStat(raw.power),
+        numericToughness: parseNumericStat(raw.toughness),
         keywords: raw.keywords,
         producedMana: raw.produced_mana ?? [],
         gameChanger: raw.game_changer,

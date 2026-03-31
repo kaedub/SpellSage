@@ -10,7 +10,7 @@ export const CollectionTextEntrySchema = z.object({
 
 export type CollectionTextEntry = z.infer<typeof CollectionTextEntrySchema>;
 
-const LINE_PATTERN = /^(\d+)\s+(.+?)\s+\(([A-Z0-9]+)\)\s+(\d+)(?:\s+\*F\*)?$/;
+const LINE_PATTERN = /^(\d+)\s+(.+?)\s+\(([A-Za-z0-9]+)\)\s+(\w+)(?:\s+\*F\*)?$/;
 
 export function parseCollectionLine(line: string): CollectionTextEntry | null {
     const trimmed = line.trim();
@@ -24,7 +24,7 @@ export function parseCollectionLine(line: string): CollectionTextEntry | null {
     return CollectionTextEntrySchema.parse({
         quantity: Number(quantityStr),
         name,
-        setCode,
+        setCode: setCode.toLowerCase(),
         collectorNum,
         foil: trimmed.endsWith('*F*'),
     });
