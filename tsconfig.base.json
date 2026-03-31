@@ -23,7 +23,9 @@
       "@shared/*": ["libs/shared/*"],
       "@platform/db": ["libs/platform/index.ts"],
       "@platform/clients/scryfall": ["libs/platform/adapters/scryfall/client.ts"],
-      "@platform/scryfall/transform": ["libs/platform/adapters/scryfall/transform.ts"]
+      "@platform/scryfall/transform": ["libs/platform/adapters/scryfall/transform.ts"],
+      "@ai": ["libs/ai/index.ts"],
+      "@ai/*": ["libs/ai/*"]
     }
   }
 }

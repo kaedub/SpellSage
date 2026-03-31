@@ -5,6 +5,8 @@
   "references": [
     { "path": "./apps/api" },
     { "path": "./apps/web" },
+    { "path": "./libs/ai" },
+    { "path": "./libs/platform" },
     { "path": "./libs/shared" }
   ]
 }

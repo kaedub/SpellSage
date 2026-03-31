@@ -6,16 +6,11 @@
     "targets": {
       "build": {
         "executor": "@nx/esbuild:esbuild",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "defaultConfiguration": "production",
+        "outputs": ["{options.outputPath}"],
         "options": {
           "platform": "node",
           "outputPath": "apps/api/dist",
-          "format": [
-            "cjs"
-          ],
+          "format": ["cjs"],
           "bundle": false,
           "main": "apps/api/src/main.ts",
           "tsConfig": "apps/api/tsconfig.app.json",
@@ -23,17 +18,6 @@
             "sourcemap": true,
             "outExtension": {
               ".js": ".js"
-            }
-          }
-        },
-        "configurations": {
-          "development": {},
-          "production": {
-            "esbuildOptions": {
-              "sourcemap": false,
-              "outExtension": {
-                ".js": ".js"
-              }
             }
           }
         }
@@ -75,21 +59,10 @@
       "serve": {
         "continuous": true,
         "executor": "@nx/js:node",
-        "defaultConfiguration": "development",
-        "dependsOn": [
-          "build"
-        ],
+        "dependsOn": ["build"],
         "options": {
           "buildTarget": "@spellsage/api:build",
           "runBuildTargetDependencies": false
-        },
-        "configurations": {
-          "development": {
-            "buildTarget": "@spellsage/api:build:development"
-          },
-          "production": {
-            "buildTarget": "@spellsage/api:build:production"
-          }
         }
       }
     }
