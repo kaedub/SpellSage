@@ -1,1 +1,11 @@
-// Platform (business logic, DB, services) entrypoint for SpellSage
+// Platform (business logic, DB, services) entrypoint for SpellSage.
+// Keep this file as the public export surface for `@platform/db`.
+
+export {
+  addToCollection,
+  findCardsByCollectorInfo,
+  getCollection,
+  insertCards,
+  removeFromCollection,
+  upsertCollectionEntries,
+} from './db/index';

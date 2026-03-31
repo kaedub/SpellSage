@@ -19,7 +19,11 @@
     "customConditions": ["@spellsage/source"],
     "baseUrl": ".",
     "paths": {
-      "@platform/db": ["libs/platform/db.ts"]
+      "@shared": ["libs/shared/index.ts"],
+      "@shared/*": ["libs/shared/*"],
+      "@platform/db": ["libs/platform/index.ts"],
+      "@platform/clients/scryfall": ["libs/platform/adapters/scryfall/client.ts"],
+      "@platform/scryfall/transform": ["libs/platform/adapters/scryfall/transform.ts"]
     }
   }
 }

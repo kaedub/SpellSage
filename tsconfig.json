@@ -5,6 +5,6 @@
   "references": [
     { "path": "./apps/api" },
     { "path": "./apps/web" },
-    { "path": "./shared" }
+    { "path": "./libs/shared" }
   ]
 }

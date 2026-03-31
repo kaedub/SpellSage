@@ -3,6 +3,11 @@
 - Keep guidance actionable for this repo; no Nx Cloud workflows – CI is handled outside of these instructions.
 - Use standard Nx commands when necessary but do not assume Nx Cloud connectivity or tooling.
 - Apply the TypeScript rule sets below whenever working in `*.ts` or `*.tsx` files, even for small edits.
+- This project uses **yarn** as its package manager. Never use `npm`, `npx`, or `pnpm` commands.
+- **Never install packages automatically.** When a new dependency is needed, provide the `yarn add` command for the user to run themselves. Do not execute install commands on the user's behalf.
+- TEMPORARY Greenfield Mode (remove after MVP deployment): nothing has been deployed yet, there is no backward compatibility requirement, and there is no tech debt to “work around”.
+- Do not do “patches” or incremental fixes to legacy behavior; treat earlier choices as non-sacred foundations that we can rework.
+- When designing and implementing, focus on defining clean, sustainable patterns for the whole application now (even if that requires rethinking earlier implementation).
 
 ---
 description: Service, repository, request/command, and adapter patterns

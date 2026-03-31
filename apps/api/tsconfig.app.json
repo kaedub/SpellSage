@@ -8,6 +8,6 @@
     "moduleResolution": "nodenext",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },
-  "include": ["src/**/*.ts", "../../libs/platform/db.ts"],
+  "include": ["src/**/*.ts", "../../libs/platform/**/*.ts", "../../libs/shared/**/*.ts"],
   "exclude": []
 }
