@@ -7,6 +7,7 @@ import type {
   CollectionFilter,
   ColorFilter,
   NumericRange,
+  TagFilter,
 } from '@shared/search';
 import { ok, err } from '@shared/result';
 import type { Result } from '@shared/result';
@@ -121,6 +122,26 @@ function buildCollectionFilter(filter: CollectionFilter): Prisma.CardWhereInput 
   };
 }
 
+function buildTagFilter(filter: TagFilter): Prisma.CardWhereInput[] {
+  const conditions: Prisma.CardWhereInput[] = [];
+
+  if (filter.all !== undefined && filter.all.length > 0) {
+    for (const tag of filter.all) {
+      conditions.push({ tags: { some: { tag } } });
+    }
+  }
+
+  if (filter.any !== undefined && filter.any.length > 0) {
+    conditions.push({ tags: { some: { tag: { in: filter.any } } } });
+  }
+
+  if (filter.none !== undefined && filter.none.length > 0) {
+    conditions.push({ tags: { none: { tag: { in: filter.none } } } });
+  }
+
+  return conditions;
+}
+
 // --- Composer ---
 
 function buildWhereClause(filter: CardSearchFilter): Prisma.CardWhereInput {
@@ -166,6 +187,9 @@ function buildWhereClause(filter: CardSearchFilter): Prisma.CardWhereInput {
   }
   if (filter.producedMana !== undefined) {
     conditions.push(buildProducedManaFilter(filter.producedMana));
+  }
+  if (filter.tags !== undefined) {
+    conditions.push(...buildTagFilter(filter.tags));
   }
   if (filter.collection !== undefined) {
     conditions.push(buildCollectionFilter(filter.collection));

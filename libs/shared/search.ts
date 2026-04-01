@@ -27,6 +27,20 @@ export const CollectionFilterSchema = z.object({
   minQuantity: z.number().int().positive().optional(),
 });
 
+export const TagFilterSchema = z
+  .object({
+    all: z.array(z.string()).optional(),
+    any: z.array(z.string()).optional(),
+    none: z.array(z.string()).optional(),
+  })
+  .refine(
+    (f) =>
+      (f.all !== undefined && f.all.length > 0) ||
+      (f.any !== undefined && f.any.length > 0) ||
+      (f.none !== undefined && f.none.length > 0),
+    { message: 'Tag filter must specify at least one of: all, any, none' },
+  );
+
 export const SortableFieldSchema = z.enum([
   'name',
   'cmc',
@@ -63,6 +77,7 @@ export const CardSearchFilterSchema = z.object({
   power: NumericRangeSchema.optional(),
   toughness: NumericRangeSchema.optional(),
   producedMana: z.array(ColorSchema).optional(),
+  tags: TagFilterSchema.optional(),
   collection: CollectionFilterSchema.optional(),
   sort: SortSchema.optional(),
   pagination: PaginationSchema.optional(),
@@ -105,6 +120,7 @@ export type ColorFilter = z.infer<typeof ColorFilterSchema>;
 export type CmcFilter = z.infer<typeof CmcFilterSchema>;
 export type NumericRange = z.infer<typeof NumericRangeSchema>;
 export type CollectionFilter = z.infer<typeof CollectionFilterSchema>;
+export type TagFilter = z.infer<typeof TagFilterSchema>;
 export type SortableField = z.infer<typeof SortableFieldSchema>;
 export type Sort = z.infer<typeof SortSchema>;
 export type Pagination = z.infer<typeof PaginationSchema>;

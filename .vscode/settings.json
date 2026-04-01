@@ -1,0 +1,12 @@
+{
+  "files.watcherExclude": {
+    "**/tools/keywords-*.json": true,
+    "**/tools/tags-improved.json": true,
+    "**/tools/archetypes.json": true
+  },
+  "search.exclude": {
+    "**/tools/keywords-*.json": true,
+    "**/tools/tags-improved.json": true,
+    "**/tools/archetypes.json": true
+  }
+}

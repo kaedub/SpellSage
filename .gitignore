@@ -55,3 +55,8 @@ test-output
 .claude/worktrees
 .claude/settings.local.json
 .nx/polygraph
+
+# Large local datasets (avoid editor/indexing overhead)
+tools/keywords-*.json
+tools/tags-improved.json
+tools/archetypes.json

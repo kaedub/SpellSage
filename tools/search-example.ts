@@ -161,7 +161,42 @@ async function main(): Promise<void> {
     pagination: { limit: 10, offset: 0 },
   });
 
-  // 16. Empty filter — just returns cards sorted by name
+  // --- Tag-based searches ---
+
+  // 16. AND: cards that are both ETB and spot removal
+  await runQuery('Tags AND: etb + spot_removal', {
+    tags: { all: ['etb', 'spot_removal'] },
+    pagination: { limit: 10, offset: 0 },
+  });
+
+  // 17. OR: cards with card_draw or card_selection
+  await runQuery('Tags OR: card_draw | card_selection', {
+    tags: { any: ['card_draw', 'card_selection'] },
+    pagination: { limit: 10, offset: 0 },
+  });
+
+  // 18. NOT: evasive threats that are NOT combat tricks
+  await runQuery('Tags: evasive_threat, NOT combat_trick', {
+    tags: { all: ['evasive_threat'], none: ['combat_trick'] },
+    pagination: { limit: 10, offset: 0 },
+  });
+
+  // 19. Combined: token makers or sacrifice outlets, excluding stax
+  await runQuery('Tags: (token_maker | sacrifice_outlet), NOT stax', {
+    tags: { any: ['token_maker', 'sacrifice_outlet'], none: ['stax'] },
+    pagination: { limit: 10, offset: 0 },
+  });
+
+  // 20. Tags + card properties: cheap creatures with ETB
+  await runQuery('Tags + properties: creatures with etb, cmc <= 3', {
+    tags: { all: ['etb'] },
+    types: ['Creature'],
+    cmc: { lte: 3 },
+    sort: { field: 'cmc', direction: 'asc' },
+    pagination: { limit: 10, offset: 0 },
+  });
+
+  // 21. Empty filter — just returns cards sorted by name
   await runQuery('No filters (first 5 cards by name)', {
     pagination: { limit: 5, offset: 0 },
   });
