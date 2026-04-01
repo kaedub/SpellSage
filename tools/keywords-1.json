@@ -1,0 +1,1380 @@
+{
+    "abilities": {
+        "Firebending": {
+            "type": "keyword_ability",
+            "rules_text_template": "Whenever this creature attacks, add {R} repeated X times. This mana lasts until end of combat.",
+            "parameterized": true,
+            "parameter_name": "X",
+            "mechanic_summary": "Attack-triggered temporary combat mana.",
+            "default_tags": [
+                "attack_trigger",
+                "conditional_mana"
+            ],
+            "tag_notes": [
+                "Add mana_sink if the card has a meaningful way to spend the mana.",
+                "Do not tag as ritual unless your system intentionally treats repeatable conditional mana as ritual."
+            ],
+            "example": "Firebending 3 = Whenever this creature attacks, add {R}{R}{R}. This mana lasts until end of combat.",
+            "set_scope": [
+                "TLA"
+            ]
+        },
+        "Waterbend": {
+            "type": "keyword_ability",
+            "rules_text_template": "While paying a waterbend cost, you can tap your artifacts and creatures to help. Each one pays for {1}.",
+            "parameterized": false,
+            "mechanic_summary": "Tap your own artifacts and creatures to reduce a special activated cost.",
+            "default_tags": [
+                "tap_synergy",
+                "cost_reduction"
+            ],
+            "tag_notes": [
+                "Add mana_sink if the waterbend ability is repeatable and meaningfully consumes extra mana.",
+                "Add card_draw, token_maker, or other functional tags based on what the waterbend ability actually does."
+            ],
+            "example": "Waterbend {6}: Draw a card.",
+            "set_scope": [
+                "TLA"
+            ]
+        },
+        "Earthbend": {
+            "type": "keyword_ability",
+            "rules_text_template": "Target land you control becomes a 0/0 creature with haste that's still a land. Put X +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.",
+            "parameterized": true,
+            "parameter_name": "X",
+            "mechanic_summary": "Animates a land, grows it with +1/+1 counters, and gives it built-in resilience.",
+            "default_tags": [
+                "lands_matter",
+                "plus1_plus1_counters",
+                "manland",
+                "sticky_threat"
+            ],
+            "tag_notes": [
+                "Add threat if the card meaningfully pressures the opponent.",
+                "Do not assume landfall; earthbend itself is not a land-entry trigger."
+            ],
+            "example": "Earthbend 2 = Target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.",
+            "set_scope": [
+                "TLA"
+            ]
+        },
+        "Airbend": {
+            "type": "keyword_ability",
+            "rules_text_template": "Exile them. While each one is exiled, its owner may cast it for {2} rather than its mana cost.",
+            "parameterized": false,
+            "mechanic_summary": "Temporary exile and recast from exile for a fixed alternate cost.",
+            "default_tags": [
+                "blink",
+                "cast_from_elsewhere"
+            ],
+            "tag_notes": [
+                "Add etb_payoff when the card rewards re-entering permanents or recasting them.",
+                "Add token_maker or other payoff tags from the rest of the card text."
+            ],
+            "example": "Airbend any number of other target nonland permanents you control.",
+            "set_scope": [
+                "TLA"
+            ]
+        },
+        "Forage": {
+            "type": "keyword_action",
+            "rules_text_template": "To forage, exile three cards from your graveyard or sacrifice a Food.",
+            "parameterized": false,
+            "mechanic_summary": "Alternative payment using graveyard resources or Food sacrifice.",
+            "default_tags": [
+                "graveyard_enabler"
+            ],
+            "tag_notes": [
+                "Add sac_payoff, sac_fodder, food, or graveyard_payoff depending on the specific card.",
+                "Do not auto-tag sacrifice_outlet; forage is a payment option, not a repeatable sacrifice engine by itself."
+            ],
+            "example": "To forage, exile three cards from your graveyard or sacrifice a Food.",
+            "set_scope": [
+                "WOE",
+                "other_sets_if_reused"
+            ]
+        },
+        "Deathtouch": {
+            "type": "keyword_ability",
+            "rules_text_template": "Any amount of damage this deals to a creature is enough to destroy it.",
+            "parameterized": false,
+            "mechanic_summary": "Makes even small amounts of damage lethal to creatures.",
+            "default_tags": [
+                "combat_trick"
+            ],
+            "tag_notes": [
+                "Usually not a primary tag by itself in your taxonomy unless combat dominance matters.",
+                "Can support fight cards or defensive combat roles."
+            ],
+            "example": "A creature with deathtouch destroys creatures it deals damage to.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Defender": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature can't attack.",
+            "parameterized": false,
+            "mechanic_summary": "Creature is restricted to blocking or noncombat utility roles.",
+            "default_tags": [],
+            "tag_notes": [
+                "Usually not enough for a tag on its own.",
+                "May matter later if you add a walls/defender-matter taxonomy."
+            ],
+            "example": "A creature with defender can't attack.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Double Strike": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature deals both first-strike and regular combat damage.",
+            "parameterized": false,
+            "mechanic_summary": "Deals combat damage twice in combat.",
+            "default_tags": [
+                "go_tall"
+            ],
+            "tag_notes": [
+                "Often supports voltron or combat-scaling plans.",
+                "Not always tag-worthy unless combat concentration is a real role."
+            ],
+            "example": "A creature with double strike deals damage in both combat damage steps.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Enchant": {
+            "type": "keyword_ability",
+            "rules_text_template": "This Aura can enchant only [specified object or player].",
+            "parameterized": true,
+            "parameter_name": "quality",
+            "mechanic_summary": "Restricts what an Aura can legally enchant.",
+            "default_tags": [
+                "aura"
+            ],
+            "tag_notes": [
+                "Being an Aura alone should not automatically imply aura strategy support.",
+                "Use aura only if the card is actually aura-relevant in your taxonomy."
+            ],
+            "example": "Enchant creature",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Equip": {
+            "type": "keyword_ability",
+            "rules_text_template": "Equip {cost} means {cost}: Attach this permanent to target creature you control. Activate only as a sorcery.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Moves Equipment onto creatures for repeatable attached bonuses.",
+            "default_tags": [
+                "equipment"
+            ],
+            "tag_notes": [
+                "Often also supports go_tall depending on the card.",
+                "Use equipment as the primary mechanical tag."
+            ],
+            "example": "Equip {2}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "First Strike": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature deals combat damage before creatures without first strike or double strike.",
+            "parameterized": false,
+            "mechanic_summary": "Gives combat initiative in the first combat damage step.",
+            "default_tags": [],
+            "tag_notes": [
+                "Usually not a standalone taxonomy tag.",
+                "May support combat-focused or go_tall cards incidentally."
+            ],
+            "example": "A creature with first strike deals combat damage earlier.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Flash": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may cast this spell any time you could cast an instant.",
+            "parameterized": false,
+            "mechanic_summary": "Allows casting at instant speed.",
+            "default_tags": [],
+            "tag_notes": [
+                "Flash alone usually does not determine taxonomy role.",
+                "Can matter for protection, combat_trick, threat, or interaction depending on full card text."
+            ],
+            "example": "A spell with flash can be cast at instant speed.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Flying": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature can't be blocked except by creatures with flying or reach.",
+            "parameterized": false,
+            "mechanic_summary": "Grants airborne evasion in combat.",
+            "default_tags": [
+                "evasive_threat"
+            ],
+            "tag_notes": [
+                "Only use evasive_threat if the creature is a real offensive threat.",
+                "Small defensive flyers may not deserve the tag."
+            ],
+            "example": "A creature with flying is hard to block without flying or reach.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Haste": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature can attack and {T} as soon as it comes under your control.",
+            "parameterized": false,
+            "mechanic_summary": "Allows immediate attacking and tap activation.",
+            "default_tags": [],
+            "tag_notes": [
+                "Do not auto-tag haste_enabler just because a card has haste.",
+                "Use haste_enabler when the card grants haste or strategically enables immediate use."
+            ],
+            "example": "A creature with haste can attack the turn it enters.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Hexproof": {
+            "type": "keyword_ability",
+            "rules_text_template": "This permanent or player can't be the target of spells or abilities your opponents control.",
+            "parameterized": false,
+            "mechanic_summary": "Prevents opposing targeting.",
+            "default_tags": [
+                "protection"
+            ],
+            "tag_notes": [
+                "Use protection when self-shielding is strategically meaningful.",
+                "Use protection_enabler when the card grants safety to others."
+            ],
+            "example": "A creature with hexproof can't be targeted by opponents' spells or abilities.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Indestructible": {
+            "type": "keyword_ability",
+            "rules_text_template": "Effects that say 'destroy' don't destroy this. If its toughness is 0 or less, it's still put into its owner's graveyard.",
+            "parameterized": false,
+            "mechanic_summary": "Resists destruction effects and lethal damage.",
+            "default_tags": [
+                "protection"
+            ],
+            "tag_notes": [
+                "Can also contribute to sticky_threat when attached to a real threat.",
+                "Not all indestructible cards should be tagged as threats."
+            ],
+            "example": "An indestructible permanent can't be destroyed.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Intimidate": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature can't be blocked except by artifact creatures and creatures that share a color with it.",
+            "parameterized": false,
+            "mechanic_summary": "Color-based evasion ability.",
+            "default_tags": [
+                "evasive_threat"
+            ],
+            "tag_notes": [
+                "Deprecated in modern design, but mechanically still evasion.",
+                "Only use evasive_threat if the body is offensively meaningful."
+            ],
+            "example": "A creature with intimidate is difficult to block outside shared-color or artifact creatures.",
+            "set_scope": [
+                "deprecated_keyword"
+            ]
+        },
+        "Landwalk": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature can't be blocked as long as defending player controls a land of the specified type.",
+            "parameterized": true,
+            "parameter_name": "land_type",
+            "mechanic_summary": "Conditional unblockability based on land types.",
+            "default_tags": [
+                "evasive_threat"
+            ],
+            "tag_notes": [
+                "Use only if the card is a meaningful pressure piece.",
+                "Landwalk is an evasion mechanic, not lands-matter."
+            ],
+            "example": "Islandwalk",
+            "set_scope": [
+                "deprecated_keyword"
+            ]
+        },
+        "Lifelink": {
+            "type": "keyword_ability",
+            "rules_text_template": "Damage dealt by this permanent also causes its controller to gain that much life.",
+            "parameterized": false,
+            "mechanic_summary": "Converts damage into life gain.",
+            "default_tags": [
+                "lifegain_enabler"
+            ],
+            "tag_notes": [
+                "Only use lifegain_enabler when the life gain is strategically meaningful.",
+                "Can also support life_drain-adjacent shells, but does not itself drain opponents."
+            ],
+            "example": "A creature with lifelink gains its controller life when it deals damage.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Protection": {
+            "type": "keyword_ability",
+            "rules_text_template": "This permanent or player can't be damaged, enchanted/equipped, blocked, or targeted by [specified quality].",
+            "parameterized": true,
+            "parameter_name": "quality",
+            "mechanic_summary": "Grants broad shielding from a specified quality.",
+            "default_tags": [
+                "protection"
+            ],
+            "tag_notes": [
+                "Can function as both defense and evasion.",
+                "Use protection as the primary tag unless your card is more clearly an evasion enabler or threat."
+            ],
+            "example": "Protection from red",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Reach": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature can block creatures with flying.",
+            "parameterized": false,
+            "mechanic_summary": "Defensive anti-flying combat ability.",
+            "default_tags": [],
+            "tag_notes": [
+                "Usually defensive and not a standalone taxonomy tag.",
+                "Can matter if you later add blocker or defensive_body tags."
+            ],
+            "example": "A creature with reach can block flyers.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Shroud": {
+            "type": "keyword_ability",
+            "rules_text_template": "This permanent or player can't be the target of spells or abilities.",
+            "parameterized": false,
+            "mechanic_summary": "Prevents all targeting, including from its controller.",
+            "default_tags": [
+                "protection"
+            ],
+            "tag_notes": [
+                "Older cousin of hexproof.",
+                "Can contribute to sticky_threat when attached to a real win condition."
+            ],
+            "example": "A creature with shroud can't be targeted by anyone.",
+            "set_scope": [
+                "deprecated_keyword"
+            ]
+        },
+        "Trample": {
+            "type": "keyword_ability",
+            "rules_text_template": "Excess combat damage can be assigned to the defending player, planeswalker, or battle.",
+            "parameterized": false,
+            "mechanic_summary": "Pushes excess combat damage through blockers.",
+            "default_tags": [
+                "evasive_threat",
+                "go_tall"
+            ],
+            "tag_notes": [
+                "Trample often matters most on large or scaling threats.",
+                "Do not use evasive_threat if the body is not actually pressuring."
+            ],
+            "example": "A creature with trample can assign excess damage past blockers.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Vigilance": {
+            "type": "keyword_ability",
+            "rules_text_template": "Attacking doesn't cause this creature to tap.",
+            "parameterized": false,
+            "mechanic_summary": "Allows attacking without giving up blocking or tap-state utility.",
+            "default_tags": [],
+            "tag_notes": [
+                "Usually not a standalone taxonomy tag.",
+                "Can matter with tap_synergy, attack_trigger, or defensive combat roles depending on card context."
+            ],
+            "example": "A creature with vigilance attacks without tapping.",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Ward": {
+            "type": "keyword_ability",
+            "rules_text_template": "Whenever this permanent becomes the target of a spell or ability an opponent controls, counter it unless that player pays [cost].",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Taxes opposing targeted interaction aimed at this permanent.",
+            "default_tags": [
+                "protection"
+            ],
+            "tag_notes": [
+                "Use protection when the ward text is a meaningful part of the card's resilience.",
+                "Ward alone does not make a card a sticky_threat unless the card is also a real threat."
+            ],
+            "example": "Ward {2}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Banding": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature can attack or block in a band, letting its controller make certain combat damage assignment decisions.",
+            "parameterized": false,
+            "mechanic_summary": "Obscure combat-coordination ability that changes how creatures attack, block, and assign combat damage in groups.",
+            "default_tags": [],
+            "tag_notes": [
+                "Usually not a meaningful standalone tag in your current taxonomy.",
+                "If you later add deep combat coordination tags, banding may deserve special handling."
+            ],
+            "example": "A creature with banding can attack in a band with other creatures.",
+            "set_scope": [
+                "deprecated_keyword"
+            ]
+        },
+        "Rampage": {
+            "type": "keyword_ability",
+            "rules_text_template": "Whenever this creature becomes blocked, it gets +N/+N until end of turn for each creature beyond the first blocking it.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Punishes multiple blockers by scaling temporary combat stats.",
+            "default_tags": [
+                "go_tall"
+            ],
+            "tag_notes": [
+                "Usually combat-focused and only tag-worthy if the card is meaningfully built around combat scaling.",
+                "Not the same as evasive_threat; it rewards being gang-blocked rather than bypassing blockers."
+            ],
+            "example": "Rampage 2",
+            "set_scope": [
+                "deprecated_keyword"
+            ]
+        },
+        "Cumulative Upkeep": {
+            "type": "keyword_ability",
+            "rules_text_template": "At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay [cost] for each age counter on it.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Escalating upkeep payment that becomes harder to sustain over time.",
+            "default_tags": [],
+            "tag_notes": [
+                "Usually not a taxonomy tag by itself.",
+                "May matter indirectly for sacrifice, temporary value, or upkeep-scaling designs, but the card's actual function should drive tagging."
+            ],
+            "example": "Cumulative upkeep {1}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Flanking": {
+            "type": "keyword_ability",
+            "rules_text_template": "Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.",
+            "parameterized": false,
+            "mechanic_summary": "Combat-pressure ability that weakens blockers lacking flanking.",
+            "default_tags": [
+                "evasive_threat"
+            ],
+            "tag_notes": [
+                "Use evasive_threat only if the card is a real pressure piece; flanking is not literal evasion but often functions similarly in combat.",
+                "Could be left untagged if your system wants to reserve evasive_threat for more direct evasion only."
+            ],
+            "example": "A creature with flanking shrinks nonflanking blockers.",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Phasing": {
+            "type": "keyword_ability",
+            "rules_text_template": "During each untap step, before the active player untaps permanents, all phased-in permanents with phasing that player controls phase out, and all phased-out permanents that player controlled when they phased out phase in.",
+            "parameterized": false,
+            "mechanic_summary": "Causes permanents to alternate between phased-in and phased-out states without changing zones.",
+            "default_tags": [
+                "protection"
+            ],
+            "tag_notes": [
+                "Only use protection when phasing is being used meaningfully to dodge interaction or preserve permanents.",
+                "Do not confuse phasing with blink; phased-out permanents do not leave and return to the battlefield."
+            ],
+            "example": "A permanent with phasing periodically phases out and back in.",
+            "set_scope": [
+                "evergreen_but_sparse"
+            ]
+        },
+        "Buyback": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may pay an additional [cost] as you cast this spell. If you do, put this card into your hand as it resolves.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Optional extra payment that returns the spell to your hand after resolution for reuse.",
+            "default_tags": [
+                "recursion"
+            ],
+            "tag_notes": [
+                "Can also support spell_recursion if you want keyword-level priors to be more specific, but recursion is safer as a default.",
+                "Add mana_sink if the repeatable extra payment is a meaningful role of the card."
+            ],
+            "example": "Buyback {3}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Cycling": {
+            "type": "keyword_ability",
+            "rules_text_template": "{cost}, Discard this card: Draw a card.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Turns a card into card draw by discarding it.",
+            "default_tags": [
+                "card_draw",
+                "discard_outlet"
+            ],
+            "tag_notes": [
+                "Cycling is both draw and discard, so it synergizes with graveyard strategies.",
+                "Use discard_outlet only if discard is strategically relevant in the deck."
+            ],
+            "example": "Cycling {2}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Echo": {
+            "type": "keyword_ability",
+            "rules_text_template": "At the beginning of your upkeep, if this came under your control since your last upkeep, sacrifice it unless you pay its echo cost.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Delayed additional cost or sacrifice after entering the battlefield.",
+            "default_tags": [],
+            "tag_notes": [
+                "Echo itself is not a payoff or engine.",
+                "Tag based on the ETB effect or sacrifice synergy of the card instead."
+            ],
+            "example": "Echo {3}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Kicker": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may pay an additional {cost} as you cast this spell for an enhanced effect.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Optional additional cost for upgraded spell effects.",
+            "default_tags": [
+                "mana_sink"
+            ],
+            "tag_notes": [
+                "Kicker often represents scalable value for extra mana.",
+                "Do not tag cost_reduction; kicker increases cost rather than reducing it."
+            ],
+            "example": "Kicker {2}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Flashback": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may cast this card from your graveyard for its flashback cost. Then exile it.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Allows casting a spell from the graveyard for a second use.",
+            "default_tags": [
+                "spell_recursion",
+                "cast_from_elsewhere"
+            ],
+            "tag_notes": [
+                "Flashback is both recursion and alternate casting.",
+                "Prefer spell_recursion over generic recursion."
+            ],
+            "example": "Flashback {3}{U}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Madness": {
+            "type": "keyword_ability",
+            "rules_text_template": "If you discard this card, you may cast it for its madness cost instead of putting it into your graveyard.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Allows casting a card at a reduced or alternate cost when discarded.",
+            "default_tags": [
+                "discard_outlet",
+                "cast_from_elsewhere",
+                "cost_reduction"
+            ],
+            "tag_notes": [
+                "Madness requires discard synergy to function properly.",
+                "Do not assume discard_outlet unless the card or deck supports discarding."
+            ],
+            "example": "Madness {R}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Morph": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Alternative hidden casting mode with later face-up conversion for value or surprise.",
+            "default_tags": [],
+            "tag_notes": [
+                "Morph itself is usually not a taxonomy tag.",
+                "Tag based on the face-up effect, ETB-adjacent value, combat trick use, or payoff text on the specific card."
+            ],
+            "example": "Morph {2}{U}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Storm": {
+            "type": "keyword_ability",
+            "rules_text_template": "When you cast this spell, copy it for each spell cast before it this turn.",
+            "parameterized": false,
+            "mechanic_summary": "Burst spell-count payoff that scales with how many spells were cast earlier in the turn.",
+            "default_tags": [
+                "storm",
+                "copy_spell"
+            ],
+            "tag_notes": [
+                "Prefer storm as the primary tag because the mechanic is specifically about burst spell count.",
+                "copy_spell is also appropriate because storm explicitly copies the spell."
+            ],
+            "example": "Storm",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Affinity": {
+            "type": "keyword_ability",
+            "rules_text_template": "This spell costs {1} less to cast for each [quality] you control.",
+            "parameterized": true,
+            "parameter_name": "quality",
+            "mechanic_summary": "Cost reduction scaling with a board class such as artifacts.",
+            "default_tags": [
+                "cost_reduction"
+            ],
+            "tag_notes": [
+                "Add artifacts_matter, enchantments_matter, or other class-specific synergy tags based on what affinity counts.",
+                "Do not tag ramp; affinity reduces spell cost rather than generating mana."
+            ],
+            "example": "Affinity for artifacts",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Entwine": {
+            "type": "keyword_ability",
+            "rules_text_template": "Choose both modes instead of one if you pay the entwine cost.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Additional payment upgrades a modal spell to use all listed modes.",
+            "default_tags": [
+                "mana_sink"
+            ],
+            "tag_notes": [
+                "Entwine is usually a mana-sink style upgrade mechanic, not a standalone archetype tag.",
+                "Tag the spell's actual effects separately, such as card_draw, spot_removal, or token_maker."
+            ],
+            "example": "Entwine {2}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Modular": {
+            "type": "keyword_ability",
+            "rules_text_template": "This permanent enters with N +1/+1 counters on it. When it dies, you may put its +1/+1 counters on target artifact creature.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Artifact creature counter mechanic that preserves and transfers +1/+1 counters on death.",
+            "default_tags": [
+                "plus1_plus1_counters",
+                "counters_payoff",
+                "artifacts_matter",
+                "death_payoff"
+            ],
+            "tag_notes": [
+                "Use counters_payoff when the card meaningfully benefits from counter scaling or transfer.",
+                "Death_payoff fits because modular creates value when the creature dies.",
+                "Not every modular card is automatically a payoff-heavy build-around, but these are strong defaults."
+            ],
+            "example": "Modular 2",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Sunburst": {
+            "type": "keyword_ability",
+            "rules_text_template": "This permanent enters with a +1/+1 counter on it for each color of mana spent to cast it, or this spell enters with charge counters that way if it's not a creature.",
+            "parameterized": false,
+            "mechanic_summary": "Scales counters based on color diversity spent to cast the spell.",
+            "default_tags": [
+                "plus1_plus1_counters"
+            ],
+            "tag_notes": [
+                "Use mana_fixing on supporting cards, not on the sunburst card itself unless it also fixes mana.",
+                "Add counters_payoff if the card explicitly benefits from having or moving those counters beyond simply entering with them."
+            ],
+            "example": "Sunburst",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Bushido": {
+            "type": "keyword_ability",
+            "rules_text_template": "Whenever this creature blocks or becomes blocked, it gets +N/+N until end of turn.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Combat-scaling ability that boosts the creature when it engages in combat.",
+            "default_tags": [
+                "go_tall"
+            ],
+            "tag_notes": [
+                "Usually supports concentrated combat on one creature.",
+                "Not a standalone archetype tag unless combat scaling is central to the card's role."
+            ],
+            "example": "Bushido 1",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Soulshift": {
+            "type": "keyword_ability",
+            "rules_text_template": "When this permanent is put into a graveyard from the battlefield, you may return target Spirit card with mana value N or less from your graveyard to your hand.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Death-triggered typal recursion for Spirit cards.",
+            "default_tags": [
+                "death_payoff",
+                "recursion",
+                "typal"
+            ],
+            "tag_notes": [
+                "Prefer recursion rather than reanimation because the card returns to hand.",
+                "Typal is appropriate because the mechanic explicitly cares about Spirits."
+            ],
+            "example": "Soulshift 3",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Splice": {
+            "type": "keyword_ability",
+            "rules_text_template": "As you cast a [quality] spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.",
+            "parameterized": true,
+            "parameter_name": "cost_and_quality",
+            "mechanic_summary": "Adds a card's effects onto another spell while keeping the spliced card in hand.",
+            "default_tags": [
+                "spellslinger"
+            ],
+            "tag_notes": [
+                "Splice is unusual card-advantage-adjacent spell layering, but spellslinger is the safest default.",
+                "Do not auto-tag copy_spell; splice adds text, it does not copy a spell."
+            ],
+            "example": "Splice onto Arcane {2}{U}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Offering": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may cast this card any time you could cast an instant by sacrificing a [quality] and paying the difference in mana costs between this and the sacrificed permanent, including color requirements.",
+            "parameterized": true,
+            "parameter_name": "quality",
+            "mechanic_summary": "Instant-speed cost-cheat mechanic that uses a tribal sacrifice to help cast a larger spell.",
+            "default_tags": [
+                "cost_cheat",
+                "typal",
+                "sac_payoff"
+            ],
+            "tag_notes": [
+                "Use typal because the sacrifice requirement names a creature type.",
+                "Sac_payoff is reasonable because sacrificing the appropriate permanent is explicitly rewarded with a rate advantage."
+            ],
+            "example": "Goblin offering",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Ninjutsu": {
+            "type": "keyword_ability",
+            "rules_text_template": "{cost}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Combat-deployment ability that swaps an unblocked attacker for this creature from hand.",
+            "default_tags": [
+                "cost_cheat",
+                "evasive_threat"
+            ],
+            "tag_notes": [
+                "Cost_cheat fits because the creature bypasses normal casting.",
+                "Evasive_threat is only appropriate when the card is a real offensive pressure piece; many ninjas are.",
+                "Many ninjutsu cards also want combat_damage_trigger from their own text."
+            ],
+            "example": "Ninjutsu {1}{U}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Epic": {
+            "type": "keyword_ability",
+            "rules_text_template": "For the rest of the game, you can't cast spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability.",
+            "parameterized": false,
+            "mechanic_summary": "Locks out future spell casting in exchange for repeated copies of the same spell each upkeep.",
+            "default_tags": [
+                "copy_spell",
+                "value_engine"
+            ],
+            "tag_notes": [
+                "Value_engine fits because epic creates ongoing repeated value over time.",
+                "Do not tag storm or spellslinger; epic shuts off future spell casting rather than rewarding continued spell chaining."
+            ],
+            "example": "Epic",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Convoke": {
+            "type": "keyword_ability",
+            "rules_text_template": "Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature’s color.",
+            "parameterized": false,
+            "mechanic_summary": "Uses creatures as a resource to reduce spell costs.",
+            "default_tags": [
+                "cost_reduction",
+                "tap_synergy"
+            ],
+            "tag_notes": [
+                "Very close to waterbend mechanically—good validation of your tap_synergy tag.",
+                "Do not tag ramp; this is cost reduction, not mana generation."
+            ],
+            "example": "Convoke",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Dredge": {
+            "type": "keyword_ability",
+            "rules_text_template": "If you would draw a card, you may instead put exactly N cards from the top of your library into your graveyard. If you do, return this card from your graveyard to your hand.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Replaces draws with self-mill to recur the card.",
+            "default_tags": [
+                "self_mill",
+                "recursion",
+                "graveyard_enabler"
+            ],
+            "tag_notes": [
+                "One of the strongest graveyard enablers in the game.",
+                "Prefer recursion over card_draw since it replaces drawing."
+            ],
+            "example": "Dredge 3",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Transmute": {
+            "type": "keyword_ability",
+            "rules_text_template": "{cost}, Discard this card: Search your library for a card with the same mana value as this card, reveal it, put it into your hand, then shuffle.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Turns a card into a tutor for another card with matching mana value.",
+            "default_tags": [
+                "tutor",
+                "discard_outlet"
+            ],
+            "tag_notes": [
+                "Very clean tutor mechanic.",
+                "Discard_outlet applies because discarding is part of the activation cost."
+            ],
+            "example": "Transmute {1}{U}{U}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Bloodthirst": {
+            "type": "keyword_ability",
+            "rules_text_template": "If an opponent was dealt damage this turn, this creature enters the battlefield with N +1/+1 counters on it.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Rewards dealing damage before casting the creature.",
+            "default_tags": [
+                "plus1_plus1_counters"
+            ],
+            "tag_notes": [
+                "Often part of aggressive strategies.",
+                "Do not tag counters_payoff unless the card scales further from counters."
+            ],
+            "example": "Bloodthirst 2",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Haunt": {
+            "type": "keyword_ability",
+            "rules_text_template": "When this spell resolves or the creature dies, exile it haunting target creature. When that creature dies, trigger the haunt effect again.",
+            "parameterized": false,
+            "mechanic_summary": "Delayed death-trigger recursion through haunting another creature.",
+            "default_tags": [
+                "death_payoff",
+                "value_engine"
+            ],
+            "tag_notes": [
+                "Acts like delayed recursion/value, not traditional recursion.",
+                "Often creates multi-stage death value."
+            ],
+            "example": "Haunt",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Replicate": {
+            "type": "keyword_ability",
+            "rules_text_template": "When you cast this spell, copy it for each time you paid its replicate cost.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Scales spell copies based on how much extra mana you pay.",
+            "default_tags": [
+                "copy_spell",
+                "mana_sink"
+            ],
+            "tag_notes": [
+                "Very similar to storm but controlled via mana instead of spell count.",
+                "Strong mana_sink usage."
+            ],
+            "example": "Replicate {2}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Forecast": {
+            "type": "keyword_ability",
+            "rules_text_template": "During your upkeep, you may reveal this card from your hand and pay its forecast cost to produce an effect.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Repeatable hand-based activated ability during upkeep.",
+            "default_tags": [
+                "value_engine"
+            ],
+            "tag_notes": [
+                "Functions as a slow, repeatable value engine.",
+                "Tag additional effects (draw, tokens, etc.) separately."
+            ],
+            "example": "Forecast {1}{W}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Graft": {
+            "type": "keyword_ability",
+            "rules_text_template": "This creature enters with N +1/+1 counters on it. Whenever another creature enters, you may move a +1/+1 counter from this creature onto it.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Distributes +1/+1 counters to new creatures entering the battlefield.",
+            "default_tags": [
+                "plus1_plus1_counters",
+                "counters_payoff"
+            ],
+            "tag_notes": [
+                "Strong synergy with ETB strategies.",
+                "Counters_payoff fits because the card leverages counters across the board."
+            ],
+            "example": "Graft 2",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Recover": {
+            "type": "keyword_ability",
+            "rules_text_template": "When a creature is put into your graveyard from the battlefield, you may pay the recover cost. If you do, return this card from your graveyard to your hand. Otherwise, exile it.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Conditional recursion triggered by creature deaths.",
+            "default_tags": [
+                "recursion",
+                "death_payoff"
+            ],
+            "tag_notes": [
+                "Ties recursion to death events.",
+                "Prefer recursion over reanimation since it returns to hand."
+            ],
+            "example": "Recover {2}{B}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Ripple": {
+            "type": "keyword_ability",
+            "rules_text_template": "When you cast this spell, you may reveal the top N cards of your library. You may cast any revealed cards with the same name without paying their mana costs.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Chains additional copies of the same spell from the library.",
+            "default_tags": [
+                "cast_from_elsewhere",
+                "spellslinger"
+            ],
+            "tag_notes": [
+                "Not technically copying spells, but casting additional ones.",
+                "Synergizes with decks built around repeated names."
+            ],
+            "example": "Ripple 4",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Split Second": {
+            "type": "keyword_ability",
+            "rules_text_template": "As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.",
+            "parameterized": false,
+            "mechanic_summary": "Prevents most interaction while the spell is on the stack.",
+            "default_tags": [
+                "protection"
+            ],
+            "tag_notes": [
+                "Represents stack-level protection for the spell.",
+                "Can also be thought of as anti-interaction, but protection is closest in your system."
+            ],
+            "example": "Split second",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Suspend": {
+            "type": "keyword_ability",
+            "rules_text_template": "Rather than cast this card from your hand, you may pay {cost} and exile it with N time counters. At upkeep, remove one. When the last is removed, cast it without paying its mana cost.",
+            "parameterized": true,
+            "parameter_name": "cost_and_N",
+            "mechanic_summary": "Delays casting a spell for a cheaper or alternate cost over time.",
+            "default_tags": [
+                "cost_cheat",
+                "cast_from_elsewhere"
+            ],
+            "tag_notes": [
+                "Cost_cheat fits because you often pay less than the original cost.",
+                "Cast_from_elsewhere applies since the spell is cast from exile."
+            ],
+            "example": "Suspend 3—{1}{U}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Vanishing": {
+            "type": "keyword_ability",
+            "rules_text_template": "This permanent enters with N time counters. At upkeep, remove one. When the last is removed, sacrifice it.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Temporary permanent with a countdown lifespan.",
+            "default_tags": [],
+            "tag_notes": [
+                "Vanishing itself is not a payoff.",
+                "Tag based on ETB, death_payoff, or other effects on the card."
+            ],
+            "example": "Vanishing 3",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Absorb": {
+            "type": "keyword_ability",
+            "rules_text_template": "If a source would deal damage to this creature, prevent N of that damage.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Reduces incoming damage to the creature.",
+            "default_tags": [
+                "protection"
+            ],
+            "tag_notes": [
+                "Only tag protection if damage prevention is meaningful to the card’s role.",
+                "Often too minor to tag on its own."
+            ],
+            "example": "Absorb 2",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Aura Swap": {
+            "type": "keyword_ability",
+            "rules_text_template": "{cost}: Exchange this Aura with an Aura card in your hand.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Swaps an Aura on the battlefield with one from your hand.",
+            "default_tags": [
+                "aura"
+            ],
+            "tag_notes": [
+                "Supports aura-based strategies.",
+                "Not card advantage by itself—just flexibility."
+            ],
+            "example": "Aura swap {2}{U}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Delve": {
+            "type": "keyword_ability",
+            "rules_text_template": "Each card you exile from your graveyard while casting this spell pays for {1}.",
+            "parameterized": false,
+            "mechanic_summary": "Uses graveyard as a resource to reduce spell cost.",
+            "default_tags": [
+                "cost_reduction",
+                "graveyard_enabler"
+            ],
+            "tag_notes": [
+                "Strong synergy with self_mill.",
+                "Do not tag ramp; this is cost reduction."
+            ],
+            "example": "Delve",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Fortify": {
+            "type": "keyword_ability",
+            "rules_text_template": "{cost}: Attach this Fortification to target land you control. Activate only as a sorcery.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Equipment-like mechanic for lands.",
+            "default_tags": [
+                "lands_matter"
+            ],
+            "tag_notes": [
+                "Very niche mechanic.",
+                "Tag based on what the Fortification actually does if relevant."
+            ],
+            "example": "Fortify {3}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Frenzy": {
+            "type": "keyword_ability",
+            "rules_text_template": "Whenever this creature attacks and isn't blocked, it gets +N/+0 until end of turn.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Rewards attacking unblocked with bonus damage.",
+            "default_tags": [
+                "evasive_threat"
+            ],
+            "tag_notes": [
+                "Depends on evasion to trigger, so often pairs with evasion strategies.",
+                "Only tag if the creature is a real offensive threat."
+            ],
+            "example": "Frenzy 2",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Gravestorm": {
+            "type": "keyword_ability",
+            "rules_text_template": "When you cast this spell, copy it for each permanent put into a graveyard this turn.",
+            "parameterized": false,
+            "mechanic_summary": "Storm variant that scales with permanents dying.",
+            "default_tags": [
+                "storm",
+                "copy_spell",
+                "death_payoff"
+            ],
+            "tag_notes": [
+                "Strong synergy with sacrifice and board wipes.",
+                "Storm is appropriate because it’s a scaling burst mechanic."
+            ],
+            "example": "Gravestorm",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Poisonous": {
+            "type": "keyword_ability",
+            "rules_text_template": "Whenever this creature deals combat damage to a player, that player gets N poison counters.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Applies poison counters on combat damage.",
+            "default_tags": [],
+            "tag_notes": [
+                "Poison is a separate win condition, but your taxonomy does not yet include poison/infect archetypes.",
+                "Consider adding a future poison_payoff or alternate_wincon tag."
+            ],
+            "example": "Poisonous 1",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Transfigure": {
+            "type": "keyword_ability",
+            "rules_text_template": "{cost}, Sacrifice this permanent: Search your library for a creature card with the same mana value as this permanent and put it onto the battlefield. Activate only as a sorcery.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Turns a creature into another creature of equal mana value directly onto the battlefield.",
+            "default_tags": [
+                "tutor",
+                "cost_cheat",
+                "sacrifice_outlet"
+            ],
+            "tag_notes": [
+                "Cost_cheat applies because the creature bypasses casting.",
+                "Sacrifice_outlet fits since the card sacrifices itself as part of its function."
+            ],
+            "example": "Transfigure {1}{B}{B}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Champion": {
+            "type": "keyword_ability",
+            "rules_text_template": "When this permanent enters the battlefield, sacrifice it unless you exile another [quality] you control. When this leaves the battlefield, return the exiled card.",
+            "parameterized": true,
+            "parameter_name": "quality",
+            "mechanic_summary": "Temporarily exiles another permanent you control and returns it when this leaves.",
+            "default_tags": [
+                "blink",
+                "typal"
+            ],
+            "tag_notes": [
+                "Acts like a delayed blink.",
+                "Typal applies because champion requires a specific creature type."
+            ],
+            "example": "Champion an Elf",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Changeling": {
+            "type": "keyword_ability",
+            "rules_text_template": "This card is every creature type.",
+            "parameterized": false,
+            "mechanic_summary": "Counts as all creature types simultaneously.",
+            "default_tags": [
+                "typal"
+            ],
+            "tag_notes": [
+                "Strong enabler for tribal/typal decks.",
+                "Not a payoff by itself."
+            ],
+            "example": "Changeling",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Evoke": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters the battlefield.",
+            "parameterized": true,
+            "parameter_name": "cost",
+            "mechanic_summary": "Alternative cheaper cost for a one-shot ETB effect.",
+            "default_tags": [
+                "cost_cheat",
+                "etb"
+            ],
+            "tag_notes": [
+                "Often used for ETB value rather than as a creature.",
+                "Add death_payoff if the card benefits from being sacrificed."
+            ],
+            "example": "Evoke {1}{U}",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Hideaway": {
+            "type": "keyword_ability",
+            "rules_text_template": "When this permanent enters, look at the top N cards of your library, exile one face down, then put the rest on the bottom. You may play the exiled card later if a condition is met.",
+            "parameterized": true,
+            "parameter_name": "N",
+            "mechanic_summary": "Stores a card from the library to be cast later under certain conditions.",
+            "default_tags": [
+                "card_selection",
+                "cast_from_elsewhere"
+            ],
+            "tag_notes": [
+                "Selection plus delayed access.",
+                "Add payoff tags based on the condition."
+            ],
+            "example": "Hideaway 4",
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Prowl": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may cast this spell for its prowl cost if you dealt combat damage to a player with a [quality] this turn.",
+            "parameterized": true,
+            "parameter_name": "cost_and_quality",
+            "mechanic_summary": "Conditional cost reduction tied to dealing combat damage with a specific creature type.",
+            "default_tags": [
+                "cost_reduction",
+                "typal"
+            ],
+            "tag_notes": [
+                "Often tied to Rogues.",
+                "Encourages evasive damage strategies."
+            ],
+            "example": "Prowl {1}{B}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Reinforce": {
+            "type": "keyword_ability",
+            "rules_text_template": "{cost}, Discard this card: Put N +1/+1 counters on target creature.",
+            "parameterized": true,
+            "parameter_name": "cost_and_N",
+            "mechanic_summary": "Turns a card in hand into +1/+1 counters via discard.",
+            "default_tags": [
+                "plus1_plus1_counters",
+                "discard_outlet"
+            ],
+            "tag_notes": [
+                "Good bridge between counters and discard strategies."
+            ],
+            "example": "Reinforce 2—{1}{G}",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Conspire": {
+            "type": "keyword_ability",
+            "rules_text_template": "As you cast this spell, you may tap two untapped creatures you control that share a color with it. If you do, copy it.",
+            "parameterized": false,
+            "mechanic_summary": "Copies spells by tapping creatures as an additional cost.",
+            "default_tags": [
+                "copy_spell",
+                "tap_synergy"
+            ],
+            "tag_notes": [
+                "Another strong validation of tap_synergy.",
+                "Similar to convoke but for copying instead of cost reduction."
+            ],
+            "example": "Conspire",
+            "set_scope": [
+                "old_keyword"
+            ]
+        },
+        "Persist": {
+            "type": "keyword_ability",
+            "rules_text_template": "When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield with a -1/-1 counter on it.",
+            "parameterized": false,
+            "mechanic_summary": "Returns a creature to the battlefield once after it dies.",
+            "default_tags": [
+                "recursion",
+                "death_payoff",
+                "sticky_threat"
+            ],
+            "tag_notes": [
+                "Functions like limited reanimation.",
+                "Sticky_threat applies if the creature is a real threat."
+            ],
+            "example": "Persist",
+            "set_scope": [
+                "evergreen"
+            ]
+        }
+    }
+}

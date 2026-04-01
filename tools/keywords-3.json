@@ -1,0 +1,350 @@
+{
+    "abilities": {
+        "Living Metal": {
+            "type": "keyword_ability",
+            "rules_text_template": "As long as it's your turn, this Vehicle is also a creature.",
+            "parameterized": false,
+            "mechanic_summary": "Automatically animates Vehicles during your turn.",
+            "default_tags": [
+                "artifact",
+                "threat"
+            ],
+            "tag_notes": [
+                "Removes need for crew.",
+                "Tag based on actual impact."
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "More Than Meets the Eye": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may cast this card converted for an alternate cost.",
+            "parameterized": true,
+            "mechanic_summary": "Alternate casting that transforms the card.",
+            "default_tags": [
+                "cost_cheat"
+            ],
+            "tag_notes": [
+                "Transformer-style mechanic.",
+                "Tag actual effects separately."
+            ],
+            "set_scope": [
+                "supplemental"
+            ]
+        },
+        "For Mirrodin!": {
+            "type": "keyword_ability",
+            "rules_text_template": "When this Equipment enters, create a 2/2 Rebel token and attach this to it.",
+            "parameterized": false,
+            "mechanic_summary": "Creates and auto-equips a token.",
+            "default_tags": [
+                "equipment",
+                "token_maker"
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Toxic": {
+            "type": "keyword_ability",
+            "rules_text_template": "Players dealt combat damage by this creature get N poison counters.",
+            "parameterized": true,
+            "mechanic_summary": "Applies poison counters on combat damage.",
+            "default_tags": [
+                "counters_payoff"
+            ],
+            "tag_notes": [
+                "Alternate win condition.",
+                "Consider future poison tag."
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Backup": {
+            "type": "keyword_ability",
+            "rules_text_template": "When this creature enters, put N +1/+1 counters on another creature. If it's not itself, that creature gains abilities.",
+            "parameterized": true,
+            "mechanic_summary": "Distributes counters and abilities.",
+            "default_tags": [
+                "plus1_plus1_counters",
+                "etb"
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Bargain": {
+            "type": "keyword_ability",
+            "rules_text_template": "As an additional cost, you may sacrifice an artifact, enchantment, or token for an upgraded effect.",
+            "parameterized": false,
+            "mechanic_summary": "Sacrifice-based upgrade mechanic.",
+            "default_tags": [
+                "sacrifice_outlet",
+                "sac_payoff"
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Craft": {
+            "type": "keyword_ability",
+            "rules_text_template": "Exile materials you control to transform this artifact.",
+            "parameterized": true,
+            "mechanic_summary": "Transforms artifacts using other permanents.",
+            "default_tags": [
+                "artifacts_matter",
+                "sacrifice_outlet"
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Disguise": {
+            "type": "keyword_ability",
+            "rules_text_template": "You may cast this face down as a 2/2 creature and turn it face up later for its disguise cost.",
+            "parameterized": true,
+            "mechanic_summary": "Variant of morph with ward-like protection.",
+            "default_tags": [
+                "threat"
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Solved": {
+            "type": "keyword_ability",
+            "rules_text_template": "This permanent gains an upgraded state once a condition is met.",
+            "parameterized": false,
+            "mechanic_summary": "Quest-style progression mechanic.",
+            "default_tags": [
+                "value_engine"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Plot": {
+            "type": "keyword_ability",
+            "rules_text_template": "Pay a cost to exile this card and cast it later for free.",
+            "parameterized": true,
+            "mechanic_summary": "Stores spells for future casting.",
+            "default_tags": [
+                "cast_from_elsewhere",
+                "cost_cheat"
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Saddle": {
+            "type": "keyword_ability",
+            "rules_text_template": "Tap creatures with total power N to enable an effect.",
+            "parameterized": true,
+            "mechanic_summary": "Uses creatures to activate abilities.",
+            "default_tags": [
+                "tap_synergy"
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Spree": {
+            "type": "keyword_ability",
+            "rules_text_template": "Choose one or more modes and pay additional costs for each.",
+            "parameterized": true,
+            "mechanic_summary": "Flexible modal scaling mechanic.",
+            "default_tags": [
+                "mana_sink"
+            ],
+            "set_scope": [
+                "evergreen"
+            ]
+        },
+        "Freerunning": {
+            "type": "keyword_ability",
+            "rules_text_template": "Costs less if you've dealt combat damage this turn.",
+            "parameterized": false,
+            "mechanic_summary": "Conditional cost reduction based on combat damage.",
+            "default_tags": [
+                "cost_reduction",
+                "combat_damage_trigger"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Gift": {
+            "type": "keyword_ability",
+            "rules_text_template": "Opponent may gain a benefit for an upgraded effect.",
+            "parameterized": false,
+            "mechanic_summary": "Political trade-off mechanic.",
+            "default_tags": [],
+            "set_scope": [
+                "supplemental"
+            ]
+        },
+        "Offspring": {
+            "type": "keyword_ability",
+            "rules_text_template": "Creates a smaller token copy when cast.",
+            "parameterized": false,
+            "mechanic_summary": "Token-copy scaling mechanic.",
+            "default_tags": [
+                "token_maker"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Impending": {
+            "type": "keyword_ability",
+            "rules_text_template": "Enters with time counters and triggers later.",
+            "parameterized": false,
+            "mechanic_summary": "Delayed effect mechanic.",
+            "default_tags": [
+                "value_engine"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Exhaust": {
+            "type": "keyword_ability",
+            "rules_text_template": "Limits how often an ability can be used.",
+            "parameterized": false,
+            "mechanic_summary": "Usage-limiting mechanic.",
+            "default_tags": [],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Max Speed": {
+            "type": "keyword_ability",
+            "rules_text_template": "Rewards reaching speed thresholds.",
+            "parameterized": false,
+            "mechanic_summary": "Scaling speed-based mechanic.",
+            "default_tags": [
+                "threat"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Start Your Engines!": {
+            "type": "keyword_ability",
+            "rules_text_template": "Initiates speed-based game state.",
+            "parameterized": false,
+            "mechanic_summary": "Global mechanic enabling speed system.",
+            "default_tags": [],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Harmonize": {
+            "type": "keyword_ability",
+            "rules_text_template": "Grants bonuses when conditions align.",
+            "parameterized": false,
+            "mechanic_summary": "Synergy-based scaling mechanic.",
+            "default_tags": [
+                "value_engine"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Mobilize": {
+            "type": "keyword_ability",
+            "rules_text_template": "Creates attacking tokens.",
+            "parameterized": false,
+            "mechanic_summary": "Attack-based token generation.",
+            "default_tags": [
+                "token_maker",
+                "attack_trigger"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Job Select": {
+            "type": "keyword_ability",
+            "rules_text_template": "Choose a role that grants abilities.",
+            "parameterized": false,
+            "mechanic_summary": "Role-selection mechanic.",
+            "default_tags": [],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Tiered": {
+            "type": "keyword_ability",
+            "rules_text_template": "Effect scales in tiers.",
+            "parameterized": false,
+            "mechanic_summary": "Threshold-based scaling.",
+            "default_tags": [
+                "mana_sink"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Station": {
+            "type": "keyword_ability",
+            "rules_text_template": "Tap creatures or permanents to build progress.",
+            "parameterized": false,
+            "mechanic_summary": "Progress-based tapping mechanic.",
+            "default_tags": [
+                "tap_synergy"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Warp": {
+            "type": "keyword_ability",
+            "rules_text_template": "Alternate casting or transformation mechanic.",
+            "parameterized": false,
+            "mechanic_summary": "Flexible casting/transformation.",
+            "default_tags": [
+                "cost_cheat"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "∞ (Infinity)": {
+            "type": "keyword_ability",
+            "rules_text_template": "Unbounded or joke mechanic.",
+            "parameterized": false,
+            "mechanic_summary": "Un-set / joke scaling.",
+            "default_tags": [],
+            "set_scope": [
+                "fun"
+            ]
+        },
+        "Mayhem": {
+            "type": "keyword_ability",
+            "rules_text_template": "Rewards chaotic or destructive play.",
+            "parameterized": false,
+            "mechanic_summary": "Chaos-based payoff mechanic.",
+            "default_tags": [
+                "value_engine"
+            ],
+            "set_scope": [
+                "set_specific"
+            ]
+        },
+        "Web-slinging": {
+            "type": "keyword_ability",
+            "rules_text_template": "Grants evasion or movement-like effects.",
+            "parameterized": false,
+            "mechanic_summary": "Spider-Man themed evasion/control mechanic.",
+            "default_tags": [
+                "evasion_enabler"
+            ],
+            "set_scope": [
+                "supplemental"
+            ]
+        }
+    }
+}
