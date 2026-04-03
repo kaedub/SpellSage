@@ -37,8 +37,8 @@ function toPrismaData(card: Card) {
   };
 }
 
-export async function insertCards(cards: Card[]) {
-  const results = await prisma.$transaction(
+export async function insertCards(cards: Card[]): Promise<void> {
+  await prisma.$transaction(
     cards.map(card => {
       const data = toPrismaData(card);
 
@@ -46,9 +46,8 @@ export async function insertCards(cards: Card[]) {
         where: { id: card.id },
         update: data,
         create: data,
+        select: { id: true },
       });
     }),
   );
-
-  return results;
 }

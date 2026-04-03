@@ -74,18 +74,45 @@ model Collection {
   @@unique([userId, cardId, foil])
 }
 
+model TagGroup {
+  slug        String   @id
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tags Tag[] @relation("TagGroupTags")
+}
+
+model Tag {
+  slug        String   @id
+  groupSlug   String   @map("group_slug")
+  definition  String
+  mustHave    String[] @map("must_have")
+  mustNotHave String[] @map("must_not_have")
+  edgeRule    String?  @map("edge_rule")
+  priority    String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  group TagGroup  @relation("TagGroupTags", fields: [groupSlug], references: [slug])
+  cards CardTag[] @relation("TagCardTags")
+
+  @@index([groupSlug])
+}
+
 model CardTag {
   id        Int      @id @default(autoincrement())
   cardId    String   @map("card_id")
-  tag       String
+  tagSlug   String   @map("tag_slug")
   source    String
   createdAt DateTime @default(now()) @map("created_at")
 
-  card      Card     @relation("CardTags", fields: [cardId], references: [id])
+  card Card @relation("CardTags", fields: [cardId], references: [id])
+  tag  Tag  @relation("TagCardTags", fields: [tagSlug], references: [slug])
 
   @@index([cardId])
-  @@index([tag])
-  @@unique([cardId, tag, source])
+  @@index([tagSlug])
+  @@unique([cardId, tagSlug, source])
 }
 
 model Keyword {

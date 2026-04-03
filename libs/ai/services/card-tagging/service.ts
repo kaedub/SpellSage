@@ -10,9 +10,10 @@ import type {
   OpenAIAdapterError,
 } from '../../adapters/openai/types';
 
-import { CardTaggingOutputSchema } from './schemas';
+import { createCardTaggingOutputSchema } from './schemas';
 import type { CardTaggingOutput } from './schemas';
 import { projectCardForTagging, buildTaggingMessages } from './prompts';
+import type { TagPromptGroup } from './prompts';
 import type {
   CardTagResult,
   CardTaggingError,
@@ -30,18 +31,27 @@ type StructuredCompletionFn = <T>(
   config: CompletionConfig,
 ) => Promise<Result<StructuredCompletionResult<T>, OpenAIAdapterError>>;
 
+export type TagTaxonomyDep = {
+  readonly groups: readonly TagPromptGroup[];
+  readonly allSlugs: readonly string[];
+};
+
 export type CardTaggingService = {
   tagCard(card: Card): Promise<Result<CardTagResult, CardTaggingError>>;
 };
 
 export function createCardTaggingService(deps: {
   completion: StructuredCompletionFn;
+  taxonomy: TagTaxonomyDep;
   config?: Partial<TaggingConfig>;
 }): CardTaggingService {
   const config: Required<TaggingConfig> = {
     ...DEFAULT_TAGGING_CONFIG,
     ...deps.config,
   };
+
+  const slugs = deps.taxonomy.allSlugs as unknown as [string, ...string[]];
+  const outputSchema = createCardTaggingOutputSchema(slugs);
 
   return { tagCard };
 
@@ -53,11 +63,11 @@ export function createCardTaggingService(deps: {
     }
 
     const input = projectCardForTagging(card);
-    const messages = buildTaggingMessages(input);
+    const messages = buildTaggingMessages(input, deps.taxonomy.groups);
 
     const completionResult = await deps.completion(
       messages,
-      CardTaggingOutputSchema,
+      outputSchema,
       'card_tags',
       {
         model: config.model,

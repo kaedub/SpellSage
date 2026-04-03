@@ -35,7 +35,7 @@ export async function upsertCardTags(
       }
 
       const { count: inserted } = await tx.cardTag.createMany({
-        data: tags.map(tag => ({ cardId, tag, source })),
+        data: tags.map(tagSlug => ({ cardId, tagSlug, source })),
       });
 
       return { deleted, inserted };

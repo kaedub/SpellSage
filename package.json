@@ -7,11 +7,11 @@
     "prisma:generate": "prisma generate --schema=libs/platform/prisma/schema.prisma",
     "seed:random": "tsx --tsconfig tools/tsconfig.json tools/seed-random-cards.ts",
     "seed:bulk": "tsx --tsconfig tools/tsconfig.json tools/seed-bulk-cards.ts",
+    "seed:keywords": "tsx --tsconfig tools/tsconfig.json tools/seed-keywords.ts",
     "seed:collection": "tsx --tsconfig tools/tsconfig.json tools/seed-collection.ts",
     "search:example": "tsx --tsconfig tools/tsconfig.json tools/search-example.ts",
-    "seed:tags": "tsx --tsconfig tools/tsconfig.json tools/seed-tags.ts",
-    "tag:print": "tsx --tsconfig tools/tsconfig.json tools/print-db.ts",
-    "seed:keywords": "tsx --tsconfig tools/tsconfig.json tools/seed-keywords.ts"
+    "generate:tags": "tsx --tsconfig tools/tsconfig.json tools/seed-tags.ts",
+    "tag:print": "tsx --tsconfig tools/tsconfig.json tools/print-db.ts"
   },
   "private": true,
   "dependencies": {

@@ -1,15 +1,28 @@
 import { z } from 'zod';
 
-import { ALL_TAG_IDS } from './tags';
-
-export const TagEntrySchema = z.object({
-  tag: z.enum(ALL_TAG_IDS),
+const TagEntrySchema = z.object({
+  tag: z.string(),
   confidence: z.number().min(0).max(1),
   evidence: z.string(),
 });
 
-export const CardTaggingOutputSchema = z.object({
+const BaseCardTaggingOutputSchema = z.object({
   tags: z.array(TagEntrySchema),
 });
 
-export type CardTaggingOutput = z.infer<typeof CardTaggingOutputSchema>;
+export type CardTaggingOutput = z.infer<typeof BaseCardTaggingOutputSchema>;
+
+export function createCardTaggingOutputSchema(
+  slugs: readonly [string, ...string[]],
+): z.ZodType<CardTaggingOutput> {
+  const constrained = z.object({
+    tags: z.array(
+      z.object({
+        tag: z.enum(slugs),
+        confidence: z.number().min(0).max(1),
+        evidence: z.string(),
+      }),
+    ),
+  });
+  return constrained;
+}

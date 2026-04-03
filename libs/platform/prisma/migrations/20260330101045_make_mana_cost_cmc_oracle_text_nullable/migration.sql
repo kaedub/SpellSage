@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "Card" ALTER COLUMN "mana_cost" DROP NOT NULL,
-ALTER COLUMN "cmc" DROP NOT NULL,
-ALTER COLUMN "oracle_text" DROP NOT NULL;

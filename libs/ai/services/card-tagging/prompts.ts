@@ -1,7 +1,20 @@
 import type { Card } from '@shared/types';
 import type { ChatMessage } from '../../adapters/openai/types';
-import { TAG_REGISTRY, TAG_DESCRIPTIONS } from './tags';
 import type { CardTagInput } from './types';
+
+export type TagPromptEntry = {
+  readonly slug: string;
+  readonly definition: string;
+  readonly mustHave: readonly string[];
+  readonly mustNotHave: readonly string[];
+  readonly edgeRule: string | null;
+  readonly priority: string | null;
+};
+
+export type TagPromptGroup = {
+  readonly slug: string;
+  readonly tags: readonly TagPromptEntry[];
+};
 
 export function projectCardForTagging(card: Card): CardTagInput {
   const faces =
@@ -32,14 +45,28 @@ export function projectCardForTagging(card: Card): CardTagInput {
   };
 }
 
-function buildTagListBlock(): string {
+function buildTagListBlock(groups: readonly TagPromptGroup[]): string {
   const sections: string[] = [];
 
-  for (const [category, tags] of Object.entries(TAG_REGISTRY)) {
-    const label = category.replace(/_/g, ' ').toUpperCase();
-    const lines = Object.keys(tags).map(tagId => {
-      const desc = TAG_DESCRIPTIONS[tagId as keyof typeof TAG_DESCRIPTIONS];
-      return `  - ${tagId}: ${desc}`;
+  for (const group of groups) {
+    const label = group.slug.replace(/_/g, ' ').toUpperCase();
+    const lines = group.tags.map(tag => {
+      const parts = [`  - ${tag.slug}: ${tag.definition}`];
+
+      if (tag.mustHave.length > 0) {
+        parts.push(`    MUST HAVE: ${tag.mustHave.join('; ')}`);
+      }
+      if (tag.mustNotHave.length > 0) {
+        parts.push(`    MUST NOT HAVE: ${tag.mustNotHave.join('; ')}`);
+      }
+      if (tag.edgeRule) {
+        parts.push(`    EDGE: ${tag.edgeRule}`);
+      }
+      if (tag.priority) {
+        parts.push(`    PRIORITY: ${tag.priority}`);
+      }
+
+      return parts.join('\n');
     });
     sections.push(`[${label}]\n${lines.join('\n')}`);
   }
@@ -99,7 +126,10 @@ Output:
 Note: This is NOT sacrifice_outlet. The card sacrifices only itself as a one-shot cost — it does not let you sacrifice other permanents repeatedly.
 `.trim();
 
-export function buildTaggingMessages(input: CardTagInput): readonly ChatMessage[] {
+export function buildTaggingMessages(
+  input: CardTagInput,
+  groups: readonly TagPromptGroup[],
+): readonly ChatMessage[] {
   const systemPrompt = `You are an MTG card tagging system.
 
 Your job is to assign deckbuilding-relevant tags to a Magic: The Gathering card based ONLY on its oracle text, keywords, and metadata.
@@ -108,7 +138,7 @@ Your job is to assign deckbuilding-relevant tags to a Magic: The Gathering card 
 
 1. Only use tags from the provided list. Never invent or approximate new tags.
 
-2. Base all tags ONLY on the card’s oracle text, keywords, and type line. Do not use outside knowledge.
+2. Base all tags ONLY on the card's oracle text, keywords, and type line. Do not use outside knowledge.
 
 3. Only assign a tag if there is clear, direct textual support. If uncertain, omit the tag.
 
@@ -124,14 +154,14 @@ Your job is to assign deckbuilding-relevant tags to a Magic: The Gathering card 
 
 9. Evidence must reference specific card text, keywords, or type information. Keep it to one short sentence.
 
-10. Type-specific tags must match the card’s type line (e.g., utility_land only for Lands, mana_dork only for Creatures, mana_rock only for Artifacts).
+10. Type-specific tags must match the card's type line (e.g., utility_land only for Lands, mana_dork only for Creatures, mana_rock only for Artifacts).
 
 11. evasive_threat requires offensive evasion: flying, menace, trample, unblockable, skulk, shadow, fear, or intimidate.  
     Deathtouch, vigilance, first strike, reach, ward, and hexproof are NOT offensive evasion.  
     evasion_enabler only applies if the card grants offensive evasion to OTHER permanents.
 
 12. sacrifice_outlet requires a repeatable or strategically central way to sacrifice your own permanents.  
-    Do NOT assign it to cards that only sacrifice themselves as a one-shot cost unless the card’s primary deck role is sac enabling.
+    Do NOT assign it to cards that only sacrifice themselves as a one-shot cost unless the card's primary deck role is sac enabling.
 
 13. mana_dork requires a repeatable mana ability (e.g., "{T}: Add {G}").  
     Do NOT assign it to one-time mana effects such as ETB triggers.
@@ -153,9 +183,11 @@ Your job is to assign deckbuilding-relevant tags to a Magic: The Gathering card 
 
 20. Do not assign a tag unless the card would realistically be included in a deck BECAUSE of that function.
 
+21. Each tag below includes MUST HAVE criteria (all must be satisfied) and MUST NOT HAVE criteria (any match disqualifies). Use EDGE and PRIORITY guidance to resolve ambiguous cases.
+
 ## Available Tags
 
-${buildTagListBlock()}
+${buildTagListBlock(groups)}
 
 ## Examples
 

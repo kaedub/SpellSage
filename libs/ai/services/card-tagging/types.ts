@@ -1,5 +1,4 @@
 import type { TokenUsage, OpenAIAdapterError } from '../../adapters/openai/types';
-import type { TagId } from './tags';
 
 export type CardFaceInput = {
   readonly name: string;
@@ -25,7 +24,7 @@ export type CardTagInput = {
 };
 
 export type TagEntry = {
-  readonly tag: TagId;
+  readonly tag: string;
   readonly confidence: number;
   readonly evidence: string;
 };

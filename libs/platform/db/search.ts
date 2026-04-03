@@ -126,17 +126,17 @@ function buildTagFilter(filter: TagFilter): Prisma.CardWhereInput[] {
   const conditions: Prisma.CardWhereInput[] = [];
 
   if (filter.all !== undefined && filter.all.length > 0) {
-    for (const tag of filter.all) {
-      conditions.push({ tags: { some: { tag } } });
+    for (const tagSlug of filter.all) {
+      conditions.push({ tags: { some: { tagSlug } } });
     }
   }
 
   if (filter.any !== undefined && filter.any.length > 0) {
-    conditions.push({ tags: { some: { tag: { in: filter.any } } } });
+    conditions.push({ tags: { some: { tagSlug: { in: filter.any } } } });
   }
 
   if (filter.none !== undefined && filter.none.length > 0) {
-    conditions.push({ tags: { none: { tag: { in: filter.none } } } });
+    conditions.push({ tags: { none: { tagSlug: { in: filter.none } } } });
   }
 
   return conditions;

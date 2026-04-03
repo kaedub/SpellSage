@@ -3,10 +3,8 @@ import 'dotenv/config';
 import { prisma } from '../libs/platform/adapters/prisma/client';
 import { CardSchema } from '@shared/schemas';
 import type { Card } from '@shared/types';
-import { upsertCardTags } from '@platform/db';
+import { upsertCardTags, loadTagTaxonomy } from '@platform/db';
 import { structuredCompletion, createCardTaggingService } from '@ai';
-
-const tagger = createCardTaggingService({ completion: structuredCompletion });
 
 const MAX_CARDS = 5;
 
@@ -24,6 +22,20 @@ function prismaCardToCard(row: Record<string, unknown>): Card {
 }
 
 async function main(): Promise<void> {
+  const taxonomyResult = await loadTagTaxonomy();
+  if (!taxonomyResult.ok) {
+    console.error(`Failed to load tag taxonomy [${taxonomyResult.error.kind}]:`, taxonomyResult.error);
+    process.exit(1);
+  }
+
+  const taxonomy = taxonomyResult.value;
+  console.log(`Loaded ${taxonomy.allSlugs.length} tags across ${taxonomy.groups.length} groups from DB`);
+
+  const tagger = createCardTaggingService({
+    completion: structuredCompletion,
+    taxonomy,
+  });
+
   const randomCardIds = await prisma.$queryRaw<{ card_id: string }[]>`
     SELECT card_id FROM (
       SELECT DISTINCT c.card_id

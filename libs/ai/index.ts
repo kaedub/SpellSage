@@ -8,13 +8,15 @@ export type {
   OpenAIAdapterError,
 } from './adapters/openai/types';
 
-export { createCardTaggingService, ALL_TAG_IDS, TAG_REGISTRY, TAG_DESCRIPTIONS } from './services/card-tagging';
+export { createCardTaggingService } from './services/card-tagging';
 export type {
   CardTaggingService,
+  TagTaxonomyDep,
   CardTagResult,
   CardTaggingError,
   TagEntry,
-  TagId,
   TaggingConfig,
   CardTagInput,
+  TagPromptGroup,
+  TagPromptEntry,
 } from './services/card-tagging';

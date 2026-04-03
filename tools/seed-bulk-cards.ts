@@ -36,7 +36,6 @@ async function main(): Promise<void> {
     let skipped = 0;
     let batch: Card[] = [];
     const skippedCards: Card[] = [];
-
     for await (const { value } of pipeline) {
         try {
             batch.push(toCard(value));

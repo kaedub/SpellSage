@@ -1,122 +1,1254 @@
 {
     "mana": {
-        "ramp": "Increases long-term mana available beyond normal land drop progression.",
-        "mana_fixing": "Helps access colors you otherwise may not reliably produce.",
-        "mana_dork": "Creature with a repeatable mana-producing ability, usually activated (e.g., '{T}: Add {G}').",
-        "mana_rock": "Artifact that produces mana through its own ability. Not lands.",
-        "land_ramp": "Puts extra lands onto the battlefield.",
-        "ritual": "Produces a short-term burst of mana.",
-        "treasure": "Creates, uses, or rewards Treasure tokens.",
-        "cost_reduction": "Reduces your own spell or ability costs. Not taxing opponents.",
-        "extra_land_drop": "Allows playing additional lands each turn.",
-        "untap": "Untaps permanents to generate extra use or mana.",
-        "mana_sink": "Provides repeatable or scalable use for excess mana."
+        "ramp": {
+            "definition": "Increases mana development beyond the normal one-land-per-turn baseline over multiple turns.",
+            "must_have": [
+                "Creates lasting mana acceleration or increases future mana access",
+                "Improves mana development beyond the current turn only"
+            ],
+            "must_not_have": [
+                "One-shot mana bursts only",
+                "Pure cost reduction",
+                "Card selection that merely finds lands to hand",
+                "Normal land drops without acceleration"
+            ],
+            "edge_rule": "Use for long-term acceleration. Prefer a more specific tag such as mana_dork, mana_rock, land_ramp, extra_land_drop, or untap when applicable.",
+            "priority": "Do not tag ramp when a more specific mana acceleration tag fully captures the card's role."
+        },
+        "mana_fixing": {
+            "definition": "Improves access to colors you may not otherwise reliably produce.",
+            "must_have": [
+                "Explicitly produces multiple colors, chosen colors, any color, or searches for color-enabling lands",
+                "Directly improves color access rather than only raw mana quantity"
+            ],
+            "must_not_have": [
+                "Colorless-only acceleration",
+                "Cards that only increase mana quantity without fixing",
+                "Cards whose fixing is incidental and not a deckbuilding reason"
+            ],
+            "edge_rule": "A card can be both acceleration and fixing if it clearly does both.",
+            "priority": "Can coexist with mana_dork, mana_rock, land_ramp, mana_filtering, or treasure."
+        },
+        "mana_filtering": {
+            "definition": "Changes available mana from one color, type, or source into a different mix without necessarily increasing total mana.",
+            "must_have": [
+                "Explicitly converts mana into different colors, combinations, or types",
+                "Primary function is changing mana composition rather than increasing mana quantity"
+            ],
+            "must_not_have": [
+                "Cards that simply produce any color with no conversion step",
+                "Pure mana acceleration with no filtering role",
+                "Card selection or land tutoring that only improves future color access"
+            ],
+            "edge_rule": "Use filtering for cards that transform mana already available. A card that both fixes and filters may receive both tags.",
+            "priority": "Prefer mana_filtering over mana_fixing when the card's main role is converting mana rather than broadening source access."
+        },
+        "mana_dork": {
+            "definition": "Creature with a repeatable mana-producing ability, usually activated.",
+            "must_have": [
+                "Creature type line",
+                "Repeatable ability that produces mana"
+            ],
+            "must_not_have": [
+                "One-shot ETB mana generation",
+                "Attack-triggered Treasure or temporary mana effects",
+                "Noncreature mana sources"
+            ],
+            "edge_rule": "Do not assign to creatures that only conditionally create mana once or through a death or ETB trigger.",
+            "priority": "Prefer mana_dork over generic ramp when the card is specifically a creature mana source."
+        },
+        "mana_rock": {
+            "definition": "Artifact whose own ability produces mana.",
+            "must_have": [
+                "Artifact type line",
+                "Explicit mana-producing ability on the artifact itself"
+            ],
+            "must_not_have": [
+                "Artifact creatures that are better classified as mana_dork if the mana role is creature-centric",
+                "Treasures unless the card's role is specifically treasure support rather than being a mana rock itself",
+                "Artifacts that only reduce costs or filter cards without producing mana"
+            ],
+            "edge_rule": "Mana rocks that also fix colors may receive mana_fixing.",
+            "priority": "Prefer mana_rock over generic ramp when the artifact itself is the mana engine."
+        },
+        "land_ramp": {
+            "definition": "Puts extra lands onto the battlefield beyond the normal land drop.",
+            "must_have": [
+                "Explicitly puts lands from library, hand, graveyard, or another zone onto the battlefield",
+                "Increases future land count"
+            ],
+            "must_not_have": [
+                "Searching lands to hand only",
+                "Allowing extra land plays without putting lands onto the battlefield directly",
+                "Untapping lands without increasing land count"
+            ],
+            "edge_rule": "Cards that both search to hand and then place onto the battlefield qualify only if the battlefield placement is explicit.",
+            "priority": "Prefer land_ramp over generic ramp when the acceleration is specifically extra lands entering."
+        },
+        "ritual": {
+            "definition": "Produces a short-term burst of mana that does not itself create lasting mana development.",
+            "must_have": [
+                "Generates extra mana for the current turn or immediate sequence only",
+                "Mana gain is one-shot rather than repeatable board-based acceleration"
+            ],
+            "must_not_have": [
+                "Repeatable mana abilities",
+                "Permanent extra lands or ongoing acceleration",
+                "Pure cost reduction"
+            ],
+            "edge_rule": "Creatures or permanents with one-time ETB mana can still be ritual if the role is clearly immediate burst mana.",
+            "priority": "Do not also tag ramp unless the card separately creates lasting acceleration."
+        },
+        "treasure": {
+            "definition": "Creates, consumes, scales with, or explicitly rewards Treasure tokens.",
+            "must_have": [
+                "Explicit mention of Treasure",
+                "Creates Treasure, uses Treasure, or benefits from Treasure as a strategy"
+            ],
+            "must_not_have": [
+                "Generic artifact-token references that do not mention Treasure",
+                "Mana generation with no Treasure connection"
+            ],
+            "edge_rule": "A card that only creates a single incidental Treasure should still qualify if Treasure is explicit and deck-relevant.",
+            "priority": "Can coexist with ramp, ritual, mana_fixing, artifacts_matter, or payoff tags."
+        },
+        "cost_reduction": {
+            "definition": "Reduces the mana or activation costs of your own spells or abilities.",
+            "must_have": [
+                "Explicitly makes your spells or abilities cost less",
+                "Reduction applies to your own resources"
+            ],
+            "must_not_have": [
+                "Opponent taxes or payment requirements",
+                "Cheating spells into play without paying rather than reducing costs",
+                "Mana generation instead of cost reduction"
+            ],
+            "edge_rule": "Alternative costs and cost bypass effects are not cost_reduction unless the card explicitly says costs less or equivalent.",
+            "priority": "Use tax for opponent-facing cost increases."
+        },
+        "cost_cheat": {
+            "definition": "Lets you cast, copy, put onto the battlefield, or otherwise use cards for less than their normal resource cost without directly saying they cost less.",
+            "must_have": [
+                "Bypasses, replaces, or ignores normal mana payment in a meaningful way",
+                "Creates access to spells or permanents ahead of normal rate"
+            ],
+            "must_not_have": [
+                "Straightforward cost reduction",
+                "Ordinary reanimation if your taxonomy treats it under graveyard only and not mana systems",
+                "Mana generation that still requires normal casting costs"
+            ],
+            "edge_rule": "Use for effects like casting without paying mana cost, cascade-style access, Sneak Attack-style deployment, or comparable rate-breaking effects.",
+            "priority": "Distinct from cost_reduction. Can coexist with archetype tags such as reanimator, cheat, or spells_matter."
+        },
+        "extra_land_drop": {
+            "definition": "Allows you to play additional lands each turn.",
+            "must_have": [
+                "Explicitly grants one or more additional land plays"
+            ],
+            "must_not_have": [
+                "Putting lands directly onto the battlefield",
+                "Returning lands to hand without extra land-play permission",
+                "Land search to hand only"
+            ],
+            "edge_rule": "Can coexist with lands_matter or landfall support, but is distinct from land_ramp.",
+            "priority": "Prefer extra_land_drop over ramp when the card only changes the land-play rule."
+        },
+        "untap": {
+            "definition": "Untaps permanents to create extra use, mana, or repeated activation value.",
+            "must_have": [
+                "Explicit untap effect on permanents",
+                "Untap creates meaningful extra use of mana sources, activated abilities, combat utility, or engine pieces"
+            ],
+            "must_not_have": [
+                "Normal untap step text or reminder text",
+                "Pure vigilance",
+                "Cards that only enter untapped"
+            ],
+            "edge_rule": "Tag when untapping is a real gameplay incentive or build-around use case, especially with lands, mana creatures, mana rocks, or repeatable engines. Omit trivial untaps that are unlikely to matter strategically.",
+            "priority": "Can coexist with ramp if untap effectively increases usable mana development."
+        },
+        "mana_sink": {
+            "definition": "Provides repeatable or scalable use for excess mana.",
+            "must_have": [
+                "Repeatable activated ability or scalable effect that meaningfully converts extra mana into value, board impact, or damage"
+            ],
+            "must_not_have": [
+                "Single expensive activated ability with no repeatable sink role",
+                "Triggered abilities with no mana input",
+                "Large mana costs that do not convert excess mana repeatedly or scalably"
+            ],
+            "edge_rule": "X-spells, repeatable pumps, and repeatable token-makers often qualify; ordinary activated abilities usually do not unless excess mana is a real deckbuilding use case.",
+            "priority": "Use only when spending extra mana is a meaningful role of the card, not just possible."
+        },
+        "conditional_mana": {
+            "definition": "Generates mana based on game actions such as attacking, dealing damage, or other conditions, typically in a repeatable way.",
+            "must_have": [
+                "Mana generation tied to a condition or trigger (e.g., attack, damage, phase)",
+                "Repeatable through normal gameplay actions"
+            ],
+            "must_not_have": [
+                "One-shot spell-based mana generation (rituals)",
+                "Permanent mana sources like lands or mana rocks"
+            ],
+            "edge_rule": "Includes combat-based mana, damage-based mana, firebending, and other triggered mana generation tied to gameplay events.",
+            "priority": "Prefer over ritual when mana is tied to repeatable conditions or board presence."
+        }
     },
     "card_flow": {
-        "card_draw": "Directly draws one or more cards.",
-        "draw_engine": "Provides repeatable or ongoing card draw.",
-        "card_selection": "Improves draw quality without necessarily gaining card quantity.",
-        "cantrip": "Replaces itself by drawing a card with low opportunity cost.",
-        "loot": "Draws then discards, or otherwise exchanges cards in hand.",
-        "wheel": "Discards hands and draws new cards.",
-        "tutor": "Searches the library for specific cards.",
-        "card_advantage": "Generates net material advantage, often through multiple cards or 2-for-1 effects.",
-        "value_engine": "Provides repeatable advantage not limited to drawing cards."
+        "card_draw": {
+            "definition": "Directly draws one or more cards.",
+            "must_have": [
+                "Explicit 'draw' instruction in oracle text"
+            ],
+            "must_not_have": [
+                "Look, reveal, surveil, mill, or tutor effects without drawing",
+                "Impulse-style exile play effects with no draw",
+                "Replacement or cost text that does not result in drawing"
+            ],
+            "edge_rule": "Even one card drawn qualifies, but incidental minor draw may be omitted if not deck-relevant.",
+            "priority": "Can coexist with cantrip, draw_engine, loot, rummage, wheel, or card_advantage where appropriate."
+        },
+        "draw_engine": {
+            "definition": "Provides repeatable or ongoing card draw over time.",
+            "must_have": [
+                "Repeatable draw trigger, activated draw ability, or persistent source of ongoing draws"
+            ],
+            "must_not_have": [
+                "Single one-shot draw spell only",
+                "Cards that merely replace themselves once",
+                "Selection effects without actual drawing"
+            ],
+            "edge_rule": "The draw must be a meaningful recurring role, not a rare corner-case trigger.",
+            "priority": "Prefer draw_engine over plain card_draw when the card's main role is ongoing draw; both may coexist."
+        },
+        "card_selection": {
+            "definition": "Improves draw quality or choice without necessarily increasing total cards drawn.",
+            "must_have": [
+                "Scry, surveil, look-at-and-choose, topdeck manipulation, hand filtering, or similar quality-improving selection"
+            ],
+            "must_not_have": [
+                "Pure card draw with no choice element",
+                "Tutor effects that directly search the library for a chosen card",
+                "Mill-only effects with no hand or draw quality impact",
+                "Impulse-style exile play effects better captured by impulse_draw"
+            ],
+            "edge_rule": "Selection that also draws may receive both card_selection and card_draw if both are strategically meaningful.",
+            "priority": "Use tutor instead when the card searches the library for a specific card. Use impulse_draw instead when access is created through temporary exile-to-play."
+        },
+        "cantrip": {
+            "definition": "Low-opportunity-cost spell or effect that replaces itself by drawing a card.",
+            "must_have": [
+                "Draws a card",
+                "Has low deckbuilding cost or small primary effect such that self-replacement is central"
+            ],
+            "must_not_have": [
+                "Expensive draw spells whose main role is card draw volume",
+                "Repeatable engines",
+                "Effects that do not directly replace themselves"
+            ],
+            "edge_rule": "Not every one-for-one draw effect is a cantrip; use only when self-replacement is a defining role.",
+            "priority": "Can coexist with card_draw, but prefer cantrip only for low-cost self-replacing effects."
+        },
+        "loot": {
+            "definition": "Draws then discards, exchanging cards in hand with new information first.",
+            "must_have": [
+                "Explicit draw-then-discard pattern"
+            ],
+            "must_not_have": [
+                "Discard-then-draw patterns",
+                "Pure card draw",
+                "Pure discard",
+                "Mill or surveil with no hand exchange"
+            ],
+            "edge_rule": "Use even when attached to an activated ability if the exchange is deck-relevant.",
+            "priority": "Can coexist with card_selection; do not use for wheel effects that replace entire hands."
+        },
+        "rummage": {
+            "definition": "Discards then draws, exchanging cards in hand with the discard happening first.",
+            "must_have": [
+                "Explicit discard-then-draw pattern"
+            ],
+            "must_not_have": [
+                "Draw-then-discard patterns",
+                "Pure card draw",
+                "Pure discard",
+                "Mill or surveil with no hand exchange"
+            ],
+            "edge_rule": "Use when the discard is a real cost or sequencing constraint, including spells and abilities that require discard before the new card is seen.",
+            "priority": "Can coexist with card_selection; do not use for wheel effects that replace entire hands."
+        },
+        "wheel": {
+            "definition": "Causes one or more players to discard, shuffle away, or otherwise move away most or all of their hand and receive a new hand or comparable full refresh.",
+            "must_have": [
+                "Mass hand reset or near-full hand replacement effect affecting one or more players"
+            ],
+            "must_not_have": [
+                "Single-card loot or rummage effects",
+                "Small hand filtering",
+                "One-for-one discard plus draw"
+            ],
+            "edge_rule": "Use for full or near-full hand reset patterns, including self-only versions if the effect functionally refreshes the hand rather than merely filtering it.",
+            "priority": "Do not use loot or rummage when wheel more accurately captures the effect."
+        },
+        "impulse_draw": {
+            "definition": "Temporarily accesses cards by exiling, revealing, or setting them aside to be played or cast for a limited time, usually this turn or until a stated duration.",
+            "must_have": [
+                "Creates temporary card access without drawing into hand",
+                "Card access is granted through exile, reveal-and-play, or similar temporary permission"
+            ],
+            "must_not_have": [
+                "Actual drawing into hand",
+                "Library search for chosen cards",
+                "Simple look-at effects with no permission to play or cast"
+            ],
+            "edge_rule": "Use for red-style exile play, adventure-adjacent access patterns, and similar temporary access effects when the key gameplay role is using cards from temporary access rather than drawing them.",
+            "priority": "Distinct from card_draw and card_selection. Can coexist with card_advantage when the effect meaningfully generates extra usable cards."
+        },
+        "tutor": {
+            "definition": "Searches the library for specific cards or card classes for retrieval, reveal, cast, or placement.",
+            "must_have": [
+                "Explicit library search for one or more cards by choice or criteria"
+            ],
+            "must_not_have": [
+                "Topdeck look-and-choose without search",
+                "Random reveal or impulse exile",
+                "Card selection from already revealed cards only"
+            ],
+            "edge_rule": "Land-search cards can be tutor if the search is strategically for lands, though they may also be mana_fixing or land_ramp depending on effect.",
+            "priority": "Prefer tutor over card_selection whenever library search is explicit."
+        },
+        "card_advantage": {
+            "definition": "Produces clear net material gain beyond one-for-one exchange, usually immediately or in a self-contained way.",
+            "must_have": [
+                "Explicit multi-card gain, extra bodies, recursion, or built-in two-for-one pattern",
+                "The material gain comes from this card directly, not merely over time if unanswered"
+            ],
+            "must_not_have": [
+                "Pure selection without net gain",
+                "Simple one-for-one interaction",
+                "Cards that only become advantageous after repeated future turns"
+            ],
+            "edge_rule": "Use for self-contained two-for-ones and immediate material gain. Do not use just because a card is efficient or strong.",
+            "priority": "Prefer draw_engine or value_engine when the main role is recurring advantage over time rather than immediate net gain."
+        },
+        "value_engine": {
+            "definition": "Provides recurring non-draw value over time through repeated triggers, activations, or persistent board presence.",
+            "must_have": [
+                "Persistent source of recurring value across multiple turns or activations",
+                "Advantage is not primarily immediate one-shot material gain"
+            ],
+            "must_not_have": [
+                "One-shot ETB value only",
+                "Single-use material gain",
+                "Cards whose recurring value is primarily drawing cards"
+            ],
+            "edge_rule": "Use only when the card functions as an engine that keeps generating value if it remains active.",
+            "priority": "Distinct from card_advantage. Use draw_engine when the recurring value is mainly card draw."
+        }
     },
     "interaction": {
-        "spot_removal": "Removes, neutralizes, or cleanly answers a single opposing permanent.",
-        "board_wipe": "Removes or resets multiple permanents at once.",
-        "counterspell": "Counters spells on the stack.",
-        "protection": "Prevents removal, damage, targeting, or other hostile interaction.",
-        "bounce": "Returns permanents to hand.",
-        "fight": "Uses creature combat or fight mechanics as removal.",
-        "edict": "Forces sacrifice as a form of removal.",
-        "graveyard_hate": "Disrupts graveyards or cards using them.",
-        "hand_disruption": "Removes or reveals cards from an opponent's hand.",
-        "land_destruction": "Destroys, exiles, or otherwise removes lands.",
-        "mana_denial": "Restricts opposing mana, untaps, land use, or resource development.",
-        "cheap_interaction": "Provides efficient low-cost disruption."
+        "spot_removal": {
+            "definition": "Removes, destroys, exiles, neutralizes, or cleanly answers a single opposing permanent.",
+            "must_have": [
+                "Direct one-target answer to a permanent or creature-sized threat"
+            ],
+            "must_not_have": [
+                "Board wipes",
+                "Temporary tap effects only",
+                "Combat-only shrink effects that do not function as real removal",
+                "Countering spells on the stack"
+            ],
+            "edge_rule": "Pacifism-style permanent neutralization counts if it meaningfully answers a single permanent. Targeted -X/-X, damage, or stat reduction qualifies when it functionally kills or neutralizes the target as a real answer.",
+            "priority": "Use bounce, edict, fight, or counterspell when those more specific answer modes are the primary function."
+        },
+        "board_wipe": {
+            "definition": "Removes, destroys, exiles, sweeps, or broadly resets multiple permanents at once.",
+            "must_have": [
+                "Affects multiple permanents or all permanents of a class in one effect"
+            ],
+            "must_not_have": [
+                "One-for-one removal",
+                "Combat tricks or spot shrink",
+                "Symmetrical sacrifice of one permanent each only"
+            ],
+            "edge_rule": "Mass bounce, mass exile, or broad reset effects can qualify if they function as a sweeping answer.",
+            "priority": "Do not also tag spot_removal unless the card separately contains a distinct one-target mode that matters."
+        },
+        "counterspell": {
+            "definition": "Counters a spell or ability on the stack.",
+            "must_have": [
+                "Explicitly uses 'counter target spell', 'counter target ability', or equivalent stack interaction"
+            ],
+            "must_not_have": [
+                "Tax-only unless failure to pay explicitly counters",
+                "Ward-like protection",
+                "Removal after resolution"
+            ],
+            "edge_rule": "Countering activated or triggered abilities can still qualify if the card's interaction role is stack denial.",
+            "priority": "Use even on modal cards if countering is a real deckbuilding mode."
+        },
+        "protection": {
+            "definition": "Prevents removal, damage, targeting, destruction, or other hostile interaction aimed at your permanents or you.",
+            "must_have": [
+                "Explicit shielding such as hexproof, indestructible, protection, phasing, regeneration, damage prevention, or save effect"
+            ],
+            "must_not_have": [
+                "Pure toughness boosts with no real safeguarding role",
+                "Ward on opposing cards",
+                "General evasiveness without defensive shielding"
+            ],
+            "edge_rule": "Temporary protection spells and static protection-granting effects both qualify if their role is defensive preservation.",
+            "priority": "Use protection_enabler when the card mainly grants safety to other permanents rather than simply having it."
+        },
+        "bounce": {
+            "definition": "Returns one or more permanents to hand.",
+            "must_have": [
+                "Explicitly returns a permanent to its owner's hand"
+            ],
+            "must_not_have": [
+                "Blink effects returning to battlefield",
+                "Top-of-library removal",
+                "Tap effects with no zone change"
+            ],
+            "edge_rule": "Temporary bounce attached to ETB, spell resolution, or activated ability all qualifies if bounce is meaningful. Land bounce can qualify here when the effect is primarily bounce rather than mana denial.",
+            "priority": "Use bounce instead of spot_removal when the answer mode is specifically returning to hand."
+        },
+        "fight": {
+            "definition": "Uses fight, bite, or creature-damage-based mechanics as removal.",
+            "must_have": [
+                "Explicit fight wording or creature dealing damage to another creature as the removal mechanism"
+            ],
+            "must_not_have": [
+                "Ordinary combat",
+                "Noncreature direct damage spells",
+                "Stat boosts without creature-damage resolution"
+            ],
+            "edge_rule": "Cards that cause only one-sided creature damage still qualify if creature-based removal is the main interaction mode.",
+            "priority": "Prefer fight over spot_removal when the card's answer mode is specifically creature-based fighting or biting."
+        },
+        "edict": {
+            "definition": "Forces an opponent to sacrifice a permanent as the primary answer mode.",
+            "must_have": [
+                "Explicitly causes an opponent to sacrifice a permanent"
+            ],
+            "must_not_have": [
+                "Self-sacrifice costs",
+                "Symmetrical sacrifice for all players unless the main role is still forcing opponent sacrifice",
+                "Destroy or exile effects"
+            ],
+            "edge_rule": "Use only when forced sacrifice is the interaction mode, not when sacrifice is merely an optional rider.",
+            "priority": "Prefer edict over spot_removal when sacrifice is the central text."
+        },
+        "graveyard_hate": {
+            "definition": "Disrupts opposing graveyards, exiles graveyard cards, prevents graveyard use, or punishes graveyard strategies.",
+            "must_have": [
+                "Explicit graveyard disruption, prevention, exiling, replacement, or shutdown aimed at opposing or shared graveyard use"
+            ],
+            "must_not_have": [
+                "Using your own graveyard positively",
+                "Self-mill without disruption",
+                "Incidental anti-recursion text that is too minor to matter"
+            ],
+            "edge_rule": "Cards that repeatedly or strongly constrain graveyard usage are especially clear fits. Symmetrical graveyard shutdown still qualifies when its strategic role is to suppress graveyard decks.",
+            "priority": "Can coexist with control_piece, stax, or lock_piece if the disruption is ongoing."
+        },
+        "hand_disruption": {
+            "definition": "Reveals, removes, or otherwise disrupts cards in an opponent's hand.",
+            "must_have": [
+                "Explicit hand reveal, discard, exile-from-hand, or selection from opponent's hand"
+            ],
+            "must_not_have": [
+                "Wheel effects that are broad hand reset rather than targeted disruption",
+                "Discarding your own hand",
+                "Tax or counter effects with no hand interaction"
+            ],
+            "edge_rule": "Targeted and mass discard both qualify if disrupting the opponent's hand is a real role.",
+            "priority": "Can coexist with control_piece or cheap_interaction."
+        },
+        "land_destruction": {
+            "definition": "Destroys, exiles, sacrifices, or otherwise removes lands from the battlefield.",
+            "must_have": [
+                "Explicitly answers lands already on the battlefield"
+            ],
+            "must_not_have": [
+                "Preventing land untaps only",
+                "Searching lands from library",
+                "Bouncing nonlands only"
+            ],
+            "edge_rule": "Land bounce can qualify only if land denial is a central role and the target can be lands.",
+            "priority": "Can coexist with mana_denial when both land removal and broader resource denial are present."
+        },
+        "mana_denial": {
+            "definition": "Restricts opposing mana production, land use, untaps, or resource development without necessarily destroying lands.",
+            "must_have": [
+                "Explicitly limits lands, mana usage, untapping, or mana production"
+            ],
+            "must_not_have": [
+                "Simple cost increase only if tax is the more precise tag",
+                "Pure land destruction with no ongoing denial aspect",
+                "General control cards with no mana or resource constraint"
+            ],
+            "edge_rule": "Use for resource denial patterns like tapping down lands, preventing untaps, restricting mana generation, or denying usable mana without directly increasing spell costs.",
+            "priority": "Prefer tax for payment-based cost increases; prefer land_destruction when the main role is removing lands."
+        },
+        "cheap_interaction": {
+            "definition": "Provides efficient low-cost disruption relative to its effect.",
+            "must_have": [
+                "Mana value is low enough that cheapness is a real deckbuilding feature",
+                "Card is interaction first, not just proactive utility"
+            ],
+            "must_not_have": [
+                "Expensive answers",
+                "Cards whose low cost is not strategically central",
+                "Noninteractive spells"
+            ],
+            "edge_rule": "Use sparingly; the cheap rate must be a meaningful reason the card is played.",
+            "priority": "Secondary tag only. Pair with a specific interaction tag such as spot_removal, counterspell, or hand_disruption."
+        }
     },
     "graveyard": {
-        "self_mill": "Puts cards from own library into own graveyard.",
-        "mill": "Puts cards from an opponent's library into their graveyard.",
-        "recursion": "Returns cards from graveyard to hand, library, or battlefield without specifically being creature-to-battlefield reanimation.",
-        "reanimation": "Returns creature cards from graveyard directly to the battlefield.",
-        "spell_recursion": "Returns instants or sorceries from graveyard for reuse.",
-        "land_recursion": "Returns lands from graveyard or replays them.",
-        "graveyard_enabler": "Actively fills or uses the graveyard to support other effects.",
-        "graveyard_payoff": "Gets stronger or generates value because cards are in graveyards."
+        "self_mill": {
+            "definition": "Puts cards from your own library into your own graveyard.",
+            "must_have": [
+                "Explicitly moves cards from your library to your graveyard"
+            ],
+            "must_not_have": [
+                "Discard from hand only",
+                "Opponent mill only",
+                "Tutor or surveil that does not actually place cards into the graveyard"
+            ],
+            "edge_rule": "Use even for small amounts if self-mill is strategically relevant.",
+            "priority": "Can coexist with graveyard_enabler or graveyard_payoff."
+        },
+        "mill": {
+            "definition": "Puts cards from an opponent's library into their graveyard.",
+            "must_have": [
+                "Explicitly causes an opponent to put cards from library into graveyard"
+            ],
+            "must_not_have": [
+                "Self-mill only",
+                "Discard from hand",
+                "Exile from library without graveyard placement"
+            ],
+            "edge_rule": "Use when the effect materially contributes to a milling plan, not for trivial incidental one-card cases unless still deck-relevant.",
+            "priority": "Do not use for self-targeting graveyard setup."
+        },
+        "recursion": {
+            "definition": "Returns cards from graveyard to hand, library, battlefield, or replay permission, excluding creature-to-battlefield reanimation when that more specific tag applies.",
+            "must_have": [
+                "Explicitly returns cards from graveyard or allows reuse from graveyard"
+            ],
+            "must_not_have": [
+                "Pure graveyard filling",
+                "Creature-only battlefield return when reanimation is the correct specific tag",
+                "Spell-only return when spell_recursion is the more precise tag",
+                "Land-only return when land_recursion is the more precise tag"
+            ],
+            "edge_rule": "Use recursion for broad or mixed graveyard return effects that are not better captured by a more specific graveyard tag.",
+            "priority": "Prefer reanimation, spell_recursion, or land_recursion when those fit exactly."
+        },
+        "reanimation": {
+            "definition": "Returns creature cards from graveyard directly to the battlefield.",
+            "must_have": [
+                "Explicitly puts creature card(s) from a graveyard onto the battlefield"
+            ],
+            "must_not_have": [
+                "Returning creatures to hand",
+                "Returning noncreatures only",
+                "Casting from graveyard instead of directly returning to battlefield"
+            ],
+            "edge_rule": "Can include your graveyard or any graveyard, but the creature-to-battlefield pattern must be explicit.",
+            "priority": "Prefer reanimation over recursion whenever creature-to-battlefield is the core effect."
+        },
+        "spell_recursion": {
+            "definition": "Returns instants or sorceries from graveyard for reuse or allows them to be recast.",
+            "must_have": [
+                "Explicitly returns, copies from, or grants reuse/cast permission for instants or sorceries in graveyards"
+            ],
+            "must_not_have": [
+                "Creature recursion",
+                "General recursion with no spell specificity unless the spell role is not central",
+                "Card draw that incidentally finds spells"
+            ],
+            "edge_rule": "Flashback-like or cast-from-graveyard support can qualify if spell reuse is explicit and meaningful.",
+            "priority": "Prefer spell_recursion over generic recursion when the target class is instants and sorceries."
+        },
+        "land_recursion": {
+            "definition": "Returns lands from graveyard, replays lands from graveyard, or otherwise reuses lands specifically from graveyard.",
+            "must_have": [
+                "Explicit land-specific graveyard return or replay permission"
+            ],
+            "must_not_have": [
+                "General recursion with no land specificity unless land reuse is the primary role",
+                "Land search from library",
+                "Extra land drop with no graveyard component"
+            ],
+            "edge_rule": "Includes effects letting you play lands from graveyard.",
+            "priority": "Prefer land_recursion over generic recursion when the graveyard target is lands."
+        },
+        "graveyard_enabler": {
+            "definition": "Actively fills, stocks, discards to, or otherwise sets up graveyards to support other effects.",
+            "must_have": [
+                "Explicit action that loads cards into a graveyard or uses the graveyard as setup"
+            ],
+            "must_not_have": [
+                "Payoff cards that merely care about graveyards being full",
+                "Recursion with no setup role",
+                "Incidental discard or mill too minor to matter"
+            ],
+            "edge_rule": "Self-mill, rummage-for-yard value, and discard outlets often qualify when they function as setup tools.",
+            "priority": "Use enabler for setup; use graveyard_payoff for reward."
+        },
+        "graveyard_payoff": {
+            "definition": "Gets stronger, cheaper, larger, or otherwise more valuable because cards are in graveyards.",
+            "must_have": [
+                "Explicit scaling, cost reduction, advantage, or reward tied to graveyard contents or graveyard use"
+            ],
+            "must_not_have": [
+                "Cards that merely fill the graveyard",
+                "Straight recursion spells with no payoff scaling",
+                "Cards that use graveyard only incidentally"
+            ],
+            "edge_rule": "The card must benefit from the graveyard state, not just interact with it.",
+            "priority": "Can coexist with recursion or reanimation only if the card both rewards and uses the graveyard."
+        },
+        "discard_outlet": {
+            "definition": "Provides a repeatable or intentional way to discard cards from hand, typically to enable graveyard strategies or synergies.",
+            "must_have": [
+                "Explicitly allows or requires discarding cards from your hand",
+                "Discarding is a controllable or repeatable action, not just a one-time drawback"
+            ],
+            "must_not_have": [
+                "One-time discard as an additional cost with no synergy relevance",
+                "Opponent discard effects",
+                "Random discard with no strategic control unless still used for graveyard setup"
+            ],
+            "edge_rule": "Looting and rummaging effects can qualify if the discard portion is strategically important for graveyard setup. Activated abilities that allow repeatable discard are strong indicators.",
+            "priority": "Use discard_outlet when enabling discard is a primary role. Can coexist with graveyard_enabler, rummage, loot, or madness_synergy."
+        }
     },
     "tokens_counters": {
-        "token_maker": "Creates creature or noncreature tokens.",
-        "token_payoff": "Benefits from creating or controlling tokens.",
-        "go_wide": "Rewards having many creatures or bodies.",
-        "go_tall": "Rewards concentrating power onto one or few creatures.",
-        "plus1_plus1_counters": "Places or uses +1/+1 counters as a major function.",
-        "counters_payoff": "Benefits from counters being placed on permanents.",
-        "proliferate": "Adds to existing counters on permanents or players.",
-        "anthem": "Broadly increases the stats of multiple creatures.",
-        "lord": "Provides a tribal or subtype-based stat boost."
+        "token_maker": {
+            "definition": "Creates creature or noncreature tokens as a meaningful part of its effect.",
+            "must_have": [
+                "Explicitly creates one or more tokens"
+            ],
+            "must_not_have": [
+                "Counters only",
+                "Copies that are not tokens unless the text creates token copies",
+                "Incidental token mention with no creation"
+            ],
+            "edge_rule": "Includes creature and noncreature tokens (Treasure, Clue, Food, etc.). Single-token effects qualify if token creation is a real reason the card is included.",
+            "priority": "Can coexist with treasure, clue-like roles, sac_fodder, or token_payoff."
+        },
+        "token_payoff": {
+            "definition": "Benefits from creating, controlling, sacrificing, counting, or going wide with tokens specifically.",
+            "must_have": [
+                "Explicit reward for tokens as tokens, not just for creatures generally"
+            ],
+            "must_not_have": [
+                "Cards that only create tokens",
+                "Generic go-wide rewards that do not care whether the bodies are tokens",
+                "Sacrifice payoffs with no token-specific incentive"
+            ],
+            "edge_rule": "Use only when token-specific language or token-centric reward is explicit or central.",
+            "priority": "Prefer go_wide when the reward is broad creature quantity rather than token specificity."
+        },
+        "go_wide": {
+            "definition": "Rewards controlling or attacking with many creatures or bodies at once.",
+            "must_have": [
+                "Scales with number of creatures, attackers, or bodies under your control"
+            ],
+            "must_not_have": [
+                "Single-creature voltron or tall strategies",
+                "Token-specific reward when token_payoff is more precise",
+                "Simple anthem with no scaling or strategic many-bodies reward if anthem is the better tag"
+            ],
+            "edge_rule": "Includes attack-based scaling and combat incentives for wide boards, even without token references.",
+            "priority": "Can coexist with anthem, token_maker, or typal."
+        },
+        "go_tall": {
+            "definition": "Rewards concentrating stats, counters, auras, or combat value onto one or a small number of creatures.",
+            "must_have": [
+                "Effect strongly favors one creature or a very small board rather than many bodies"
+            ],
+            "must_not_have": [
+                "Wide team pumps",
+                "Generic counters cards that do not encourage concentration",
+                "Single-target protection that is not a real tall-strategy reward"
+            ],
+            "edge_rule": "Voltron-style enhancement, one-creature scaling, and concentrated counter growth usually qualify.",
+            "priority": "Do not use with go_wide unless the card genuinely supports both plans."
+        },
+        "plus1_plus1_counters": {
+            "definition": "Uses +1/+1 counters as a direct and central mechanical feature.",
+            "must_have": [
+                "Explicitly places, moves, removes, or modifies +1/+1 counters",
+                "References +1/+1 counters in oracle text as a primary mechanic"
+            ],
+            "must_not_have": [
+                "Cards that grow without using counters",
+                "Cards referencing only other counter types",
+                "Temporary stat boosts without counters"
+            ],
+            "edge_rule": "Do not tag if +1/+1 counters are incidental and not a core reason to include the card.",
+            "priority": "Represents the presence of the mechanic, not whether it is a payoff."
+        },
+        "counters_payoff": {
+            "definition": "Benefits significantly from counters being placed, scaling or generating value from them.",
+            "must_have": [
+                "Explicit benefit when counters are placed",
+                "Scaling based on number of counters",
+                "Converts counters into value, damage, cards, mana, or board advantage"
+            ],
+            "must_not_have": [
+                "Cards that only place counters on themselves",
+                "Cards that incidentally receive counters without broader synergy",
+                "Cards where counters are not tied to strategic reward"
+            ],
+            "edge_rule": "Use only when the card is a reward for a counters strategy, not just a participant.",
+            "priority": "May coexist with plus1_plus1_counters only if both conditions are clearly met."
+        },
+        "proliferate": {
+            "definition": "Adds to existing counters on permanents or players through proliferate or equivalent counter-expansion effects.",
+            "must_have": [
+                "Explicit proliferate wording or direct addition to existing counters across multiple permanents or players"
+            ],
+            "must_not_have": [
+                "Simply placing new counters without growing existing ones"
+            ],
+            "edge_rule": "Primarily for true proliferate or near-identical effects that expand existing counters across multiple objects.",
+            "priority": "Can coexist with plus1_plus1_counters or counters_payoff."
+        },
+        "anthem": {
+            "definition": "Broadly increases the stats of multiple creatures at once.",
+            "must_have": [
+                "Static or repeatable effect that increases power, toughness, or both for a broad set of creatures"
+            ],
+            "must_not_have": [
+                "Single-target pumps",
+                "Temporary combat tricks",
+                "Counters-only growth that is not a broad team boost"
+            ],
+            "edge_rule": "Team-wide temporary effects usually belong under combat_trick unless their primary role is persistent enhancement.",
+            "priority": "Use lord when the boost is subtype-specific and that typal restriction is central."
+        },
+        "lord": {
+            "definition": "Provides a tribal or subtype-based stat boost or similar broad enhancement to a named creature type.",
+            "must_have": [
+                "Explicitly boosts or improves a named creature type or subtype group"
+            ],
+            "must_not_have": [
+                "Generic anthem with no type restriction",
+                "Self-only buffs",
+                "Typal references that do not actually enhance the tribe broadly"
+            ],
+            "edge_rule": "Non-stat tribal enhancement can qualify if it functions like a classic lord for the tribe.",
+            "priority": "Prefer lord over anthem when the effect is subtype-based."
+        }
     },
     "sacrifice_life_death": {
-        "sacrifice_outlet": "Repeatable or strategically central way to sacrifice your own permanents for value, payoff, or enabling synergies. Not one-shot self-sacrifice costs unless the card's deck role is sac enabling.",
-        "sac_fodder": "Provides expendable permanents to sacrifice.",
-        "death_payoff": "Benefits when creatures or permanents die.",
-        "sac_payoff": "Benefits specifically from sacrificing permanents.",
-        "lifegain_enabler": "Causes you to gain life.",
-        "lifegain_payoff": "Benefits from life being gained. Not cards that simply gain life.",
-        "life_drain": "Causes life loss for opponents while often gaining life for you.",
-        "aristocrats": "Combines sacrifice, death triggers, and incremental drain/value."
+        "sacrifice_outlet": {
+            "definition": "Provides a repeatable or strategically central way to sacrifice your own permanents for value, enabling, or payoff.",
+            "must_have": [
+                "Explicitly allows you to sacrifice your own permanents",
+                "Sacrificing is repeatable or a primary deckbuilding role of the card"
+            ],
+            "must_not_have": [
+                "Cards that only sacrifice themselves as a one-shot cost",
+                "Forced sacrifice from opponents only",
+                "Incidental self-sacrifice that is not a meaningful engine role"
+            ],
+            "edge_rule": "Repeatable free or low-cost sacrifice is a strong indicator. One-time sacrifice effects are not outlets unless they clearly function as enablers.",
+            "priority": "Can coexist with sac_payoff, death_payoff, or aristocrats."
+        },
+        "sac_fodder": {
+            "definition": "Provides expendable permanents that are useful to sacrifice.",
+            "must_have": [
+                "Creates or supplies disposable permanents that can be profitably sacrificed",
+                "The expendable material is a meaningful part of why the card is played"
+            ],
+            "must_not_have": [
+                "Ordinary creatures with no expendable-material role",
+                "Cards that only sacrifice themselves",
+                "Payoffs that do not actually provide bodies or material"
+            ],
+            "edge_rule": "Token-makers often qualify if the bodies are primarily used as sacrifice material rather than combat bodies.",
+            "priority": "Canonical location for sac_fodder. Can coexist with token_maker."
+        },
+        "death_payoff": {
+            "definition": "Benefits when creatures or permanents die.",
+            "must_have": [
+                "Explicit trigger or scaling effect tied to creatures or permanents dying"
+            ],
+            "must_not_have": [
+                "Cards that merely cause death without benefiting from it",
+                "Sacrifice outlets with no reward",
+                "Leave-the-battlefield triggers unrelated to death"
+            ],
+            "edge_rule": "Includes death of any permanents unless restricted by text. Use when the card gains value from death broadly, not just sacrifice.",
+            "priority": "Prefer sac_payoff when the reward is specifically tied to sacrificing rather than dying."
+        },
+        "sac_payoff": {
+            "definition": "Benefits specifically from sacrificing permanents.",
+            "must_have": [
+                "Explicit trigger, scaling, or reward tied to sacrificing permanents"
+            ],
+            "must_not_have": [
+                "General death triggers with no sacrifice specificity",
+                "Cards that only enable sacrifice",
+                "Cards that merely require a sacrifice cost without rewarding it"
+            ],
+            "edge_rule": "If the card rewards sacrifice directly (not just death), use sac_payoff.",
+            "priority": "Prefer sac_payoff over death_payoff when sacrifice is the precise condition."
+        },
+        "lifegain_enabler": {
+            "definition": "Causes you to gain life as a meaningful function.",
+            "must_have": [
+                "Explicit life gain for you or your controller"
+            ],
+            "must_not_have": [
+                "Life total setting or prevention with no gain",
+                "Cards that only care about gained life but do not gain it",
+                "Tiny incidental life gain that is not strategically relevant"
+            ],
+            "edge_rule": "Lifelink qualifies when life gain is a meaningful part of the card’s role, not just incidental.",
+            "priority": "Can coexist with life_drain or lifegain_payoff if both apply."
+        },
+        "lifegain_payoff": {
+            "definition": "Benefits from life being gained through triggers, scaling, or rewards.",
+            "must_have": [
+                "Explicitly rewards life gain with a trigger, counters, cards, damage, tokens, or scaling"
+            ],
+            "must_not_have": [
+                "Cards that only gain life",
+                "Cards that merely preserve life totals",
+                "Cards where life gain is unrelated to the reward"
+            ],
+            "edge_rule": "Includes cards that check for life gain events or thresholds (e.g., 'whenever you gain life' or 'if you gained life this turn').",
+            "priority": "Do not use for pure life gain sources; use lifegain_enabler there."
+        },
+        "life_drain": {
+            "definition": "Causes opponents to lose life, often paired with you gaining life.",
+            "must_have": [
+                "Explicit opponent life loss tied to the card"
+            ],
+            "must_not_have": [
+                "Pure damage-based burn with no drain identity",
+                "Life gain only"
+            ],
+            "edge_rule": "Life gain is common but not required. Use when the card’s identity is incremental life swing rather than burst damage.",
+            "priority": "Can coexist with death_payoff, sac_payoff, or aristocrats."
+        },
+        "aristocrats": {
+            "definition": "Archetype tag for cards that clearly belong in sacrifice/death/drain shells.",
+            "must_have": [
+                "Strongly supports or rewards a sacrifice/death/value loop",
+                "Would commonly be included in an aristocrats-style deck because of that role"
+            ],
+            "must_not_have": [
+                "Generic sacrifice outlets with no payoff",
+                "Generic death payoffs with no sacrifice-shell relevance",
+                "Cards only loosely related to sacrificing"
+            ],
+            "edge_rule": "Use sparingly and only as a secondary archetype tag after functional tags like sac_payoff, death_payoff, sac_fodder, or sacrifice_outlet are assigned.",
+            "priority": "Secondary archetype tag only. Never use as a substitute for functional sacrifice/death tags."
+        }
     },
     "combat_board": {
-        "haste_enabler": "Grants or enables haste.",
-        "evasive_threat": "Threat with offensive evasion such as flying, menace, trample, unblockable, skulk, shadow, fear, or intimidate. Not deathtouch, vigilance, first strike, reach, ward, or hexproof.",
-        "evasion_enabler": "Grants offensive evasion to other permanents.",
-        "protection_enabler": "Grants hexproof, indestructible, protection, ward-like safety, or similar shielding.",
-        "combat_trick": "Temporary combat-focused boost, protection, or stat swing.",
-        "blink": "Exiles and returns permanents to retrigger or protect them.",
-        "etb": "Has a meaningful effect when it enters the battlefield.",
-        "etb_payoff": "Benefits from permanents entering the battlefield.",
-        "ltb_payoff": "Benefits from permanents leaving the battlefield.",
-        "threat": "Must-answer permanent that generates significant advantage or pressure if left unchecked.",
-        "sticky_threat": "Threat that is difficult to remove, recurs, survives interaction, or replaces itself."
+        "haste_enabler": {
+            "definition": "Grants or enables haste or immediate activation use for itself or other permanents as a meaningful role.",
+            "must_have": [
+                "Explicitly grants haste or allows immediate use equivalent to haste (including activated abilities)"
+            ],
+            "must_not_have": [
+                "Card simply having haste with no enabling role or deckbuilding significance",
+                "Untap effects that are not functionally haste-enabling",
+                "Cards that only accelerate mana"
+            ],
+            "edge_rule": "Includes effects that allow creatures or permanents to use tap abilities immediately.",
+            "priority": "Use more readily when the card grants haste to other permanents."
+        },
+        "evasive_threat": {
+            "definition": "Threat with offensive evasion such as flying, menace, trample, unblockable, skulk, shadow, fear, or intimidate.",
+            "must_have": [
+                "A meaningful offensive body or threat profile",
+                "Explicit offensive evasion keyword or equivalent text"
+            ],
+            "must_not_have": [
+                "Deathtouch, vigilance, first strike, reach, ward, or hexproof alone",
+                "Purely defensive flyers with no real pressure role",
+                "Cards that only grant evasion to others"
+            ],
+            "edge_rule": "Use when evasion materially contributes to pressure, not just incidental keywords.",
+            "priority": "Use evasion_enabler when the card grants evasion to others."
+        },
+        "evasion_enabler": {
+            "definition": "Grants offensive evasion to other permanents.",
+            "must_have": [
+                "Explicitly grants offensive evasion keywords or equivalent to other permanents"
+            ],
+            "must_not_have": [
+                "Card merely having evasion itself",
+                "Protection or shielding that is not offensive evasion",
+                "Temporary combat tricks unless evasion is the main role"
+            ],
+            "edge_rule": "Use when enabling attacks to connect is a meaningful role.",
+            "priority": "Distinct from protection_enabler."
+        },
+        "protection_enabler": {
+            "definition": "Grants hexproof, indestructible, protection, ward-like safety, or similar shielding to other permanents.",
+            "must_have": [
+                "Explicitly grants defensive protection or safeguarding to other permanents"
+            ],
+            "must_not_have": [
+                "Card merely protecting itself",
+                "Evasion-granting with no real shielding",
+                "Temporary stat boosts without true protection"
+            ],
+            "edge_rule": "Use when protecting other permanents is a primary role.",
+            "priority": "Distinct from protection."
+        },
+        "combat_trick": {
+            "definition": "A temporary, combat-focused effect primarily intended to influence combat outcomes, usually at instant speed.",
+            "must_have": [
+                "Temporary change to power/toughness, combat keywords, or survivability",
+                "Effect is primarily usable during combat"
+            ],
+            "must_not_have": [
+                "Sorcery-speed stat changes not clearly combat-focused",
+                "Permanent stat increases such as counters",
+                "Static anthem effects",
+                "Pure removal spells",
+                "High-cost spells with incidental combat relevance"
+            ],
+            "edge_rule": "If the primary purpose is not to swing combat this turn, do not tag.",
+            "priority": "If also removal, prefer interaction tags."
+        },
+        "blink": {
+            "definition": "Exiles and returns permanents to retrigger ETB abilities, reset them, or protect them.",
+            "must_have": [
+                "Explicitly exiles and returns a permanent to the battlefield"
+            ],
+            "must_not_have": [
+                "Bounce to hand only",
+                "Phasing only",
+                "Temporary exile that does not return"
+            ],
+            "edge_rule": "Includes both self-blink and blinking other permanents when used for value or protection.",
+            "priority": "Can coexist with etb or protection."
+        },
+        "etb": {
+            "definition": "Has a meaningful effect that triggers when the permanent enters the battlefield.",
+            "must_have": [
+                "Explicit 'enters the battlefield' trigger"
+            ],
+            "must_not_have": [
+                "Morph or face-up triggers",
+                "'When cast' triggers",
+                "'When dies' triggers",
+                "Attack triggers",
+                "Upkeep or end step triggers",
+                "Static abilities"
+            ],
+            "edge_rule": "Do not tag low-impact ETBs that are not a primary reason to include the card.",
+            "priority": "Can coexist with functional tags."
+        },
+        "etb_payoff": {
+            "definition": "Benefits from permanents entering the battlefield.",
+            "must_have": [
+                "Explicit trigger or scaling tied to permanents entering the battlefield"
+            ],
+            "must_not_have": [
+                "Cards that merely have ETB effects themselves",
+                "Leave-the-battlefield or cast triggers",
+                "Static effects with no ETB reward"
+            ],
+            "edge_rule": "Use when the card rewards ETB events broadly, not just itself.",
+            "priority": "Distinct from etb."
+        },
+        "ltb_payoff": {
+            "definition": "Benefits from permanents leaving the battlefield.",
+            "must_have": [
+                "Explicit trigger or reward tied to permanents leaving the battlefield"
+            ],
+            "must_not_have": [
+                "Death-only payoffs if death_payoff is more precise",
+                "Blink cards with no reward",
+                "Sacrifice outlets with no payoff"
+            ],
+            "edge_rule": "Includes blink and exile-return patterns when broadly rewarded.",
+            "priority": "Prefer death_payoff when limited to dying."
+        },
+        "attack_trigger": {
+            "definition": "Triggers when a creature attacks.",
+            "must_have": [
+                "Explicit 'whenever this creature attacks' or similar attack trigger"
+            ],
+            "must_not_have": [
+                "Combat damage triggers",
+                "Static combat bonuses",
+                "Non-combat triggers"
+            ],
+            "edge_rule": "Includes attack triggers that generate value, tokens, or effects upon declaring attacks.",
+            "priority": "Can coexist with threat or go_wide."
+        },
+        "combat_damage_trigger": {
+            "definition": "Triggers when a creature deals combat damage to a player, creature, or permanent.",
+            "must_have": [
+                "Explicit combat damage trigger condition"
+            ],
+            "must_not_have": [
+                "Attack triggers",
+                "Non-combat damage triggers",
+                "Static effects"
+            ],
+            "edge_rule": "Includes saboteur-style effects that generate value on hit.",
+            "priority": "Often pairs with evasive_threat."
+        },
+        "threat": {
+            "definition": "A permanent that, if unanswered, generates significant pressure, advantage, or game progression.",
+            "must_have": [
+                "Repeatable advantage, or meaningful damage pressure, or snowballing board impact"
+            ],
+            "must_not_have": [
+                "Low-impact creatures",
+                "Purely defensive cards",
+                "Narrow synergy pieces",
+                "Cards requiring heavy setup"
+            ],
+            "edge_rule": "If only strong in synergy shells, prefer payoff or build-around tags.",
+            "priority": "Use sparingly."
+        },
+        "sticky_threat": {
+            "definition": "A threat that is difficult to remove or continues providing value through interaction.",
+            "must_have": [
+                "Qualifies as a threat",
+                "Has resilience such as recursion, replacement, protection, or persistent value"
+            ],
+            "must_not_have": [
+                "Easily removed threats",
+                "Defensive resilient cards with no pressure",
+                "Minor one-time protection"
+            ],
+            "edge_rule": "Stickiness must be a defining feature.",
+            "priority": "Only if both threat and resilience are clear."
+        }
     },
     "spells_artifacts_enchantments": {
-        "spellslinger": "Rewards casting instants, sorceries, or multiple noncreature spells.",
-        "storm": "Rewards casting many spells in a turn.",
-        "prowess": "Rewards noncreature spell casting with stat growth or combat bonuses.",
-        "copy_spell": "Copies spells.",
-        "copy_permanent": "Copies permanents.",
-        "clone": "Copies creatures specifically.",
-        "artifacts_matter": "Benefits from artifacts entering, existing, or being used.",
-        "enchantments_matter": "Explicitly rewards, counts, recurs, or otherwise cares about enchantments as a class. Not just 'is an enchantment'.",
-        "equipment": "Interacts with Equipment or benefits from equipping.",
-        "aura": "Interacts with Auras or benefits from enchanting."
+        "spellslinger": {
+            "definition": "Rewards casting or copying instants, sorceries, or multiple noncreature spells.",
+            "must_have": [
+                "Explicit trigger, scaling, or reward tied to casting or copying instants, sorceries, or noncreature spells"
+            ],
+            "must_not_have": [
+                "Cards that are merely instants or sorceries",
+                "Single spell-copy effects with no ongoing spells-matter incentive"
+            ],
+            "edge_rule": "Includes magecraft-style effects and similar cast-or-copy triggers.",
+            "priority": "Can coexist with prowess, storm, or copy_spell."
+        },
+        "storm": {
+            "definition": "Rewards casting many spells in a single turn or scales with spell count in a burst-combo pattern.",
+            "must_have": [
+                "Explicit storm mechanic or clear reward for casting many spells in a single turn"
+            ],
+            "must_not_have": [
+                "General spellslinger cards that reward spell casting over time",
+                "Single spell-copy effects with no spell-count scaling"
+            ],
+            "edge_rule": "Reserve for burst sequencing, not general spell value.",
+            "priority": "Prefer storm over spellslinger when the card specifically rewards high spell count in one turn."
+        },
+        "prowess": {
+            "definition": "Rewards noncreature spell casting with temporary or scaling combat/stat bonuses.",
+            "must_have": [
+                "Explicit prowess or equivalent combat/stat growth from casting noncreature spells"
+            ],
+            "must_not_have": [
+                "General spellslinger payoffs that do not affect combat",
+                "Permanent counters unless combat growth is the central role"
+            ],
+            "edge_rule": "Use for combat-centric spell reward patterns.",
+            "priority": "Can coexist with spellslinger."
+        },
+        "copy_spell": {
+            "definition": "Copies spells on the stack or as they are cast.",
+            "must_have": [
+                "Explicitly copies one or more spells"
+            ],
+            "must_not_have": [
+                "Copying permanents only",
+                "Recasting from graveyard without copying"
+            ],
+            "edge_rule": "Central role must involve copying spells, not incidental duplication.",
+            "priority": "Distinct from copy_permanent and clone."
+        },
+        "cast_from_elsewhere": {
+            "definition": "Allows or rewards casting spells from zones other than hand (e.g., exile, graveyard, library).",
+            "must_have": [
+                "Explicit permission or reward for casting spells from non-hand zones"
+            ],
+            "must_not_have": [
+                "Standard casting from hand",
+                "Simple recursion to hand without casting",
+                "Impulse draw without meaningful casting synergy"
+            ],
+            "edge_rule": "Includes flashback, escape, exile-play, adventure, and similar mechanics when casting from alternate zones is central.",
+            "priority": "Can coexist with spellslinger, impulse_draw, or recursion."
+        },
+        "copy_permanent": {
+            "definition": "Copies permanents as permanents or creates copies of permanents.",
+            "must_have": [
+                "Explicitly copies a permanent or creates a copy token of a permanent"
+            ],
+            "must_not_have": [
+                "Copying spells only",
+                "Creature-only copying when clone is more precise"
+            ],
+            "edge_rule": "Use when copying is not limited strictly to creatures.",
+            "priority": "Prefer clone for creature-specific copying."
+        },
+        "clone": {
+            "definition": "Copies creatures specifically.",
+            "must_have": [
+                "Explicitly enters as or becomes a copy of a creature"
+            ],
+            "must_not_have": [
+                "Copying any permanent broadly",
+                "Token generation without copying"
+            ],
+            "edge_rule": "Use whenever creature copying is the central function.",
+            "priority": "Prefer clone over copy_permanent when applicable."
+        },
+        "artifacts_matter": {
+            "definition": "Benefits from artifacts entering, existing, being cast, or being used as a class.",
+            "must_have": [
+                "Explicit reward, count, or scaling tied to artifacts"
+            ],
+            "must_not_have": [
+                "Being an artifact alone"
+            ],
+            "edge_rule": "Includes artifact tokens (Treasure, Clue, Food) when relevant to the strategy.",
+            "priority": "Can coexist with treasure, equipment, or sac_payoff."
+        },
+        "enchantments_matter": {
+            "definition": "Rewards, counts, or interacts with enchantments as a class.",
+            "must_have": [
+                "Explicit synergy or reward tied to enchantments (including constellation-style triggers)"
+            ],
+            "must_not_have": [
+                "Being an enchantment only"
+            ],
+            "edge_rule": "Includes constellation and similar ETB enchantment triggers.",
+            "priority": "Use aura when specifically aura-focused."
+        },
+        "equipment": {
+            "definition": "Interacts with Equipment or benefits from equipping.",
+            "must_have": [
+                "Explicitly references Equipment or equip mechanics"
+            ],
+            "must_not_have": [
+                "Generic artifact synergy"
+            ],
+            "edge_rule": "Use when equipment interaction is central.",
+            "priority": "Can coexist with artifacts_matter."
+        },
+        "aura": {
+            "definition": "Interacts with Auras or benefits from enchanting.",
+            "must_have": [
+                "Explicitly references Auras or enchanted permanents"
+            ],
+            "must_not_have": [
+                "Generic enchantment synergy"
+            ],
+            "edge_rule": "Being an Aura is not sufficient unless aura synergy is central.",
+            "priority": "Can coexist with enchantments_matter."
+        }
     },
     "lands": {
-        "lands_matter": "Benefits from lands entering, being played, sacrificed, or counted.",
-        "landfall": "Triggers when lands enter the battlefield.",
-        "utility_land": "Land whose primary value includes a meaningful non-mana ability; basic lands and simple fixing lands are not utility lands."
+        "lands_matter": {
+            "definition": "Benefits from lands entering, being played, being sacrificed, being counted, being replayed, or otherwise being used as a strategic resource.",
+            "must_have": [
+                "Explicit reward, count, scaling, or synergy tied to lands"
+            ],
+            "must_not_have": [
+                "Cards that merely produce mana",
+                "Simple land tutors with no broader land synergy",
+                "Single land interaction that is not a lands-strategy reward"
+            ],
+            "edge_rule": "Use when the card is part of a lands shell, not merely adjacent to mana development. Includes cards that care about lands entering, leaving, being in graveyards, or being replayed.",
+            "priority": "Can coexist with landfall, land_recursion, extra_land_drop, or sac_land."
+        },
+        "landfall": {
+            "definition": "Triggers when lands enter the battlefield under your control or in an equivalent land-entry trigger pattern.",
+            "must_have": [
+                "Explicit trigger tied to lands entering the battlefield"
+            ],
+            "must_not_have": [
+                "Playing lands with no trigger",
+                "Extra land plays with no reward",
+                "Land-count scaling with no ETB trigger"
+            ],
+            "edge_rule": "Use for explicit land-entry-trigger rewards; do not use for broader lands-matter cards without that pattern.",
+            "priority": "Can coexist with lands_matter."
+        },
+        "utility_land": {
+            "definition": "Land whose primary value includes a meaningful non-mana ability beyond simple fixing or basic mana production.",
+            "must_have": [
+                "Land type line",
+                "Meaningful non-mana activated, triggered, or static ability"
+            ],
+            "must_not_have": [
+                "Basic lands",
+                "Simple dual, fetch, or fixing lands with no meaningful utility beyond mana access",
+                "Lands whose only text is entering tapped or producing mana variants"
+            ],
+            "edge_rule": "The non-mana ability must be a real reason to include the land, not trivial text.",
+            "priority": "Can coexist with manland, sac_land, land_destruction, lands_matter, or recursion-related tags if applicable."
+        },
+        "manland": {
+            "definition": "Land that can become a creature or otherwise function as an attacking or blocking creature.",
+            "must_have": [
+                "Land type line",
+                "Explicit ability to become a creature, animate itself, or enter as a creature land"
+            ],
+            "must_not_have": [
+                "Lands that only create creature tokens",
+                "Utility lands with no self-animation",
+                "Nonland permanents that animate lands temporarily without the land itself carrying that role"
+            ],
+            "edge_rule": "Use when creature-land functionality is a meaningful role, whether as threat, blocker, or resilient win condition.",
+            "priority": "Prefer manland over generic utility_land when self-animation is a central reason the land is played, though both may coexist."
+        },
+        "sac_land": {
+            "definition": "Land that sacrifices itself or is commonly used by sacrificing lands as a central part of its function.",
+            "must_have": [
+                "Land type line",
+                "Explicit sacrifice of itself or another land as a meaningful cost, effect, or strategic function"
+            ],
+            "must_not_have": [
+                "Lands that merely go to graveyard through normal gameplay",
+                "Lands with no sacrifice text or sacrifice role",
+                "Nonland cards that sacrifice lands"
+            ],
+            "edge_rule": "Includes fetch-style self-sacrificing lands, self-sacrifice utility lands, and lands whose central role involves sacrificing lands for value, fixing, denial, or graveyard synergy.",
+            "priority": "Can coexist with mana_fixing, land_destruction, lands_matter, or land_recursion."
+        }
     },
     "tribal_typal": {
-        "typal": "Rewards, references, or cares about creature types or a named subtype."
-    },
-    "strategy_roles": {
-        "build_around": "Strongly rewards surrounding support or deck construction choices.",
-        "synergy_piece": "Supports a specific strategy but may not be the payoff.",
-        "payoff": "Primary reward card for a synergy package.",
-        "enabler": "Primary setup card for a synergy package.",
-        "combo_piece": "Part of a deterministic or high-synergy combo line.",
-        "finisher": "Often closes the game quickly once resolved or stabilized.",
-        "burn": "Deals direct damage to creatures, planeswalkers, or players as a main function.",
-        "cheat_into_play": "Bypasses normal mana costs to put cards onto the battlefield or cast them.",
-        "extra_turn": "Creates additional turns.",
-        "extra_combat": "Creates additional combat steps."
-    },
-    "prison_control": {
-        "stax": "Restricts resources, untaps, casting, attacking, or other core game actions symmetrically or asymmetrically.",
-        "tax": "Increases costs opponents must pay or imposes payment requirements.",
-        "lock_piece": "Contributes to a game state that heavily constrains opposing options.",
-        "control_piece": "Designed primarily to slow, constrain, or answer opposing development over time."
+        "typal": {
+            "definition": "Rewards, references, counts, or meaningfully cares about creature types or a named subtype.",
+            "must_have": [
+                "Explicit subtype or creature-type reference that matters strategically"
+            ],
+            "must_not_have": [
+                "Having a creature type line only",
+                "Lord effects can still be typal, but do not use typal for cards with no actual tribal/textual payoff",
+                "Flavor references with no rules meaning"
+            ],
+            "edge_rule": "Use when the card belongs in a tribal/typal shell because of subtype-based synergy or reward.",
+            "priority": "Can coexist with lord, payoff, or build_around."
+        }
     }
 }
