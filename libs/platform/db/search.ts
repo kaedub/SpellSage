@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import type {
   CardSearchFilter,
   CardSearchResult,
+  CardSummary,
   CmcFilter,
   CollectionFilter,
   ColorFilter,
@@ -39,7 +40,27 @@ export const CARD_SUMMARY_SELECT = {
   keywords: true,
   imageUri: true,
   isLegendary: true,
+  tags: {
+    select: {
+      tagSlug: true,
+      tag: { select: { groupSlug: true } },
+    },
+  },
 } satisfies Prisma.CardSelect;
+
+type RawCardSummaryRow = Omit<CardSummary, 'tags'> & {
+  tags: Array<{ tagSlug: string; tag: { groupSlug: string } }>;
+};
+
+export function toCardSummary(row: RawCardSummaryRow): CardSummary {
+  return {
+    ...row,
+    tags: row.tags.map((t) => ({
+      tagSlug: t.tagSlug,
+      groupSlug: t.tag.groupSlug,
+    })),
+  };
+}
 
 // --- Individual filter builders ---
 
@@ -225,7 +246,7 @@ export async function searchCards(
     const where = buildWhereClause(filter);
     const orderBy = buildOrderBy(filter);
 
-    const [cards, total] = await Promise.all([
+    const [rawCards, total] = await Promise.all([
       prisma.card.findMany({
         where,
         select: CARD_SUMMARY_SELECT,
@@ -237,7 +258,7 @@ export async function searchCards(
     ]);
 
     return ok({
-      cards,
+      cards: rawCards.map(toCardSummary),
       total,
       pagination: { limit, offset },
     });

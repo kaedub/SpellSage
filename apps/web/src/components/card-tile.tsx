@@ -5,11 +5,16 @@ import type { CollectionCardMeta } from '../lib/use-collection';
 type CardTileProps = {
   readonly card: CardSummary;
   readonly collectionMeta?: CollectionCardMeta;
+  readonly onSelect: (card: CardSummary) => void;
 };
 
-export function CardTile({ card, collectionMeta }: CardTileProps) {
+export function CardTile({ card, collectionMeta, onSelect }: CardTileProps) {
   return (
-    <div className="group relative overflow-hidden rounded-lg bg-gray-800 transition-all hover:ring-1 hover:ring-indigo-500">
+    <button
+      type="button"
+      onClick={() => onSelect(card)}
+      className="group relative cursor-pointer overflow-hidden rounded-lg bg-gray-800 text-left transition-all hover:ring-1 hover:ring-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+    >
       <div className="aspect-[488/680] w-full overflow-hidden">
         <img
           src={card.imageUri}
@@ -17,18 +22,6 @@ export function CardTile({ card, collectionMeta }: CardTileProps) {
           className="h-full w-full object-cover"
           loading="lazy"
         />
-      </div>
-
-      <div className="px-2 py-2">
-        <p className="truncate text-sm font-medium text-gray-100">
-          {card.name}
-        </p>
-        <p className="truncate text-xs text-gray-400">
-          {card.typeLine}
-        </p>
-        {card.manaCost && (
-          <p className="mt-0.5 text-xs text-gray-500">{card.manaCost}</p>
-        )}
       </div>
 
       {collectionMeta && (
@@ -43,6 +36,6 @@ export function CardTile({ card, collectionMeta }: CardTileProps) {
           )}
         </div>
       )}
-    </div>
+    </button>
   );
 }

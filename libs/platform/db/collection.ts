@@ -5,7 +5,7 @@ import type { Result } from '@shared/result';
 import { collectionCardKey } from '@shared/collection-text';
 
 import { prisma } from '../adapters/prisma/client';
-import { CARD_SUMMARY_SELECT } from './search';
+import { CARD_SUMMARY_SELECT, toCardSummary } from './search';
 
 // --- Error types ---
 
@@ -96,7 +96,7 @@ export async function getCollectionCards(
         cardId: row.cardId,
         quantity: row.quantity,
         foil: row.foil,
-        card: row.card,
+        card: toCardSummary(row.card),
       })),
     );
   } catch (error) {

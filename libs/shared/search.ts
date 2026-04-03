@@ -91,6 +91,11 @@ export const CardSearchFilterSchema = z.object({
 
 // --- Result projection (matches Prisma return shape, not ingestion input) ---
 
+export const CardTagSummarySchema = z.object({
+  tagSlug: z.string(),
+  groupSlug: z.string(),
+});
+
 export const CardSummarySchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -108,6 +113,7 @@ export const CardSummarySchema = z.object({
   keywords: z.array(z.string()),
   imageUri: z.string(),
   isLegendary: z.boolean(),
+  tags: z.array(CardTagSummarySchema).default([]),
 });
 
 export const CardSearchResultSchema = z.object({
@@ -156,6 +162,7 @@ export type SortableField = z.infer<typeof SortableFieldSchema>;
 export type Sort = z.infer<typeof SortSchema>;
 export type Pagination = z.infer<typeof PaginationSchema>;
 export type CardSearchFilter = z.infer<typeof CardSearchFilterSchema>;
+export type CardTagSummary = z.infer<typeof CardTagSummarySchema>;
 export type CardSummary = z.infer<typeof CardSummarySchema>;
 export type CardSearchResult = z.infer<typeof CardSearchResultSchema>;
 export type CollectionSummary = z.infer<typeof CollectionSchema>;
