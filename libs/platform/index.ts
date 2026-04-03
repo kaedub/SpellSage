@@ -4,7 +4,7 @@
 export {
   addToCollection,
   findCardsByCollectorInfo,
-  getCollection,
+  getCollectionByUser,
   insertCards,
   removeFromCollection,
   searchCards,

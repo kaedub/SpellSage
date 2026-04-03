@@ -1,12 +1,18 @@
-// Uncomment this line to use CSS modules
-// import styles from './app.module.css';
-import NxWelcome from './nx-welcome';
+import { Route, Routes } from 'react-router-dom';
+import { Layout } from './layout';
+import { HomePage } from './pages/home';
+import { SearchPage } from './pages/search';
+import { CollectionPage } from './pages/collection';
 
 export function App() {
   return (
-    <div>
-      <NxWelcome title="@spellsage/web" />
-    </div>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path="search" element={<SearchPage />} />
+        <Route path="collection" element={<CollectionPage />} />
+      </Route>
+    </Routes>
   );
 }
 

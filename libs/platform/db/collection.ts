@@ -1,11 +1,33 @@
 import type { Collection } from '@prisma/client';
+import type { CollectionEntry } from '@shared/search';
 
 import { collectionCardKey } from '@shared/collection-text';
 
 import { prisma } from '../adapters/prisma/client';
+import { CARD_SUMMARY_SELECT } from './search';
 
-export async function getCollection(): Promise<Collection[]> {
-  return prisma.collection.findMany();
+export async function getCollectionByUser(userId: string): Promise<{
+  items: CollectionEntry[];
+  total: number;
+}> {
+  const rows = await prisma.collection.findMany({
+    where: { userId },
+    include: {
+      card: { select: CARD_SUMMARY_SELECT },
+    },
+    orderBy: { card: { name: 'asc' } },
+  });
+
+  return {
+    items: rows.map((row) => ({
+      collectionId: row.id,
+      cardId: row.cardId,
+      quantity: row.quantity,
+      foil: row.foil,
+      card: row.card,
+    })),
+    total: rows.length,
+  };
 }
 
 export async function addToCollection(params: Array<{

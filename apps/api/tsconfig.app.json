@@ -14,5 +14,13 @@
     "../../libs/platform/**/*.ts",
     "../../libs/shared/**/*.ts"
   ],
-  "exclude": []
+  "exclude": [],
+  "references": [
+    {
+      "path": "../../libs/shared/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/platform/tsconfig.lib.json"
+    }
+  ]
 }

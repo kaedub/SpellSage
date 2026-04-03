@@ -22,7 +22,7 @@ export type SearchError =
 
 // --- Prisma select for CardSummary projection ---
 
-const CARD_SUMMARY_SELECT = {
+export const CARD_SUMMARY_SELECT = {
   id: true,
   name: true,
   set: true,

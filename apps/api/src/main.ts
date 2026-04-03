@@ -1,20 +1,32 @@
 import Fastify from 'fastify';
+import { z } from 'zod';
+import { CardSearchFilterSchema } from '@shared/search';
 import {
 	addToCollection,
-	getCollection,
+	getCollectionByUser,
 	removeFromCollection,
 	searchCards,
 } from '@platform/db';
-import { CardSearchFilterSchema } from '@shared/search';
 
 const app = Fastify();
 
+const CollectionQuerySchema = z.object({
+	userId: z.string().min(1),
+});
+
 app.get('/health', async () => ({ status: 'ok' }));
 
-// View entire collection
 app.get('/collection', async (request, reply) => {
+	const parsed = CollectionQuerySchema.safeParse(request.query);
+	if (!parsed.success) {
+		return reply.status(400).send({
+			error: 'Missing or invalid userId query parameter',
+			details: parsed.error.issues,
+		});
+	}
+
 	try {
-		const collection = await getCollection();
+		const collection = await getCollectionByUser(parsed.data.userId);
 		return collection;
 	} catch (err) {
 		return reply.status(500).send({ error: 'Failed to fetch collection' });

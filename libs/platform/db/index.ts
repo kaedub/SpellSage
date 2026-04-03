@@ -4,7 +4,7 @@ export type { CardTagError, UpsertCardTagsResult } from './card-tag';
 export {
   addToCollection,
   findCardsByCollectorInfo,
-  getCollection,
+  getCollectionByUser,
   removeFromCollection,
   upsertCollectionEntries,
 } from './collection';

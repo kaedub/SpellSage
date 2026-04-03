@@ -113,6 +113,21 @@ export const CardSearchResultSchema = z.object({
   }),
 });
 
+// --- Collection entry (card + ownership metadata) ---
+
+export const CollectionEntrySchema = z.object({
+  collectionId: z.number().int(),
+  cardId: z.string(),
+  quantity: z.number().int().positive(),
+  foil: z.boolean(),
+  card: CardSummarySchema,
+});
+
+export const CollectionResponseSchema = z.object({
+  items: z.array(CollectionEntrySchema),
+  total: z.number().int().nonnegative(),
+});
+
 // --- Inferred types ---
 
 export type ColorFilterMode = z.infer<typeof ColorFilterModeSchema>;
@@ -127,3 +142,5 @@ export type Pagination = z.infer<typeof PaginationSchema>;
 export type CardSearchFilter = z.infer<typeof CardSearchFilterSchema>;
 export type CardSummary = z.infer<typeof CardSummarySchema>;
 export type CardSearchResult = z.infer<typeof CardSearchResultSchema>;
+export type CollectionEntry = z.infer<typeof CollectionEntrySchema>;
+export type CollectionResponse = z.infer<typeof CollectionResponseSchema>;
