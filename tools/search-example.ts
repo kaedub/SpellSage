@@ -198,7 +198,7 @@ async function main(): Promise<void> {
 
   // 21. Empty filter — just returns cards sorted by name
   await runQuery('No filters (first 5 cards by name)', {
-    pagination: { limit: 5, offset: 0 },
+    pagination: { limit: 5, offset: 0 }, 
   });
 }
 

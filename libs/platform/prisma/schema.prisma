@@ -88,6 +88,25 @@ model CardTag {
   @@unique([cardId, tag, source])
 }
 
+model Keyword {
+  id                Int      @id @default(autoincrement())
+  name              String   @unique
+  slug              String   @unique
+  type              String
+  rulesTextTemplate String   @map("rules_text_template")
+  parameterized     Boolean
+  parameterName     String?  @map("parameter_name")
+  mechanicSummary   String   @map("mechanic_summary")
+  defaultTags       String[] @map("default_tags")
+  tagNotes          String[] @map("tag_notes")
+  example           String
+  setScope          String[] @map("set_scope")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@index([type])
+}
+
 model ScryfallSyncRun {
   id             Int      @id @default(autoincrement())
   startedAt      DateTime @map("started_at")
