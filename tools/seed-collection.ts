@@ -8,11 +8,14 @@ import {
     type CollectionTextEntry,
 } from '@shared/collection-text';
 import {
+    createCollection,
+    getCollectionsByUser,
     findCardsByCollectorInfo,
     upsertCollectionEntries,
 } from '@platform/db';
 
 const SEED_USER_ID = process.env['SEED_USER_ID'] ?? 'seed-user';
+const SEED_COLLECTION_NAME = process.env['SEED_COLLECTION_NAME'] ?? 'Main';
 const BATCH_SIZE = 200;
 
 function loadCollectionFile(): string {
@@ -22,6 +25,28 @@ function loadCollectionFile(): string {
 }
 
 async function main(): Promise<void> {
+    const createResult = await createCollection({
+        userId: SEED_USER_ID,
+        name: SEED_COLLECTION_NAME,
+    });
+
+    let collectionId: number;
+
+    if (createResult.ok) {
+        collectionId = createResult.value.id;
+    } else if (createResult.error.kind === 'duplicate') {
+        console.log(`Collection "${SEED_COLLECTION_NAME}" already exists, reusing it.`);
+        const listResult = await getCollectionsByUser(SEED_USER_ID);
+        if (!listResult.ok) throw new Error(listResult.error.message);
+        const existing = listResult.value.find((c) => c.name === SEED_COLLECTION_NAME);
+        if (!existing) throw new Error(`Collection "${SEED_COLLECTION_NAME}" not found after create`);
+        collectionId = existing.id;
+    } else {
+        throw new Error(createResult.error.message);
+    }
+
+    console.log(`Using collection "${SEED_COLLECTION_NAME}" (id=${collectionId}) for user "${SEED_USER_ID}".\n`);
+
     const text = loadCollectionFile();
     const cardMap = parseCollectionText(text);
 
@@ -36,7 +61,6 @@ async function main(): Promise<void> {
     console.log(`Resolved ${cardIdMap.size} / ${cardMap.size} cards in the database.\n`);
 
     const upsertRows: Array<{
-        userId: string;
         cardId: string;
         quantity: number;
         foil: boolean;
@@ -52,7 +76,6 @@ async function main(): Promise<void> {
 
         for (const entry of entries) {
             upsertRows.push({
-                userId: SEED_USER_ID,
                 cardId,
                 quantity: entry.quantity,
                 foil: entry.foil,
@@ -63,7 +86,7 @@ async function main(): Promise<void> {
     let inserted = 0;
     for (let i = 0; i < upsertRows.length; i += BATCH_SIZE) {
         const batch = upsertRows.slice(i, i + BATCH_SIZE);
-        inserted += await upsertCollectionEntries(batch);
+        inserted += await upsertCollectionEntries(collectionId, batch);
         process.stdout.write(
             `\r  Upserted ${inserted} / ${upsertRows.length} collection entries`,
         );
@@ -82,7 +105,7 @@ async function main(): Promise<void> {
     }
 
     console.log(
-        `Done. Upserted ${inserted} entries for user "${SEED_USER_ID}", ${unresolved.length} unresolved.`,
+        `Done. Upserted ${inserted} entries into "${SEED_COLLECTION_NAME}" for user "${SEED_USER_ID}", ${unresolved.length} unresolved.`,
     );
 }
 

@@ -22,10 +22,16 @@ export const NumericRangeSchema = z.object({
   lte: z.number().int().optional(),
 });
 
-export const CollectionFilterSchema = z.object({
-  userId: z.string(),
-  minQuantity: z.number().int().positive().optional(),
-});
+export const CollectionFilterSchema = z
+  .object({
+    collectionId: z.number().int().optional(),
+    userId: z.string().optional(),
+    minQuantity: z.number().int().positive().optional(),
+  })
+  .refine(
+    (f) => f.collectionId !== undefined || f.userId !== undefined,
+    { message: 'Collection filter must specify at least collectionId or userId' },
+  );
 
 export const TagFilterSchema = z
   .object({
@@ -113,9 +119,19 @@ export const CardSearchResultSchema = z.object({
   }),
 });
 
-// --- Collection entry (card + ownership metadata) ---
+// --- Collection container ---
 
-export const CollectionEntrySchema = z.object({
+export const CollectionSchema = z.object({
+  id: z.number().int(),
+  userId: z.string(),
+  name: z.string(),
+  cardCount: z.number().int().nonnegative(),
+});
+
+// --- Collection card entry (card + ownership metadata) ---
+
+export const CollectionCardEntrySchema = z.object({
+  collectionCardId: z.number().int(),
   collectionId: z.number().int(),
   cardId: z.string(),
   quantity: z.number().int().positive(),
@@ -123,8 +139,8 @@ export const CollectionEntrySchema = z.object({
   card: CardSummarySchema,
 });
 
-export const CollectionResponseSchema = z.object({
-  items: z.array(CollectionEntrySchema),
+export const CollectionCardsResponseSchema = z.object({
+  items: z.array(CollectionCardEntrySchema),
   total: z.number().int().nonnegative(),
 });
 
@@ -142,5 +158,6 @@ export type Pagination = z.infer<typeof PaginationSchema>;
 export type CardSearchFilter = z.infer<typeof CardSearchFilterSchema>;
 export type CardSummary = z.infer<typeof CardSummarySchema>;
 export type CardSearchResult = z.infer<typeof CardSearchResultSchema>;
-export type CollectionEntry = z.infer<typeof CollectionEntrySchema>;
-export type CollectionResponse = z.infer<typeof CollectionResponseSchema>;
+export type CollectionSummary = z.infer<typeof CollectionSchema>;
+export type CollectionCardEntry = z.infer<typeof CollectionCardEntrySchema>;
+export type CollectionCardsResponse = z.infer<typeof CollectionCardsResponseSchema>;

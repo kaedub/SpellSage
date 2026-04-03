@@ -1,11 +1,11 @@
 import type { CardSummary } from '@shared/search';
 
-import type { CollectionMeta } from '../lib/use-collection';
+import type { CollectionCardMeta } from '../lib/use-collection';
 import { CardTile } from './card-tile';
 
 type CardGridProps = {
   readonly cards: CardSummary[];
-  readonly collectionMap?: ReadonlyMap<string, CollectionMeta>;
+  readonly collectionMap?: ReadonlyMap<string, CollectionCardMeta>;
 };
 
 export function CardGrid({ cards, collectionMap }: CardGridProps) {

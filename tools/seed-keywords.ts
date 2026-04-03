@@ -14,10 +14,10 @@ type RawKeyword = {
   parameterized: boolean;
   parameter_name?: string;
   mechanic_summary: string;
-  default_tags: string[];
-  tag_notes: string[];
-  example: string;
-  set_scope: string[];
+  default_tags?: string[];
+  tag_notes?: string[];
+  example?: string;
+  set_scope?: string[];
 };
 
 type RawKeywordsFile = {
@@ -34,26 +34,31 @@ function loadKeywordsFile(path: string): KeywordInput[] {
     type: kw.type,
     rulesTextTemplate: kw.rules_text_template,
     parameterized: kw.parameterized,
-    parameterName: kw.parameterized ? kw.parameter_name : undefined,
+    parameterName: kw.parameterized ? (kw.parameter_name ?? 'N') : undefined,
     mechanicSummary: kw.mechanic_summary,
-    defaultTags: kw.default_tags,
-    tagNotes: kw.tag_notes,
+    defaultTags: kw.default_tags ?? [],
+    tagNotes: kw.tag_notes ?? [],
     example: kw.example,
-    setScope: kw.set_scope,
+    setScope: kw.set_scope ?? [],
   }));
 }
 
 async function main(): Promise<void> {
   const thisDir = dirname(fileURLToPath(import.meta.url));
-  const filePath = resolve(thisDir, 'keywords-1.json');
-  const keywords = loadKeywordsFile(filePath);
+  const fileNames = ['keywords-1.json', 'keywords-2.json', 'keywords-3.json'];
+  const keywords = fileNames.flatMap((name) => {
+    const filePath = resolve(thisDir, name);
+    const kws = loadKeywordsFile(filePath);
+    console.log(`  ${name}: ${kws.length} keywords`);
+    return kws;
+  });
 
-  console.log(`Loaded ${keywords.length} keywords from ${filePath}`);
+  console.log(`Loaded ${keywords.length} keywords total`);
 
   const result = await upsertKeywords(keywords);
 
   if (!result.ok) {
-    console.error(`ERROR [${result.error.kind}]:`, result.error.message);
+    console.error(`ERROR [${result.error.kind}]:`, result.error);
     process.exit(1);
   }
 
@@ -61,7 +66,7 @@ async function main(): Promise<void> {
 
   const allResult = await findAllKeywords();
   if (!allResult.ok) {
-    console.error(`Verification failed [${allResult.error.kind}]:`, allResult.error.message);
+    console.error(`Verification failed [${allResult.error.kind}]:`, allResult.error);
     process.exit(1);
   }
 

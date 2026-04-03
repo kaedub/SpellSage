@@ -10,7 +10,8 @@
     "seed:keywords": "tsx --tsconfig tools/tsconfig.json tools/seed-keywords.ts",
     "seed:collection": "tsx --tsconfig tools/tsconfig.json tools/seed-collection.ts",
     "search:example": "tsx --tsconfig tools/tsconfig.json tools/search-example.ts",
-    "generate:tags": "tsx --tsconfig tools/tsconfig.json tools/seed-tags.ts",
+    "seed:tag-taxonomy": "tsx --tsconfig tools/tsconfig.json tools/seed-tag-taxonomy.ts",
+    "tag:cards": "tsx --tsconfig tools/tsconfig.json tools/tag-cards.ts",
     "tag:print": "tsx --tsconfig tools/tsconfig.json tools/print-db.ts"
   },
   "private": true,

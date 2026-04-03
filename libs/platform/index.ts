@@ -2,13 +2,17 @@
 // Keep this file as the public export surface for `@platform/db`.
 
 export {
-  addToCollection,
+  createCollection,
+  getCollectionsByUser,
+  getCollectionCards,
+  addCardsToCollection,
+  removeCardFromCollection,
+  deleteCollection,
   findCardsByCollectorInfo,
-  getCollectionByUser,
   insertCards,
-  removeFromCollection,
   searchCards,
   upsertCardTags,
+  findUntaggedCollectionCards,
   upsertCollectionEntries,
   upsertKeywords,
   findKeywordBySlug,
@@ -16,7 +20,8 @@ export {
   upsertTagTaxonomy,
   loadTagTaxonomy,
 } from './db/index';
-export type { CardTagError, UpsertCardTagsResult } from './db/index';
+export type { CollectionError, CollectionSummary, CollectionCardEntry } from './db/index';
+export type { CardTagError, CardTagInput, UpsertCardTagsResult } from './db/index';
 export type { KeywordError, KeywordInput, UpsertKeywordsResult } from './db/index';
 export type { SearchError } from './db/index';
 export type {

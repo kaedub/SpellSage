@@ -37,13 +37,24 @@ CREATE TABLE "Card" (
 CREATE TABLE "Collection" (
     "id" SERIAL NOT NULL,
     "user_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Collection_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CollectionCard" (
+    "id" SERIAL NOT NULL,
+    "collection_id" INTEGER NOT NULL,
     "card_id" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
     "foil" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Collection_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "CollectionCard_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -154,13 +165,19 @@ CREATE INDEX "Card_keywords_idx" ON "Card" USING GIN ("keywords");
 CREATE INDEX "Card_produced_mana_idx" ON "Card" USING GIN ("produced_mana");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Collection_user_id_name_key" ON "Collection"("user_id", "name");
+
+-- CreateIndex
 CREATE INDEX "Collection_user_id_idx" ON "Collection"("user_id");
 
 -- CreateIndex
-CREATE INDEX "Collection_card_id_idx" ON "Collection"("card_id");
+CREATE UNIQUE INDEX "CollectionCard_collection_id_card_id_foil_key" ON "CollectionCard"("collection_id", "card_id", "foil");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Collection_user_id_card_id_foil_key" ON "Collection"("user_id", "card_id", "foil");
+CREATE INDEX "CollectionCard_collection_id_idx" ON "CollectionCard"("collection_id");
+
+-- CreateIndex
+CREATE INDEX "CollectionCard_card_id_idx" ON "CollectionCard"("card_id");
 
 -- CreateIndex
 CREATE INDEX "Tag_group_slug_idx" ON "Tag"("group_slug");
@@ -184,7 +201,10 @@ CREATE UNIQUE INDEX "Keyword_slug_key" ON "Keyword"("slug");
 CREATE INDEX "Keyword_type_idx" ON "Keyword"("type");
 
 -- AddForeignKey
-ALTER TABLE "Collection" ADD CONSTRAINT "Collection_card_id_fkey" FOREIGN KEY ("card_id") REFERENCES "Card"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CollectionCard" ADD CONSTRAINT "CollectionCard_collection_id_fkey" FOREIGN KEY ("collection_id") REFERENCES "Collection"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CollectionCard" ADD CONSTRAINT "CollectionCard_card_id_fkey" FOREIGN KEY ("card_id") REFERENCES "Card"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Tag" ADD CONSTRAINT "Tag_group_slug_fkey" FOREIGN KEY ("group_slug") REFERENCES "TagGroup"("slug") ON DELETE RESTRICT ON UPDATE CASCADE;

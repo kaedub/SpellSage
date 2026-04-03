@@ -1,25 +1,14 @@
 import 'dotenv/config';
 
-import { prisma } from '../libs/platform/adapters/prisma/client';
-import { CardSchema } from '@shared/schemas';
-import type { Card } from '@shared/types';
-import { upsertCardTags, loadTagTaxonomy } from '@platform/db';
+import {
+  upsertCardTags,
+  findUntaggedCollectionCards,
+  loadTagTaxonomy,
+} from '@platform/db';
 import { structuredCompletion, createCardTaggingService } from '@ai';
 
-const MAX_CARDS = 5;
-
-function prismaCardToCard(row: Record<string, unknown>): Card {
-  const { createdAt: _, updatedAt: __, collections: ___, tags: ____, ...rest } = row;
-
-  return CardSchema.parse({
-    ...rest,
-    manaCost: rest.manaCost ?? undefined,
-    cmc: rest.cmc ?? undefined,
-    oracleText: rest.oracleText ?? undefined,
-    faces: rest.faces ?? null,
-    rawJson: rest.rawJson ?? {},
-  });
-}
+const TAG_SOURCE = 'v0.0.1';
+const BATCH_SIZE = Number(process.env['TAG_BATCH_SIZE']) || 4000;
 
 async function main(): Promise<void> {
   const taxonomyResult = await loadTagTaxonomy();
@@ -36,36 +25,23 @@ async function main(): Promise<void> {
     taxonomy,
   });
 
-  const randomCardIds = await prisma.$queryRaw<{ card_id: string }[]>`
-    SELECT card_id FROM (
-      SELECT DISTINCT c.card_id
-      FROM "Collection" c
-      JOIN "Card" k ON k.id = c.card_id
-      WHERE k.oracle_text IS NOT NULL AND k.oracle_text <> ''
-        AND NOT EXISTS (
-          SELECT 1 FROM "CardTag" ct
-          WHERE ct.card_id = c.card_id AND ct.source = 'ai'
-        )
-    ) AS pool
-    ORDER BY RANDOM()
-    LIMIT ${MAX_CARDS}
-  `;
-
-  if (randomCardIds.length === 0) {
-    console.error('No cards with oracle text found in collection. Seed some cards first.');
+  const cardsResult = await findUntaggedCollectionCards(BATCH_SIZE);
+  if (!cardsResult.ok) {
+    console.error(`Failed to find untagged cards [${cardsResult.error.kind}]:`, cardsResult.error);
     process.exit(1);
   }
 
-  const cards = await prisma.card.findMany({
-    where: { id: { in: randomCardIds.map(r => r.card_id) } },
-  });
+  const cards = cardsResult.value;
 
-  const sample = cards.slice(0, MAX_CARDS);
+  if (cards.length === 0) {
+    console.log('No untagged cards with oracle text found in collection.');
+    return;
+  }
 
-  for (const row of sample) {
-    const card = prismaCardToCard(row as unknown as Record<string, unknown>);
+  console.log(`Found ${cards.length} untagged cards to process (source: ${TAG_SOURCE})\n`);
 
-    console.log(`\n${'='.repeat(60)}`);
+  for (const card of cards) {
+    console.log(`${'='.repeat(60)}`);
     console.log(`  ${card.name} ${card.manaCost ?? ''}`);
     console.log(`  ${card.typeLine}`);
     if (card.oracleText) {
@@ -92,7 +68,11 @@ async function main(): Promise<void> {
 
     console.log(`  tokens: ${usage.promptTokens} in / ${usage.completionTokens} out / ${usage.totalTokens} total`);
 
-    const saveResult = await upsertCardTags(card.id, 'ai', tags.map(t => t.tag));
+    const saveResult = await upsertCardTags(
+      card.id,
+      TAG_SOURCE,
+      tags.map(t => ({ tagSlug: t.tag, confidence: t.confidence, evidence: t.evidence })),
+    );
 
     if (!saveResult.ok) {
       console.error(`  SAVE ERROR [${saveResult.error.kind}]:`, saveResult.error);
@@ -103,7 +83,7 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((err: unknown) => {
-  console.error(err);
+main().catch((error: unknown) => {
+  console.error(error);
   process.exit(1);
 });

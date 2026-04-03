@@ -1,90 +1,195 @@
-import type { Collection } from '@prisma/client';
-import type { CollectionEntry } from '@shared/search';
+import type { Collection, CollectionCard } from '@prisma/client';
 
+import { ok, err } from '@shared/result';
+import type { Result } from '@shared/result';
 import { collectionCardKey } from '@shared/collection-text';
 
 import { prisma } from '../adapters/prisma/client';
 import { CARD_SUMMARY_SELECT } from './search';
 
-export async function getCollectionByUser(userId: string): Promise<{
-  items: CollectionEntry[];
-  total: number;
-}> {
-  const rows = await prisma.collection.findMany({
-    where: { userId },
-    include: {
-      card: { select: CARD_SUMMARY_SELECT },
-    },
-    orderBy: { card: { name: 'asc' } },
-  });
+// --- Error types ---
 
-  return {
-    items: rows.map((row) => ({
-      collectionId: row.id,
-      cardId: row.cardId,
-      quantity: row.quantity,
-      foil: row.foil,
-      card: row.card,
-    })),
-    total: rows.length,
-  };
-}
+export type CollectionError =
+  | { kind: 'not_found'; message: string }
+  | { kind: 'duplicate'; message: string }
+  | { kind: 'card_not_found'; message: string }
+  | { kind: 'database_error'; message: string };
 
-export async function addToCollection(params: Array<{
+// --- Collection CRUD ---
+
+export async function createCollection(params: {
   userId: string;
-  cardName: string;
-  set: string;
-  quantity: number;
-  foil?: boolean;
-}>): Promise<Collection[]> {
-  const cardLookups = await Promise.all(
-    params.map(({ cardName, set }) =>
-      prisma.card.findFirst({
-        where: { name: cardName, set },
-        select: { id: true },
-      }),
-    ),
-  );
-
-  const ops = params.map(({ userId, quantity, foil }, i) => {
-    const card = cardLookups[i];
-    if (!card) throw new Error(`Card not found for params[${i}]`);
-    const isFoil = foil ?? false;
-    return prisma.collection.upsert({
-      where: {
-        userId_cardId_foil: { userId, cardId: card.id, foil: isFoil },
-      },
-      update: { quantity },
-      create: { userId, cardId: card.id, quantity, foil: isFoil },
+  name: string;
+}): Promise<Result<Collection, CollectionError>> {
+  try {
+    const collection = await prisma.collection.create({
+      data: { userId: params.userId, name: params.name },
     });
-  });
-
-  return prisma.$transaction(ops);
+    return ok(collection);
+  } catch (error) {
+    if (isPrismaUniqueViolation(error)) {
+      return err({
+        kind: 'duplicate',
+        message: `Collection "${params.name}" already exists for this user`,
+      });
+    }
+    return err({ kind: 'database_error', message: errorMessage(error) });
+  }
 }
 
-export async function removeFromCollection(params: {
+export async function getCollectionsByUser(
+  userId: string,
+): Promise<Result<CollectionSummary[], CollectionError>> {
+  try {
+    const collections = await prisma.collection.findMany({
+      where: { userId },
+      include: { _count: { select: { cards: true } } },
+      orderBy: { name: 'asc' },
+    });
+
+    return ok(
+      collections.map((c) => ({
+        id: c.id,
+        userId: c.userId,
+        name: c.name,
+        cardCount: c._count.cards,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+      })),
+    );
+  } catch (error) {
+    return err({ kind: 'database_error', message: errorMessage(error) });
+  }
+}
+
+export interface CollectionSummary {
   id: number;
   userId: string;
-}): Promise<Collection> {
-  const { id, userId } = params;
-
-  const existing = await prisma.collection.findFirst({
-    where: { id, userId },
-  });
-
-  if (!existing) {
-    throw new Error(`Collection row not found for id=${id}, userId=${userId}`);
-  }
-
-  return prisma.collection.delete({
-    where: { id },
-  });
+  name: string;
+  cardCount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-/**
- * Batch-resolve cards by name + set + collectorNum.
- * Returns a map of `collectionCardKey` -> Scryfall card ID.
- */
+export async function getCollectionCards(
+  collectionId: number,
+): Promise<Result<CollectionCardEntry[], CollectionError>> {
+  try {
+    const collection = await prisma.collection.findUnique({
+      where: { id: collectionId },
+      select: { id: true },
+    });
+    if (!collection) {
+      return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
+    }
+
+    const rows = await prisma.collectionCard.findMany({
+      where: { collectionId },
+      include: { card: { select: CARD_SUMMARY_SELECT } },
+      orderBy: { card: { name: 'asc' } },
+    });
+
+    return ok(
+      rows.map((row) => ({
+        collectionCardId: row.id,
+        collectionId: row.collectionId,
+        cardId: row.cardId,
+        quantity: row.quantity,
+        foil: row.foil,
+        card: row.card,
+      })),
+    );
+  } catch (error) {
+    return err({ kind: 'database_error', message: errorMessage(error) });
+  }
+}
+
+export interface CollectionCardEntry {
+  collectionCardId: number;
+  collectionId: number;
+  cardId: string;
+  quantity: number;
+  foil: boolean;
+  card: Record<string, unknown>;
+}
+
+export async function addCardsToCollection(
+  collectionId: number,
+  entries: Array<{ cardId: string; quantity: number; foil?: boolean }>,
+): Promise<Result<CollectionCard[], CollectionError>> {
+  try {
+    const collection = await prisma.collection.findUnique({
+      where: { id: collectionId },
+      select: { id: true },
+    });
+    if (!collection) {
+      return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
+    }
+
+    const ops = entries.map(({ cardId, quantity, foil }) => {
+      const isFoil = foil ?? false;
+      return prisma.collectionCard.upsert({
+        where: {
+          collectionId_cardId_foil: { collectionId, cardId, foil: isFoil },
+        },
+        update: { quantity },
+        create: { collectionId, cardId, quantity, foil: isFoil },
+      });
+    });
+
+    const results = await prisma.$transaction(ops);
+    return ok(results);
+  } catch (error) {
+    return err({ kind: 'database_error', message: errorMessage(error) });
+  }
+}
+
+export async function removeCardFromCollection(
+  collectionCardId: number,
+): Promise<Result<CollectionCard, CollectionError>> {
+  try {
+    const existing = await prisma.collectionCard.findUnique({
+      where: { id: collectionCardId },
+    });
+    if (!existing) {
+      return err({
+        kind: 'not_found',
+        message: `CollectionCard ${collectionCardId} not found`,
+      });
+    }
+
+    const deleted = await prisma.collectionCard.delete({
+      where: { id: collectionCardId },
+    });
+    return ok(deleted);
+  } catch (error) {
+    return err({ kind: 'database_error', message: errorMessage(error) });
+  }
+}
+
+export async function deleteCollection(
+  collectionId: number,
+): Promise<Result<Collection, CollectionError>> {
+  try {
+    const existing = await prisma.collection.findUnique({
+      where: { id: collectionId },
+      select: { id: true },
+    });
+    if (!existing) {
+      return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
+    }
+
+    const deleted = await prisma.collection.delete({
+      where: { id: collectionId },
+    });
+    return ok(deleted);
+  } catch (error) {
+    return err({ kind: 'database_error', message: errorMessage(error) });
+  }
+}
+
+// --- Card lookup (unchanged, not collection-specific) ---
+
 export async function findCardsByCollectorInfo(
   entries: Array<{ name: string; set: string; collectorNum: string }>,
 ): Promise<Map<string, string>> {
@@ -110,23 +215,21 @@ export async function findCardsByCollectorInfo(
   return result;
 }
 
+// --- Batch upsert for seed tooling ---
+
 export async function upsertCollectionEntries(
-  entries: Array<{
-    userId: string;
-    cardId: string;
-    quantity: number;
-    foil: boolean;
-  }>,
+  collectionId: number,
+  entries: Array<{ cardId: string; quantity: number; foil: boolean }>,
 ): Promise<number> {
   if (entries.length === 0) return 0;
 
-  const ops = entries.map(({ userId, cardId, quantity, foil }) =>
-    prisma.collection.upsert({
+  const ops = entries.map(({ cardId, quantity, foil }) =>
+    prisma.collectionCard.upsert({
       where: {
-        userId_cardId_foil: { userId, cardId, foil },
+        collectionId_cardId_foil: { collectionId, cardId, foil },
       },
       update: { quantity },
-      create: { userId, cardId, quantity, foil },
+      create: { collectionId, cardId, quantity, foil },
     }),
   );
 
@@ -134,3 +237,17 @@ export async function upsertCollectionEntries(
   return results.length;
 }
 
+// --- Helpers ---
+
+function isPrismaUniqueViolation(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code: string }).code === 'P2002'
+  );
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Unknown database error';
+}

@@ -2,7 +2,8 @@ import type { Result } from '@shared/result';
 import type {
   CardSearchFilter,
   CardSearchResult,
-  CollectionResponse,
+  CollectionCardsResponse,
+  CollectionSummary,
 } from '@shared/search';
 
 export type ApiError = {
@@ -62,34 +63,59 @@ export function searchCards(
   });
 }
 
-export function getCollection(
+export function getCollections(
   userId: string,
-): Promise<Result<CollectionResponse, ApiError>> {
-  return request<CollectionResponse>(
-    `/collection?userId=${encodeURIComponent(userId)}`,
+): Promise<Result<CollectionSummary[], ApiError>> {
+  return request<CollectionSummary[]>(
+    `/collections?userId=${encodeURIComponent(userId)}`,
   );
 }
 
-export function addToCollection(
-  items: ReadonlyArray<{
-    userId: string;
-    cardName: string;
-    set: string;
-    quantity: number;
-  }>,
-): Promise<Result<unknown, ApiError>> {
-  return request('/collection/batch', {
+export function createCollection(params: {
+  userId: string;
+  name: string;
+}): Promise<Result<CollectionSummary, ApiError>> {
+  return request<CollectionSummary>('/collections', {
     method: 'POST',
-    body: JSON.stringify(items),
+    body: JSON.stringify(params),
   });
 }
 
-export function removeFromCollection(params: {
-  id: number;
-  userId: string;
-}): Promise<Result<unknown, ApiError>> {
-  return request('/collection', {
+export function deleteCollection(
+  collectionId: number,
+): Promise<Result<unknown, ApiError>> {
+  return request(`/collections/${collectionId}`, {
     method: 'DELETE',
-    body: JSON.stringify(params),
+  });
+}
+
+export function getCollectionCards(
+  collectionId: number,
+): Promise<Result<CollectionCardsResponse, ApiError>> {
+  return request<CollectionCardsResponse>(
+    `/collections/${collectionId}/cards`,
+  );
+}
+
+export function addCardsToCollection(
+  collectionId: number,
+  entries: ReadonlyArray<{
+    cardId: string;
+    quantity: number;
+    foil?: boolean;
+  }>,
+): Promise<Result<unknown, ApiError>> {
+  return request(`/collections/${collectionId}/cards`, {
+    method: 'POST',
+    body: JSON.stringify({ entries }),
+  });
+}
+
+export function removeCardFromCollection(
+  collectionId: number,
+  cardEntryId: number,
+): Promise<Result<unknown, ApiError>> {
+  return request(`/collections/${collectionId}/cards/${cardEntryId}`, {
+    method: 'DELETE',
   });
 }

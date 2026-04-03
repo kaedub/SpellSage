@@ -1,38 +1,38 @@
 import { useEffect, useRef, useState } from 'react';
 
-import type { CollectionEntry } from '@shared/search';
+import type { CollectionCardEntry } from '@shared/search';
 
-import { type ApiError, getCollection } from './api-client';
+import { type ApiError, getCollectionCards } from './api-client';
 
-export type CollectionMeta = {
-  readonly collectionId: number;
+export type CollectionCardMeta = {
+  readonly collectionCardId: number;
   readonly quantity: number;
   readonly foil: boolean;
 };
 
-export type CollectionState = {
-  readonly items: CollectionEntry[];
-  readonly collectionMap: ReadonlyMap<string, CollectionMeta>;
+export type CollectionCardsState = {
+  readonly items: CollectionCardEntry[];
+  readonly cardMap: ReadonlyMap<string, CollectionCardMeta>;
   readonly total: number;
   readonly loading: boolean;
   readonly error: ApiError | null;
 };
 
-function buildCollectionMap(
-  items: CollectionEntry[],
-): ReadonlyMap<string, CollectionMeta> {
-  const map = new Map<string, CollectionMeta>();
+function buildCardMap(
+  items: CollectionCardEntry[],
+): ReadonlyMap<string, CollectionCardMeta> {
+  const map = new Map<string, CollectionCardMeta>();
   for (const item of items) {
     const existing = map.get(item.cardId);
     if (existing) {
       map.set(item.cardId, {
-        collectionId: existing.collectionId,
+        collectionCardId: existing.collectionCardId,
         quantity: existing.quantity + item.quantity,
         foil: existing.foil || item.foil,
       });
     } else {
       map.set(item.cardId, {
-        collectionId: item.collectionId,
+        collectionCardId: item.collectionCardId,
         quantity: item.quantity,
         foil: item.foil,
       });
@@ -41,10 +41,10 @@ function buildCollectionMap(
   return map;
 }
 
-export function useCollection(userId: string): CollectionState {
-  const [state, setState] = useState<CollectionState>({
+export function useCollectionCards(collectionId: number | null): CollectionCardsState {
+  const [state, setState] = useState<CollectionCardsState>({
     items: [],
-    collectionMap: new Map(),
+    cardMap: new Map(),
     total: 0,
     loading: true,
     error: null,
@@ -53,16 +53,21 @@ export function useCollection(userId: string): CollectionState {
   const requestId = useRef(0);
 
   useEffect(() => {
+    if (collectionId === null) {
+      setState({ items: [], cardMap: new Map(), total: 0, loading: false, error: null });
+      return;
+    }
+
     const id = ++requestId.current;
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
-    getCollection(userId).then((result) => {
+    getCollectionCards(collectionId).then((result) => {
       if (id !== requestId.current) return;
 
       if (result.ok) {
         setState({
           items: result.value.items,
-          collectionMap: buildCollectionMap(result.value.items),
+          cardMap: buildCardMap(result.value.items),
           total: result.value.total,
           loading: false,
           error: null,
@@ -71,7 +76,7 @@ export function useCollection(userId: string): CollectionState {
         setState((prev) => ({ ...prev, loading: false, error: result.error }));
       }
     });
-  }, [userId]);
+  }, [collectionId]);
 
   return state;
 }

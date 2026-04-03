@@ -1,5 +1,7 @@
 import { ok, err } from '@shared/result';
 import type { Result } from '@shared/result';
+import { CardSchema } from '@shared/schemas';
+import type { Card } from '@shared/types';
 
 import { prisma } from '../adapters/prisma/client';
 
@@ -14,10 +16,16 @@ export type UpsertCardTagsResult = {
   readonly deleted: number;
 };
 
+export type CardTagInput = {
+  readonly tagSlug: string;
+  readonly confidence: number;
+  readonly evidence: string;
+};
+
 export async function upsertCardTags(
   cardId: string,
   source: string,
-  tags: readonly string[],
+  tags: readonly CardTagInput[],
 ): Promise<Result<UpsertCardTagsResult, CardTagError>> {
   try {
     const card = await prisma.card.findUnique({ where: { id: cardId }, select: { id: true } });
@@ -35,7 +43,13 @@ export async function upsertCardTags(
       }
 
       const { count: inserted } = await tx.cardTag.createMany({
-        data: tags.map(tagSlug => ({ cardId, tagSlug, source })),
+        data: tags.map(t => ({
+          cardId,
+          tagSlug: t.tagSlug,
+          source,
+          confidence: t.confidence,
+          evidence: t.evidence,
+        })),
       });
 
       return { deleted, inserted };
@@ -47,6 +61,40 @@ export async function upsertCardTags(
       inserted: result.inserted,
       deleted: result.deleted,
     });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown database error';
+    return err({ kind: 'database_error' as const, message });
+  }
+}
+
+export async function findUntaggedCollectionCards(
+  limit: number,
+): Promise<Result<Card[], CardTagError>> {
+  try {
+    const rows = await prisma.card.findMany({
+      where: {
+        collectionCards: { some: {} },
+        tags: { none: {} },
+        AND: [
+          { oracleText: { not: null } },
+          { oracleText: { not: '' } },
+        ],
+      },
+      take: limit,
+    });
+
+    const cards = rows.map((row): Card =>
+      CardSchema.parse({
+        ...row,
+        manaCost: row.manaCost ?? undefined,
+        cmc: row.cmc ?? undefined,
+        oracleText: row.oracleText ?? undefined,
+        // SAFE: rawJson is stored as a JSON-serializable Scryfall API response
+        rawJson: row.rawJson as Record<string, unknown>,
+      }),
+    );
+
+    return ok(cards);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown database error';
     return err({ kind: 'database_error' as const, message });

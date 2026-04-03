@@ -10,38 +10,38 @@ datasource db {
 }
 
 model Card {
-  id             String   @id @db.Text
-  name           String
-  set            String
-  setId          String   @map("set_id")
-  collectorNum   String   @map("collector_num")
-  typeLine       String   @map("type_line")
-  supertypes     String[]
-  types          String[]
-  subtypes       String[]
-  isLegendary    Boolean  @map("is_legendary")
-  colors         String[]
-  colorIdentity  String[] @map("color_identity")
-  manaCost       String?   @map("mana_cost")
-  cmc            Float?
-  oracleText     String?   @map("oracle_text")
-  layout         String
-  faces          Json?
-  power          String?
-  toughness      String?
-  numericPower   Int?     @map("numeric_power")
-  numericToughness Int?   @map("numeric_toughness")
-  keywords       String[]
-  producedMana   String[] @map("produced_mana")
-  gameChanger    Boolean  @map("game_changer")
-  scryfallUri    String   @map("scryfall_uri")
-  imageUri       String   @map("image_uri")
-  rawJson        Json     @map("raw_json")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  id               String   @id @db.Text
+  name             String
+  set              String
+  setId            String   @map("set_id")
+  collectorNum     String   @map("collector_num")
+  typeLine         String   @map("type_line")
+  supertypes       String[]
+  types            String[]
+  subtypes         String[]
+  isLegendary      Boolean  @map("is_legendary")
+  colors           String[]
+  colorIdentity    String[] @map("color_identity")
+  manaCost         String?  @map("mana_cost")
+  cmc              Float?
+  oracleText       String?  @map("oracle_text")
+  layout           String
+  faces            Json?
+  power            String?
+  toughness        String?
+  numericPower     Int?     @map("numeric_power")
+  numericToughness Int?     @map("numeric_toughness")
+  keywords         String[]
+  producedMana     String[] @map("produced_mana")
+  gameChanger      Boolean  @map("game_changer")
+  scryfallUri      String   @map("scryfall_uri")
+  imageUri         String   @map("image_uri")
+  rawJson          Json     @map("raw_json")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
-  collections    Collection[] @relation("CardCollections")
-  tags           CardTag[]     @relation("CardTags")
+  collectionCards CollectionCard[] @relation("CardCollectionCards")
+  tags            CardTag[]        @relation("CardTags")
 
   @@index([name])
   @@index([set])
@@ -59,19 +59,33 @@ model Card {
 }
 
 model Collection {
-  id         Int      @id @default(autoincrement())
-  userId     String   @map("user_id")
-  cardId     String   @map("card_id")
-  quantity   Int
-  foil       Boolean  @default(false)
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  card       Card     @relation("CardCollections", fields: [cardId], references: [id])
+  cards CollectionCard[] @relation("CollectionCards")
 
+  @@unique([userId, name])
   @@index([userId])
+}
+
+model CollectionCard {
+  id           Int      @id @default(autoincrement())
+  collectionId Int      @map("collection_id")
+  cardId       String   @map("card_id")
+  quantity     Int
+  foil         Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  collection Collection @relation("CollectionCards", fields: [collectionId], references: [id], onDelete: Cascade)
+  card       Card       @relation("CardCollectionCards", fields: [cardId], references: [id])
+
+  @@unique([collectionId, cardId, foil])
+  @@index([collectionId])
   @@index([cardId])
-  @@unique([userId, cardId, foil])
 }
 
 model TagGroup {
@@ -101,18 +115,20 @@ model Tag {
 }
 
 model CardTag {
-  id        Int      @id @default(autoincrement())
-  cardId    String   @map("card_id")
-  tagSlug   String   @map("tag_slug")
-  source    String
-  createdAt DateTime @default(now()) @map("created_at")
+  id         Int      @id @default(autoincrement())
+  cardId     String   @map("card_id")
+  tagSlug    String   @map("tag_slug")
+  source     String
+  confidence Float?   @map("confidence")
+  evidence   String?  @map("evidence")
+  createdAt  DateTime @default(now()) @map("created_at")
 
   card Card @relation("CardTags", fields: [cardId], references: [id])
   tag  Tag  @relation("TagCardTags", fields: [tagSlug], references: [slug])
 
+  @@unique([cardId, tagSlug, source])
   @@index([cardId])
   @@index([tagSlug])
-  @@unique([cardId, tagSlug, source])
 }
 
 model Keyword {
@@ -123,10 +139,10 @@ model Keyword {
   rulesTextTemplate String   @map("rules_text_template")
   parameterized     Boolean
   parameterName     String?  @map("parameter_name")
-  mechanicSummary   String   @map("mechanic_summary")
+  mechanicSummary   String?  @map("mechanic_summary")
   defaultTags       String[] @map("default_tags")
   tagNotes          String[] @map("tag_notes")
-  example           String
+  example           String?
   setScope          String[] @map("set_scope")
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
@@ -135,10 +151,10 @@ model Keyword {
 }
 
 model ScryfallSyncRun {
-  id             Int      @id @default(autoincrement())
-  startedAt      DateTime @map("started_at")
+  id             Int       @id @default(autoincrement())
+  startedAt      DateTime  @map("started_at")
   completedAt    DateTime? @map("completed_at")
   status         String
-  cardsProcessed Int      @map("cards_processed")
-  errorMessage   String?  @map("error_message")
+  cardsProcessed Int       @map("cards_processed")
+  errorMessage   String?   @map("error_message")
 }

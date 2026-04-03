@@ -1,36 +1,68 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { CardSearchFilter, Sort } from '@shared/search';
+import type { CollectionSummary } from '@shared/search';
 
 import { CardGrid } from '../../components/card-grid';
 import { FilterPanel } from '../../components/filter-panel';
 import { MobileFilterToggle } from '../../components/mobile-filter-toggle';
 import { Pagination } from '../../components/pagination';
 import { SortControl } from '../../components/sort-control';
+import { type ApiError, getCollections } from '../../lib/api-client';
 import { useCardSearch } from '../../lib/use-card-search';
-import { useCollection } from '../../lib/use-collection';
+import { useCollectionCards } from '../../lib/use-collection';
 
 const SEED_USER_ID = 'seed-user';
 const DEFAULT_SORT: Sort = { field: 'name', direction: 'asc' };
 const PAGE_SIZE = 50;
+
+function useUserCollections(userId: string) {
+  const [collections, setCollections] = useState<CollectionSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const requestId = useRef(0);
+
+  useEffect(() => {
+    const id = ++requestId.current;
+    setLoading(true);
+    setError(null);
+
+    getCollections(userId).then((result) => {
+      if (id !== requestId.current) return;
+      if (result.ok) {
+        setCollections(result.value);
+      } else {
+        setError(result.error);
+      }
+      setLoading(false);
+    });
+  }, [userId]);
+
+  return { collections, loading, error };
+}
 
 export function CollectionPage() {
   const [filterFromPanel, setFilterFromPanel] = useState<CardSearchFilter>({});
   const [sort, setSort] = useState<Sort>(DEFAULT_SORT);
   const [offset, setOffset] = useState(0);
 
+  const { collections, loading: collectionsLoading } = useUserCollections(SEED_USER_ID);
+  const activeCollection = collections[0] ?? null;
+
   const filter: CardSearchFilter = {
     ...filterFromPanel,
-    collection: { userId: SEED_USER_ID },
+    collection: activeCollection
+      ? { collectionId: activeCollection.id }
+      : { userId: SEED_USER_ID },
     sort,
     pagination: { limit: PAGE_SIZE, offset },
   };
 
   const { data, loading, error } = useCardSearch(filter);
   const {
-    collectionMap,
+    cardMap: collectionMap,
     loading: collectionLoading,
-  } = useCollection(SEED_USER_ID);
+  } = useCollectionCards(activeCollection?.id ?? null);
 
   const handleFilterChange = useCallback(
     (next: CardSearchFilter) => {
@@ -50,8 +82,10 @@ export function CollectionPage() {
     <div className="-mx-4 -mt-8 flex h-[calc(100vh-52px)] flex-col">
       {/* Collection header */}
       <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-gray-800 bg-gray-900 px-4 py-4">
-        <h1 className="text-xl font-bold text-gray-100">My Collection</h1>
-        {!collectionLoading && (
+        <h1 className="text-xl font-bold text-gray-100">
+          {activeCollection ? activeCollection.name : 'My Collection'}
+        </h1>
+        {!collectionsLoading && !collectionLoading && (
           <span className="text-sm text-gray-400">
             {totalCards.toLocaleString()} card{totalCards !== 1 ? 's' : ''}{' '}
             ({uniqueCards.toLocaleString()} unique)

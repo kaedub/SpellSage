@@ -1,13 +1,17 @@
 export { insertCards } from './card';
-export { upsertCardTags } from './card-tag';
-export type { CardTagError, UpsertCardTagsResult } from './card-tag';
+export { upsertCardTags, findUntaggedCollectionCards } from './card-tag';
+export type { CardTagError, CardTagInput, UpsertCardTagsResult } from './card-tag';
 export {
-  addToCollection,
+  createCollection,
+  getCollectionsByUser,
+  getCollectionCards,
+  addCardsToCollection,
+  removeCardFromCollection,
+  deleteCollection,
   findCardsByCollectorInfo,
-  getCollectionByUser,
-  removeFromCollection,
   upsertCollectionEntries,
 } from './collection';
+export type { CollectionError, CollectionSummary, CollectionCardEntry } from './collection';
 export { upsertKeywords, findKeywordBySlug, findAllKeywords } from './keyword';
 export type { KeywordError, KeywordInput, UpsertKeywordsResult } from './keyword';
 export { searchCards } from './search';

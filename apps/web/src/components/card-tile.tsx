@@ -1,10 +1,10 @@
 import type { CardSummary } from '@shared/search';
 
-import type { CollectionMeta } from '../lib/use-collection';
+import type { CollectionCardMeta } from '../lib/use-collection';
 
 type CardTileProps = {
   readonly card: CardSummary;
-  readonly collectionMeta?: CollectionMeta;
+  readonly collectionMeta?: CollectionCardMeta;
 };
 
 export function CardTile({ card, collectionMeta }: CardTileProps) {

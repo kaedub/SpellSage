@@ -32,7 +32,7 @@ async function summary(): Promise<void> {
     where: { source: 'ai' },
   });
   const distinctTagNames = await prisma.cardTag.groupBy({
-    by: ['tag'],
+    by: ['tagSlug'],
     where: { source: 'ai' },
   });
 
@@ -61,7 +61,7 @@ async function recentTags(): Promise<void> {
 
   for (const r of rows) {
     const cost = r.card.manaCost ? dim(` ${r.card.manaCost}`) : '';
-    console.log(`  ${bold(r.card.name)}${cost}  →  ${bold(r.tag)}`);
+    console.log(`  ${bold(r.card.name)}${cost}  →  ${bold(r.tagSlug)}`);
   }
 }
 
@@ -85,9 +85,9 @@ async function tagsByCard(): Promise<void> {
   for (const r of rows) {
     const entry = grouped.get(r.cardId);
     if (entry) {
-      entry.tags.push(r.tag);
+      entry.tags.push(r.tagSlug);
     } else {
-      grouped.set(r.cardId, { card: r.card, tags: [r.tag] });
+      grouped.set(r.cardId, { card: r.card, tags: [r.tagSlug] });
     }
   }
 
@@ -109,10 +109,10 @@ async function tagFrequency(): Promise<void> {
   header('Tag Frequency (most common first)');
 
   const rows = await prisma.cardTag.groupBy({
-    by: ['tag'],
+    by: ['tagSlug'],
     where: { source: 'ai' },
-    _count: { tag: true },
-    orderBy: { _count: { tag: 'desc' } },
+    _count: { tagSlug: true },
+    orderBy: { _count: { tagSlug: 'desc' } },
   });
 
   if (rows.length === 0) {
@@ -121,7 +121,7 @@ async function tagFrequency(): Promise<void> {
   }
 
   for (const r of rows) {
-    console.log(`  ${r.tag} (${r._count.tag})`);
+    console.log(`  ${r.tagSlug} (${r._count.tagSlug})`);
   }
 }
 

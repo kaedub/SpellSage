@@ -12,7 +12,7 @@ const KeywordBaseSchema = z.object({
   mechanicSummary: z.string().min(1),
   defaultTags: z.array(z.string()),
   tagNotes: z.array(z.string()),
-  example: z.string().min(1),
+  example: z.string().min(1).optional(),
   setScope: z.array(z.string()),
 });
 

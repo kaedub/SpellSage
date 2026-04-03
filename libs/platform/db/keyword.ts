@@ -20,7 +20,7 @@ export type KeywordInput = {
   readonly mechanicSummary: string;
   readonly defaultTags: readonly string[];
   readonly tagNotes: readonly string[];
-  readonly example: string;
+  readonly example: string | undefined;
   readonly setScope: readonly string[];
 };
 
@@ -35,26 +35,27 @@ function toKeyword(row: {
   rulesTextTemplate: string;
   parameterized: boolean;
   parameterName: string | null;
-  mechanicSummary: string;
+  mechanicSummary: string | null;
   defaultTags: string[];
   tagNotes: string[];
-  example: string;
+  example: string | null;
   setScope: string[];
 }): Result<Keyword, KeywordError> {
+  const base = {
+    name: row.name,
+    slug: row.slug,
+    type: row.type,
+    rulesTextTemplate: row.rulesTextTemplate,
+    parameterized: row.parameterized,
+    mechanicSummary: row.mechanicSummary,
+    defaultTags: row.defaultTags,
+    tagNotes: row.tagNotes,
+    ...(row.example !== null ? { example: row.example } : {}),
+    setScope: row.setScope,
+  };
   const raw = row.parameterized
-    ? { ...row, parameterName: row.parameterName ?? '' }
-    : {
-        name: row.name,
-        slug: row.slug,
-        type: row.type,
-        rulesTextTemplate: row.rulesTextTemplate,
-        parameterized: row.parameterized,
-        mechanicSummary: row.mechanicSummary,
-        defaultTags: row.defaultTags,
-        tagNotes: row.tagNotes,
-        example: row.example,
-        setScope: row.setScope,
-      };
+    ? { ...base, parameterName: row.parameterName ?? '' }
+    : base;
 
   const parsed = KeywordSchema.safeParse(raw);
   if (!parsed.success) {
@@ -82,7 +83,7 @@ export async function upsertKeywords(
           mechanicSummary: kw.mechanicSummary,
           defaultTags: [...kw.defaultTags],
           tagNotes: [...kw.tagNotes],
-          example: kw.example,
+          example: kw.example ?? null,
           setScope: [...kw.setScope],
         };
 

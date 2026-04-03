@@ -110,13 +110,22 @@ function buildProducedManaFilter(colors: string[]): Prisma.CardWhereInput {
 }
 
 function buildCollectionFilter(filter: CollectionFilter): Prisma.CardWhereInput {
+  const quantityClause =
+    filter.minQuantity !== undefined ? { quantity: { gte: filter.minQuantity } } : {};
+
+  if (filter.collectionId !== undefined) {
+    return {
+      collectionCards: {
+        some: { collectionId: filter.collectionId, ...quantityClause },
+      },
+    };
+  }
+
   return {
-    collections: {
+    collectionCards: {
       some: {
-        userId: filter.userId,
-        ...(filter.minQuantity !== undefined
-          ? { quantity: { gte: filter.minQuantity } }
-          : {}),
+        collection: { userId: filter.userId },
+        ...quantityClause,
       },
     },
   };

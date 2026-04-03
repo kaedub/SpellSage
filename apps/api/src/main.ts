@@ -2,22 +2,27 @@ import Fastify from 'fastify';
 import { z } from 'zod';
 import { CardSearchFilterSchema } from '@shared/search';
 import {
-	addToCollection,
-	getCollectionByUser,
-	removeFromCollection,
+	createCollection,
+	getCollectionsByUser,
+	getCollectionCards,
+	addCardsToCollection,
+	removeCardFromCollection,
+	deleteCollection,
 	searchCards,
 } from '@platform/db';
 
 const app = Fastify();
 
-const CollectionQuerySchema = z.object({
+app.get('/health', async () => ({ status: 'ok' }));
+
+// --- Collections ---
+
+const ListCollectionsQuerySchema = z.object({
 	userId: z.string().min(1),
 });
 
-app.get('/health', async () => ({ status: 'ok' }));
-
-app.get('/collection', async (request, reply) => {
-	const parsed = CollectionQuerySchema.safeParse(request.query);
+app.get('/collections', async (request, reply) => {
+	const parsed = ListCollectionsQuerySchema.safeParse(request.query);
 	if (!parsed.success) {
 		return reply.status(400).send({
 			error: 'Missing or invalid userId query parameter',
@@ -25,35 +30,130 @@ app.get('/collection', async (request, reply) => {
 		});
 	}
 
-	try {
-		const collection = await getCollectionByUser(parsed.data.userId);
-		return collection;
-	} catch (err) {
-		return reply.status(500).send({ error: 'Failed to fetch collection' });
+	const result = await getCollectionsByUser(parsed.data.userId);
+	if (!result.ok) {
+		return reply.status(500).send({ error: result.error.message });
 	}
+
+	return result.value;
 });
 
-// Add a batch of cards to collection
-app.post('/collection/batch', async (request, reply) => {
-	try {
-		const body = request.body as Array<{ userId: string; cardName: string; set: string; quantity: number }>;
-		const result = await addToCollection(body);
-		return result;
-	} catch (err) {
-		return reply.status(400).send({ error: err instanceof Error ? err.message : 'Failed to add cards' });
-	}
+const CreateCollectionBodySchema = z.object({
+	userId: z.string().min(1),
+	name: z.string().min(1),
 });
 
-// Remove a card from collection
-app.delete('/collection', async (request, reply) => {
-	try {
-		const { id, userId } = request.body as { id: number; userId: string };
-		const result = await removeFromCollection({ id, userId });
-		return result;
-	} catch (err) {
-		return reply.status(400).send({ error: err instanceof Error ? err.message : 'Failed to remove card' });
+app.post('/collections', async (request, reply) => {
+	const parsed = CreateCollectionBodySchema.safeParse(request.body);
+	if (!parsed.success) {
+		return reply.status(400).send({
+			error: 'Invalid request body',
+			details: parsed.error.issues,
+		});
 	}
+
+	const result = await createCollection(parsed.data);
+	if (!result.ok) {
+		const status = result.error.kind === 'duplicate' ? 409 : 500;
+		return reply.status(status).send({ error: result.error.message });
+	}
+
+	return reply.status(201).send(result.value);
 });
+
+const CollectionIdParamsSchema = z.object({
+	id: z.coerce.number().int().positive(),
+});
+
+app.delete('/collections/:id', async (request, reply) => {
+	const parsed = CollectionIdParamsSchema.safeParse(request.params);
+	if (!parsed.success) {
+		return reply.status(400).send({ error: 'Invalid collection id' });
+	}
+
+	const result = await deleteCollection(parsed.data.id);
+	if (!result.ok) {
+		const status = result.error.kind === 'not_found' ? 404 : 500;
+		return reply.status(status).send({ error: result.error.message });
+	}
+
+	return result.value;
+});
+
+// --- Collection cards ---
+
+app.get('/collections/:id/cards', async (request, reply) => {
+	const parsed = CollectionIdParamsSchema.safeParse(request.params);
+	if (!parsed.success) {
+		return reply.status(400).send({ error: 'Invalid collection id' });
+	}
+
+	const result = await getCollectionCards(parsed.data.id);
+	if (!result.ok) {
+		const status = result.error.kind === 'not_found' ? 404 : 500;
+		return reply.status(status).send({ error: result.error.message });
+	}
+
+	return { items: result.value, total: result.value.length };
+});
+
+const AddCardsBodySchema = z.object({
+	entries: z.array(
+		z.object({
+			cardId: z.string().min(1),
+			quantity: z.number().int().positive(),
+			foil: z.boolean().optional(),
+		}),
+	).min(1),
+});
+
+app.post('/collections/:id/cards', async (request, reply) => {
+	const paramsParsed = CollectionIdParamsSchema.safeParse(request.params);
+	if (!paramsParsed.success) {
+		return reply.status(400).send({ error: 'Invalid collection id' });
+	}
+
+	const bodyParsed = AddCardsBodySchema.safeParse(request.body);
+	if (!bodyParsed.success) {
+		return reply.status(400).send({
+			error: 'Invalid request body',
+			details: bodyParsed.error.issues,
+		});
+	}
+
+	const result = await addCardsToCollection(
+		paramsParsed.data.id,
+		bodyParsed.data.entries,
+	);
+	if (!result.ok) {
+		const status = result.error.kind === 'not_found' ? 404 : 500;
+		return reply.status(status).send({ error: result.error.message });
+	}
+
+	return result.value;
+});
+
+const CollectionCardIdParamsSchema = z.object({
+	id: z.coerce.number().int().positive(),
+	cardEntryId: z.coerce.number().int().positive(),
+});
+
+app.delete('/collections/:id/cards/:cardEntryId', async (request, reply) => {
+	const parsed = CollectionCardIdParamsSchema.safeParse(request.params);
+	if (!parsed.success) {
+		return reply.status(400).send({ error: 'Invalid parameters' });
+	}
+
+	const result = await removeCardFromCollection(parsed.data.cardEntryId);
+	if (!result.ok) {
+		const status = result.error.kind === 'not_found' ? 404 : 500;
+		return reply.status(status).send({ error: result.error.message });
+	}
+
+	return result.value;
+});
+
+// --- Card search ---
 
 app.post('/cards/search', async (request, reply) => {
 	const parsed = CardSearchFilterSchema.safeParse(request.body);

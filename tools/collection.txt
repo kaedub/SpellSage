@@ -1,78 +1,78 @@
 3 Aardvark Sloth (TLE) 212
 1 Avatar Aang // Aang, Master of Elements (TLA) 308
 4 Avatar Enthusiasts (TLA) 11
-4 Airbending Lesson (TLA) 8
+5 Airbending Lesson (TLA) 8
 4 Aang, Swift Savior // Aang and La, Ocean's Fury (TLA) 204
-5 Aang, the Last Airbender (TLA) 4
+8 Aang, the Last Airbender (TLA) 4
 1 Air Nomad Legacy (TLA) 206
-2 The Art of Tea (TLE) 129
-6 Azula Always Lies (TLA) 84
+4 The Art of Tea (TLE) 129
+9 Azula Always Lies (TLA) 84
 3 Airbender Ascension (TLA) 6
 1 Aang's Iceberg (TLA) 5
-5 Azula, On the Hunt (TLA) 85
+9 Azula, On the Hunt (TLA) 85
 1 Azula, Cunning Usurper (TLA) 208
-5 Accumulate Wisdom (TLA) 44
+6 Accumulate Wisdom (TLA) 44
 4 Abandon Attachments (TLA) 205
 3 Airbender's Reversal (TLA) 7
 2 Aang's Journey (TLA) 1
 1 Beifong's Bounty Hunters (TLA) 209
-3 Bumi Bash (TLA) 125
-1 Bosco, Just a Bear (TLE) 132
-3 Boomerang Basics (TLA) 46
-4 Buzzard-Wasp Colony (TLA) 88
-9 Beetle-Headed Merchants (TLA) 86
+5 Bumi Bash (TLA) 125
+3 Bosco, Just a Bear (TLE) 132
+5 Boomerang Basics (TLA) 46
+8 Buzzard-Wasp Colony (TLA) 88
+11 Beetle-Headed Merchants (TLA) 86
 2 Bitter Work (TLA) 210
 4 Badgermole (TLA) 166
 3 Boar-q-pine (TLA) 124
 4 Cat-Owl (TLA) 212
-4 Canyon Crawler (TLA) 90
-4 Callous Inspector (TLA) 89
+6 Canyon Crawler (TLA) 90
+6 Callous Inspector (TLA) 89
 3 Curious Farm Animals (TLA) 14
-7 Cycle of Renewal (TLA) 170
+8 Cycle of Renewal (TLA) 170
 2 Compassionate Healer (TLA) 13
 3 Corrupt Court Official (TLA) 92
 1 Bumi, King of Three Trials (TLA) 169
-1 Bumi's Feast Lecture (TLE) 133
+3 Bumi's Feast Lecture (TLE) 133
 2 The Boulder, Ready to Rumble (TLA) 168
 2 Barrels of Blasting Jelly (TLA) 254
 4 Bender's Waterskin (TLA) 255
-5 Cunning Maneuver (TLA) 130
+8 Cunning Maneuver (TLA) 130
 1 Earthen Ally (TLA) 177
 1 Earth Kingdom Protectors (TLA) 17
 5 Earth Rumble Wrestlers (TLA) 218
-7 Earth Kingdom Soldier (TLA) 216
-5 Earth Village Ruffians (TLA) 219
+8 Earth Kingdom Soldier (TLA) 216
+6 Earth Village Ruffians (TLA) 219
 7 Earthbending Lesson (TLA) 176
 3 Earth Kingdom General (TLA) 173
-3 Epic Downfall (TLA) 96
+5 Epic Downfall (TLA) 96
 5 Earth Rumble (TLA) 174
 2 Dramatic Reversal (TLE) 158
 2 Dragon Moose (TLE) 235
 3 Destined Confrontation (TLA) 15
-8 Dai Li Indoctrination (TLA) 93
+10 Dai Li Indoctrination (TLA) 93
 1 Capital Guard (TLE) 277
-8 Deserter's Disciple (TLA) 131
-2 The Cave of Two Lovers (TLA) 126
+9 Deserter's Disciple (TLA) 131
+4 The Cave of Two Lovers (TLA) 126
 2 Cruel Administrator (TLA) 213
 3 Crashing Wave (TLA) 47
-11 Deadly Precision (TLA) 95
+15 Deadly Precision (TLA) 95
 1 Fire Nation Archers (TLE) 237
 4 Fire Nation Warship (TLA) 256
 1 Fire Nation Soldier (TLE) 280
-4 Fire Nation Raider (TLA) 135
-2 Elephant-Rat (TLE) 228
+5 Fire Nation Raider (TLA) 135
+5 Elephant-Rat (TLE) 228
 2 Earthbender Ascension (TLA) 175
-2 Feed the Swarm (TLE) 257
+3 Feed the Swarm (TLE) 257
 2 Eel-Hounds (TLE) 250
-3 Elephant-Mandrill (TLE) 138
+6 Elephant-Mandrill (TLE) 138
 2 Earth Kingdom Jailer (TLA) 16
 1 Ember Island Production (TLA) 48
 1 Energybending (TLA) 2
 2 Fire Nation's Conquest (TLE) 281
 2 Fire Nation Sentinels (TLE) 230
-4 Fire Nation Ambushers (TLE) 229
+6 Fire Nation Ambushers (TLE) 229
 4 Cat-Gator (TLA) 91
-3 Foggy Swamp Hunters (TLA) 101
+4 Foggy Swamp Hunters (TLA) 101
 5 Flexible Waterbender (TLA) 50
 3 Fire Sages (TLA) 136
 2 Fancy Footwork (TLA) 19
@@ -80,57 +80,57 @@
 9 First-Time Flyer (TLA) 49
 7 Fire Nation Cadets (TLA) 134
 3 Flopsie, Bumi's Buddy (TLA) 179
-2 Firebending Student (TLA) 139
+3 Firebending Student (TLA) 139
 6 Forecasting Fortune Teller (TLA) 51
 2 Frog-Squirrels (TLE) 251
 1 The Fire Nation Drill (TLA) 98
-1 Fatal Fissure (TLA) 97
-1 Flying Dolphin-Fish (TLE) 223
-7 Foggy Swamp Vinebender (TLA) 180
+2 Fatal Fissure (TLA) 97
+3 Flying Dolphin-Fish (TLE) 223
+9 Foggy Swamp Vinebender (TLA) 180
 2 Hama, the Bloodbender (TLA) 224
-4 Honest Work (TLA) 55
-5 Hei Bai, Spirit of Balance (TLA) 225
-4 Hippo-Cows (TLE) 252
-8 How to Start a Riot (TLA) 140
-7 Heartless Act (TLA) 103
+6 Honest Work (TLA) 55
+6 Hei Bai, Spirit of Balance (TLA) 225
+6 Hippo-Cows (TLE) 252
+11 How to Start a Riot (TLA) 140
+10 Heartless Act (TLA) 103
 6 Haru, Hidden Talent (TLA) 182
 5 Geyser Leaper (TLA) 52
-10 Giant Koi (TLA) 53
-12 Glider Kids (TLA) 21
-2 Gilacorn (TLE) 231
+15 Giant Koi (TLA) 53
+16 Glider Kids (TLA) 21
+3 Gilacorn (TLE) 231
 1 Gather the White Lotus (TLA) 20
-3 Hog-Monkey (TLA) 104
+5 Hog-Monkey (TLA) 104
 3 Guru Pathik (TLA) 223
 4 Jasmine Dragon Tea Shop (TLA) 270
 4 Airship Engine Room (TLA) 265
 2 Omashu City (TLA) 275
 2 Sun-Blessed Peak (TLA) 280
 2 Serpent's Pass (TLA) 279
-1 Secret Tunnel (TLA) 278
-2 White Lotus Hideout (TLA) 281
+3 Secret Tunnel (TLA) 278
+4 White Lotus Hideout (TLA) 281
 3 Jeong Jeong, the Deserter (TLA) 142
 2 Zhao, the Moon Slayer (TLA) 162
 1 Wartime Protestors (TLA) 160
 1 Zuko, Avatar Hunter (TLE) 287
 1 Ozai, the Phoenix King (TLA) 335 *F*
 2 Zuko, Conflicted (TLA) 253
-6 Pretending Poxbearers (TLA) 237
+9 Pretending Poxbearers (TLA) 237
 3 Tolls of War (TLA) 245
-3 Jet, Freedom Fighter (TLA) 229
+4 Jet, Freedom Fighter (TLA) 229
 1 The Walls of Ba Sing Se (TLA) 329
 1 Crashing Wave (TLA) 300
 4 Watery Grasp (TLA) 82
 1 Mystic Remora (TLE) 16
-7 Rowdy Snowballers (TLA) 68
+11 Rowdy Snowballers (TLA) 68
 2 Yue, the Moon Spirit (TLA) 83
-3 Lost in the Spirit World (TLE) 224
-2 Wan Shi Tong, All-Knowing (TLE) 98
+6 Lost in the Spirit World (TLE) 224
+3 Wan Shi Tong, All-Knowing (TLE) 98
 1 Seismic Tutelage (TLE) 254
 12 Pillar Launch (TLA) 189
-3 Cracked Earth Technique (TLE) 135
-1 The Cabbage Merchant (TLE) 134
-3 Hog-Monkey Rampage (TLE) 255
-5 Katara, Bending Prodigy (TLA) 59
+4 Cracked Earth Technique (TLE) 135
+3 The Cabbage Merchant (TLE) 134
+4 Hog-Monkey Rampage (TLE) 255
+7 Katara, Bending Prodigy (TLA) 59
 1 Fire Nation Palace (TLA) 268
 2 Foggy Bottom Swamp (TLA) 269
 1 Meditation Pools (TLA) 272
@@ -138,25 +138,25 @@
 2 Boiling Rock Prison (TLA) 267
 5 Misty Palms Oasis (TLA) 273
 2 Rumble Arena (TLA) 277
-3 June, Bounty Hunter (TLA) 106
-7 Jeong Jeong's Deserters (TLA) 25
-1 Invasion Submersible (TLA) 57
+6 June, Bounty Hunter (TLA) 106
+9 Jeong Jeong's Deserters (TLA) 25
+3 Invasion Submersible (TLA) 57
 1 Iroh, Firebending Instructor (TLE) 282
 1 Invasion Tactics (TLA) 183
-5 Inspired Insurgent (TLE) 77
+7 Inspired Insurgent (TLE) 77
 9 Iguana Parrot (TLA) 56
-7 Invasion Reinforcements (TLA) 24
+8 Invasion Reinforcements (TLA) 24
 4 It'll Quench Ya! (TLA) 58
-1 Komodo Rhino (TLE) 241
+2 Komodo Rhino (TLE) 241
 4 Kyoshi Warrior Guard (TLE) 216
-4 Knowledge Seeker (TLA) 60
+5 Knowledge Seeker (TLA) 60
 10 Kyoshi Warriors (TLA) 26
-7 Kyoshi Battle Fan (TLA) 257
-5 Lightning Strike (TLA) 146
+10 Kyoshi Battle Fan (TLA) 257
+6 Lightning Strike (TLA) 146
 1 Lion Vulture (TLE) 232
 4 Lost Days (TLA) 62
-3 Leaves from the Vine (TLA) 185
-4 Long Feng, Grand Secretariat (TLA) 233
+5 Leaves from the Vine (TLA) 185
+6 Long Feng, Grand Secretariat (TLA) 233
 2 Sokka, Tenacious Tactician (TLA) 242
 1 Ozai, the Phoenix King (TLA) 235
 1 Kyoshi Island Plaza (TLA) 184
@@ -179,13 +179,13 @@
 2 South Pole Voyager (TLA) 35
 1 Foggy Swamp Visions (TLA) 102
 1 Earth King's Lieutenant (TLA) 217
-9 Waterbending Lesson (TLA) 80
+12 Waterbending Lesson (TLA) 80
 3 Zuko, Exiled Prince (TLA) 163
 2 Hermitic Herbalist (TLA) 226
 1 North Pole Patrol (TLA) 65
 3 White Lotus Reinforcements (TLA) 251
-5 Suki, Kyoshi Warrior (TLA) 243
-10 Firebending Lesson (TLA) 138
+6 Suki, Kyoshi Warrior (TLA) 243
+12 Firebending Lesson (TLA) 138
 7 Thriving Heath (TLE) 262
 2 The Spirit Oasis (TLA) 72
 2 Southern Air Temple (TLA) 36
@@ -194,57 +194,57 @@
 2 North Pole Gates (TLA) 274
 2 Meteor Sword (TLA) 258
 1 Allied Teamwork (TLE) 213
-2 Tale of Momo (TLE) 86
+4 Tale of Momo (TLE) 86
 2 Duelist's Heritage (TLE) 153
 2 Cloudshift (TLE) 152
 1 Aang, Air Nomad (TLE) 265
 1 Katara, Heroic Healer (TLE) 269
 1 Appa, Aang's Companion (TLE) 268
 3 Master Piandao (TLA) 28
-3 Teo, Spirited Glider (TLA) 74
+5 Teo, Spirited Glider (TLA) 74
 6 Walltop Sentries (TLA) 202
 4 Rebellious Captives (TLA) 191
-6 Raucous Audience (TLA) 190
+7 Raucous Audience (TLA) 190
 1 Bumi, Eclectic Earthbender (TLE) 248
 2 Match the Odds (TLE) 253
 1 Explore (TLE) 259
 2 Katara, the Fearless (TLA) 230
 4 Mechanical Glider (TLE) 256
 5 Momo, Rambunctious Rascal (TLE) 217
-5 Appa, Loyal Sky Bison (TLA) 9
+8 Appa, Loyal Sky Bison (TLA) 9
 4 Stand United (TLE) 149
 7 Sokka, Lateral Strategist (TLA) 241
 4 Master Pakku (TLA) 63
 2 Mai, Scornful Striker (TLA) 109
-5 Merchant of Many Hats (TLA) 110
-2 Mai, Jaded Edge (TLA) 147
-1 Many Partings (TLE) 169
-5 Mongoose Lizard (TLA) 148
-6 Messenger Hawk (TLA) 234
-1 Obsessive Pursuit (TLA) 112
+7 Merchant of Many Hats (TLA) 110
+3 Mai, Jaded Edge (TLA) 147
+3 Many Partings (TLE) 169
+8 Mongoose Lizard (TLA) 148
+7 Messenger Hawk (TLA) 234
+3 Obsessive Pursuit (TLA) 112
 5 Origin of Metalbending (TLA) 187
 5 Ostrich-Horse (TLA) 188
-5 Octopus Form (TLA) 66
+8 Octopus Form (TLA) 66
 7 Otter-Penguin (TLA) 67
 5 Ozai's Cruelty (TLA) 113
-5 Professor Zei, Anthropologist (TLA) 238
-13 Path to Redemption (TLA) 31
+6 Professor Zei, Anthropologist (TLA) 238
+17 Path to Redemption (TLA) 31
 4 Platypus-Bear (TLA) 236
-2 Purple Pentapus (TLE) 233
-5 Pirate Peddlers (TLA) 115
-8 Rocky Rebuke (TLA) 193
+5 Purple Pentapus (TLE) 233
+9 Pirate Peddlers (TLA) 115
+11 Rocky Rebuke (TLA) 193
 4 Ruinous Waterbending (TLA) 118
-5 Rough Rhino Cavalry (TLA) 152
+7 Rough Rhino Cavalry (TLA) 152
 6 Razor Rings (TLA) 33
-1 Raven Eagle (TLA) 116
-5 Rabaroo Troop (TLA) 32
+2 Raven Eagle (TLA) 116
+7 Rabaroo Troop (TLA) 32
 2 Rockalanche (TLA) 192
-5 Saber-Tooth Moose-Lion (TLA) 194
-3 Sandbenders' Storm (TLA) 34
+7 Saber-Tooth Moose-Lion (TLA) 194
+4 Sandbenders' Storm (TLA) 34
 4 Sparring Dummy (TLA) 197
 2 Sun Warriors (TLA) 244
 5 Swampsnare Trap (TLA) 120
-4 Serpent of the Pass (TLA) 70
+6 Serpent of the Pass (TLA) 70
 2 Sokka's Haiku (TLA) 71
 2 Sokka, Bold Boomeranger (TLA) 240
 2 Team Avatar (TLA) 38
@@ -253,45 +253,45 @@
 2 True Ancestry (TLA) 199
 4 Twin Blades (TLA) 157
 7 Turtle-Duck (TLA) 200
-4 Treetop Freedom Fighters (TLA) 156
+5 Treetop Freedom Fighters (TLA) 156
 1 Teo, Spirited Glider (TLA) 74 *F*
 1 Sokka, Wolf Cove's Protector (TLE) 274
 1 Sledding Otter-Penguin (TLE) 273
-5 Sold Out (TLA) 119
+9 Sold Out (TLA) 119
 1 Seismic Sense (TLA) 195
 1 Solstice Revelations (TLA) 153
-3 That's Rough Buddy (TLE) 87
+4 That's Rough Buddy (TLE) 87
 4 Toph, the Blind Bandit (TLA) 198
-3 Ty Lee, Artful Acrobat (TLA) 158
-2 Tiger-Dillo (TLA) 155
-4 Turtle-Seals (TLE) 226
+6 Ty Lee, Artful Acrobat (TLA) 158
+3 Tiger-Dillo (TLA) 155
+6 Turtle-Seals (TLE) 226
 1 Wolf Cove Villager (TLE) 276
-4 Wandering Musicians (TLA) 250
+6 Wandering Musicians (TLA) 250
 3 War Balloon (TLA) 159
-10 Water Tribe Captain (TLA) 41
+12 Water Tribe Captain (TLA) 41
 2 Water Tribe Rallier (TLA) 42
 1 Warship Scout (TLE) 285
-2 Vengeful Villagers (TLA) 40
+3 Vengeful Villagers (TLA) 40
 6 Vindictive Warden (TLA) 249
-5 Uncle Iroh (TLA) 248
-2 Unlucky Cabbage Merchant (TLA) 201
-2 Unagi's Spray (TLE) 97
+6 Uncle Iroh (TLA) 248
+4 Unlucky Cabbage Merchant (TLA) 201
+4 Unagi's Spray (TLE) 97
 1 Wolfbat (TLA) 122
 1 Zhao, the Seething Flame (TLE) 286
 2 Zuko's Conviction (TLA) 123
-3 Zhao, Ruthless Admiral (TLA) 252
-6 Zuko's Exile (TLA) 3
+5 Zhao, Ruthless Admiral (TLA) 252
+7 Zuko's Exile (TLA) 3
 7 Yuyan Archers (TLA) 161
-7 Yip Yip! (TLA) 43
+10 Yip Yip! (TLA) 43
 1 Deny Entry (TLE) 222
-1 Run Amok (TLE) 258
+2 Run Amok (TLE) 258
 2 Roku's Mastery (TLE) 243
 1 Fists of Flame (TLE) 166 *F*
 1 Octopus Form (TLA) 66 *F*
 1 Force of Negation (TLE) 13
 2 Combustion Technique (TLA) 128
 1 Water Whip (TLE) 227
-2 Explosive Shot (TLE) 236
+5 Explosive Shot (TLE) 236
 1 Zuko's Offense (TLE) 288
 2 Nightmares and Daydreams (TLE) 94
 2 Ty Lee, Artful Acrobat (TLA) 158 *F*
@@ -1907,20 +1907,20 @@
 2 The Duke, Rebel Sentry (TLE) 76
 1 Deer-Dog (TLE) 114
 1 Ran and Shaw (TLA) 150
-3 Combustion Man (TLA) 127
-1 Overwhelming Victory (TLE) 123
-2 Fang, Roku's Companion (TLE) 115
-1 Cathartic Reunion (TLE) 164
-1 Tectonic Split (TLE) 144
-6 Allies at Last (TLA) 164
-1 Avatar Kyoshi, Earthbender (TLE) 130
+4 Combustion Man (TLA) 127
+2 Overwhelming Victory (TLE) 123
+3 Fang, Roku's Companion (TLE) 115
+2 Cathartic Reunion (TLE) 164
+2 Tectonic Split (TLE) 144
+7 Allies at Last (TLA) 164
+2 Avatar Kyoshi, Earthbender (TLE) 130
 1 Aang, Airbending Master (TLE) 74
 1 Enter the Avatar State (TLA) 18
-1 Koala-Sheep (TLE) 80
-2 Kindly Customer (TLE) 79
-1 Kyoshi Warrior Exemplars (TLE) 140
-1 Desperate Plea (TLE) 103
-1 Fire Nation Occupation (TLE) 105
+3 Koala-Sheep (TLE) 80
+3 Kindly Customer (TLE) 79
+2 Kyoshi Warrior Exemplars (TLE) 140
+2 Desperate Plea (TLE) 103
+3 Fire Nation Occupation (TLE) 105
 12 Island (TLA) 283
 2 Island (TLA) 288
 1 Consider (TLE) 157
@@ -1929,11 +1929,11 @@
 18 Forest (TLA) 286
 3 Forest (TLA) 291
 5 Master's Guidance (TLE) 141
-2 Aang, A Lot to Learn (TLE) 146
+3 Aang, A Lot to Learn (TLE) 146
 23 Swamp (TLA) 284
 4 Swamp (TLA) 289
-1 Fire Nation Salvagers (TLE) 106
-7 Zuko, Seeking Honor (TLE) 150
+3 Fire Nation Salvagers (TLE) 106
+11 Zuko, Seeking Honor (TLE) 150
 3 Plains (TLA) 287
 7 Joo Dee, One of Many (TLA) 105
 4 Dragonlord's Servant (AFC) 123
@@ -1943,25 +1943,25 @@
 1 Diligent Zookeeper (TLA) 171
 2 Bison Whistle (TLE) 131
 1 Animal Attendant (TLE) 128
-2 Fire Nation Attacks (TLA) 133
-2 Longshot, Rebel Bowman (TLE) 120
-1 Fists of Flame (TLE) 166
-1 Fire Navy Trebuchet (TLA) 100
+3 Fire Nation Attacks (TLA) 133
+4 Longshot, Rebel Bowman (TLE) 120
+2 Fists of Flame (TLE) 166
+3 Fire Navy Trebuchet (TLA) 100
 1 Scarring Memories (TLE) 111
 1 Fire Lord Ozai (TLE) 104
-1 Storm of Memories (TLE) 126
-1 Founding of Omashu (TLE) 116
+2 Storm of Memories (TLE) 126
+3 Founding of Omashu (TLE) 116
 2 Frantic Confrontation (TLE) 117
-5 Freedom Fighter Recruit (TLE) 118
-2 Hook Swords (TLE) 147
-4 Katara, Seeking Revenge (TLE) 148
-4 Suki, Courageous Rescuer (TLA) 37
+9 Freedom Fighter Recruit (TLE) 118
+3 Hook Swords (TLE) 147
+5 Katara, Seeking Revenge (TLE) 148
+5 Suki, Courageous Rescuer (TLA) 37
 1 Baboon Spirit (TLE) 89
-1 Chong and Lily, Nomads (TLE) 113
+3 Chong and Lily, Nomads (TLE) 113
 1 Creeping Crystal Coating (TLE) 136
 3 Dai Li Censor (TLE) 102
-2 Dutiful Knowledge Seeker (TLE) 92
-1 Nyla, Shirshu Sleuth (TLE) 109
+3 Dutiful Knowledge Seeker (TLE) 92
+3 Nyla, Shirshu Sleuth (TLE) 109
 1 Whirlwind Technique (TLE) 100
 1 Avatar Destiny (TLA) 165 *F*
 1 Enter the Avatar State (TLA) 18 *F*
@@ -1991,21 +1991,21 @@
 1 Yuriko, the Tiger's Shadow (C18) 52
 1 Ashling, Rekindled // Ashling, Rimebound (ECL) 124
 1 Lo and Li, Royal Advisors (TLE) 108
-1 Smellerbee, Rebel Fighter (TLE) 125
-1 Brainstorm (TLE) 155
-1 Suspicious Bookcase (TLE) 170
+2 Smellerbee, Rebel Fighter (TLE) 125
+2 Brainstorm (TLE) 155
+2 Suspicious Bookcase (TLE) 170
 1 Valorous Stance (TLE) 154
-1 Acrobatic Leap (TLE) 151
+2 Acrobatic Leap (TLE) 151
 1 Jet, Rebel Leader (TLE) 78
 1 Pipsqueak, Rebel Strongarm (TLE) 82
-1 Toucan-Puffin (TLE) 88
+2 Toucan-Puffin (TLE) 88
 1 Descendants' Path (TLE) 167
-1 Glider Staff (TLA) 22
-1 Air Nomad Student (TLE) 75
-1 Momo, Friendly Flier (TLA) 29
-1 Frantic Search (TLE) 159
-1 The Blue Spirit (TLE) 90
-1 Princess Yue (TLE) 95
+4 Glider Staff (TLA) 22
+4 Air Nomad Student (TLE) 75
+4 Momo, Friendly Flier (TLA) 29
+3 Frantic Search (TLE) 159
+3 The Blue Spirit (TLE) 90
+3 Princess Yue (TLE) 95
 1 Sunbaked Canyon (TLE) 58
 1 Kiora, the Rising Tide (FDN) 45
 1 Shivan Dragon (FDN) 206
@@ -2170,3 +2170,9 @@
 1 Ty Lee, Chi Blocker (TLA) 76
 1 Fire Lord Azula (TLA) 220
 1 Etali, Primal Storm (DMC) 121
+1 Diresight (TLE) 162
+2 Coastal Piracy (TLE) 156
+2 Tui and La, Moon and Ocean (TLE) 96
+2 Moku, Meandering Drummer (TLE) 122
+2 Ruthless Waterbender (TLE) 110
+2 Bastion of Remembrance (TLE) 160
