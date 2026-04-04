@@ -7,10 +7,12 @@ import type {
 } from '@shared/search';
 
 import { useDebouncedValue } from '../lib/use-debounced-value';
+import { useTagTaxonomySlugs } from '../lib/use-tag-taxonomy-slugs';
 import { ColorPicker } from './color-picker';
 import { FilterSection } from './filter-section';
 import { ManaSymbol } from './mana';
 import { NumericRangeInput } from './numeric-range-input';
+import { TagFilterInput } from './tag-filter-input';
 
 const DEBOUNCE_MS = 300;
 
@@ -63,7 +65,8 @@ type FilterState = {
   oracleText: string;
   isLegendary: 'any' | 'yes' | 'no';
   producedMana: string[];
-  tagsText: string;
+  tagSlugs: string[];
+  tagDraft: string;
   tagsMode: 'all' | 'any' | 'none';
   inCollection: boolean;
 };
@@ -82,7 +85,8 @@ const INITIAL_STATE: FilterState = {
   oracleText: '',
   isLegendary: 'any',
   producedMana: [],
-  tagsText: '',
+  tagSlugs: [],
+  tagDraft: '',
   tagsMode: 'any',
   inCollection: false,
 };
@@ -96,7 +100,8 @@ function applyTagUrlSeed(
   }
   return {
     ...base,
-    tagsText: seed.slugs.join(', '),
+    tagSlugs: [...seed.slugs],
+    tagDraft: '',
     tagsMode: seed.mode,
   };
 }
@@ -120,6 +125,9 @@ export function FilterPanel({
   collectionUserId,
   tagFilterFromUrl,
 }: FilterPanelProps) {
+  const { sortedSlugs: taxonomySlugs, loading: taxonomyLoading, error: taxonomyError } =
+    useTagTaxonomySlugs();
+
   const [state, setState] = useState<FilterState>(() =>
     applyTagUrlSeed(INITIAL_STATE, tagFilterFromUrl),
   );
@@ -146,7 +154,7 @@ export function FilterPanel({
   const debouncedSubtypes = useDebouncedValue(state.subtypesText, DEBOUNCE_MS);
   const debouncedKeywords = useDebouncedValue(state.keywordsText, DEBOUNCE_MS);
   const debouncedOracle = useDebouncedValue(state.oracleText, DEBOUNCE_MS);
-  const debouncedTags = useDebouncedValue(state.tagsText, DEBOUNCE_MS);
+  const debouncedTagSlugs = useDebouncedValue(state.tagSlugs, DEBOUNCE_MS);
 
   const filter = useMemo((): CardSearchFilter => {
     const f: CardSearchFilter = {};
@@ -175,10 +183,9 @@ export function FilterPanel({
     if (state.producedMana.length > 0)
       f.producedMana = state.producedMana as CardSearchFilter['producedMana'];
 
-    const tags = splitCommaSeparated(debouncedTags);
-    if (tags.length > 0) {
+    if (debouncedTagSlugs.length > 0) {
       const tagFilter: { all?: string[]; any?: string[]; none?: string[] } = {};
-      tagFilter[state.tagsMode] = tags;
+      tagFilter[state.tagsMode] = [...debouncedTagSlugs];
       f.tags = tagFilter;
     }
 
@@ -202,7 +209,7 @@ export function FilterPanel({
     debouncedOracle,
     state.isLegendary,
     state.producedMana,
-    debouncedTags,
+    debouncedTagSlugs,
     state.tagsMode,
     collectionUserId,
     state.inCollection,
@@ -424,12 +431,14 @@ export function FilterPanel({
       </FilterSection>
 
       <FilterSection title="Tags">
-        <input
-          type="text"
-          placeholder="e.g. removal, ramp"
-          value={state.tagsText}
-          onChange={(e) => update('tagsText', e.target.value)}
-          className={inputClass}
+        <TagFilterInput
+          slugs={state.tagSlugs}
+          draft={state.tagDraft}
+          onSlugsChange={(next) => update('tagSlugs', [...next])}
+          onDraftChange={(d) => update('tagDraft', d)}
+          allSlugs={taxonomySlugs}
+          taxonomyLoading={taxonomyLoading}
+          taxonomyErrorMessage={taxonomyError?.message ?? null}
         />
         <div className="mt-2 flex gap-1.5">
           {(['all', 'any', 'none'] as const).map((mode) => (
