@@ -28,6 +28,7 @@ function toPrismaData(card: Card) {
     numericPower: card.numericPower ?? null,
     numericToughness: card.numericToughness ?? null,
     keywords: card.keywords,
+    keywordsCi: card.keywords.map((k) => k.toLowerCase()),
     producedMana: card.producedMana,
     gameChanger: card.gameChanger,
     scryfallUri: card.scryfallUri,

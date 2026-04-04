@@ -10,6 +10,7 @@ import type {
   NumericRange,
   TagFilter,
 } from '@shared/search';
+import { DEFAULT_SEARCH_PAGE_LIMIT } from '@shared/search';
 import { ok, err } from '@shared/result';
 import type { Result } from '@shared/result';
 
@@ -98,10 +99,16 @@ function buildManaCostFilter(cost: string): Prisma.CardWhereInput {
 }
 
 function buildArrayFilter(
-  field: 'types' | 'subtypes' | 'keywords',
+  field: 'types' | 'subtypes',
   values: string[],
 ): Prisma.CardWhereInput {
   return { [field]: { hasEvery: values } };
+}
+
+function buildKeywordsCiFilter(values: string[]): Prisma.CardWhereInput {
+  return {
+    keywordsCi: { hasEvery: values.map((v) => v.toLowerCase()) },
+  };
 }
 
 function buildOracleTextFilter(terms: string[]): Prisma.CardWhereInput {
@@ -201,7 +208,7 @@ function buildWhereClause(filter: CardSearchFilter): Prisma.CardWhereInput {
     conditions.push(buildArrayFilter('subtypes', filter.subtypes));
   }
   if (filter.keywords !== undefined) {
-    conditions.push(buildArrayFilter('keywords', filter.keywords));
+    conditions.push(buildKeywordsCiFilter(filter.keywords));
   }
   if (filter.oracleText !== undefined) {
     conditions.push(buildOracleTextFilter(filter.oracleText));
@@ -239,7 +246,7 @@ function buildOrderBy(filter: CardSearchFilter): Prisma.CardOrderByWithRelationI
 export async function searchCards(
   filter: CardSearchFilter,
 ): Promise<Result<CardSearchResult, SearchError>> {
-  const limit = filter.pagination?.limit ?? 50;
+  const limit = filter.pagination?.limit ?? DEFAULT_SEARCH_PAGE_LIMIT;
   const offset = filter.pagination?.offset ?? 0;
 
   try {

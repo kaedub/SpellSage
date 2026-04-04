@@ -12,7 +12,8 @@ export {
   insertCards,
   searchCards,
   upsertCardTags,
-  findUntaggedCollectionCards,
+  findUntaggedCards,
+  getTaggingQueueStats,
   upsertCollectionEntries,
   upsertKeywords,
   findKeywordBySlug,
@@ -21,7 +22,7 @@ export {
   loadTagTaxonomy,
 } from './db/index';
 export type { CollectionError, CollectionSummary, CollectionCardEntry } from './db/index';
-export type { CardTagError, CardTagInput, UpsertCardTagsResult } from './db/index';
+export type { CardTagError, CardTagInput, UpsertCardTagsResult, TaggingQueueStats } from './db/index';
 export type { KeywordError, KeywordInput, UpsertKeywordsResult } from './db/index';
 export type { SearchError } from './db/index';
 export type {

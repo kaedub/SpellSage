@@ -1,4 +1,5 @@
 import type { CardSummary, CardTagSummary } from '@shared/search';
+import { Link } from 'react-router-dom';
 
 import type { CollectionCardMeta } from '../lib/use-collection';
 import { ManaCost, ManaSymbol, ManaText } from './mana';
@@ -135,7 +136,7 @@ export function CardDetailModal({
 
           {/* Tags -- guard for API responses not yet including tags */}
           {card.tags !== undefined && card.tags.length > 0 && (
-            <TagList tags={card.tags} />
+            <TagList tags={card.tags} onTagNavigate={onClose} />
           )}
 
           {/* Collection info */}
@@ -201,7 +202,13 @@ function formatSlug(slug: string): string {
     .join(' ');
 }
 
-function TagList({ tags }: { readonly tags: readonly CardTagSummary[] }) {
+function TagList({
+  tags,
+  onTagNavigate,
+}: {
+  readonly tags: readonly CardTagSummary[];
+  readonly onTagNavigate?: () => void;
+}) {
   const grouped = groupTagsByGroup(tags);
 
   return (
@@ -216,12 +223,14 @@ function TagList({ tags }: { readonly tags: readonly CardTagSummary[] }) {
           </p>
           <div className="flex flex-wrap gap-1.5">
             {slugs.map((slug) => (
-              <span
+              <Link
                 key={slug}
-                className="rounded-full bg-indigo-900/40 px-2.5 py-0.5 text-xs font-medium text-indigo-300 ring-1 ring-indigo-700/50"
+                to={`/search?tag=${encodeURIComponent(slug)}`}
+                onClick={onTagNavigate}
+                className="rounded-full bg-indigo-900/40 px-2.5 py-0.5 text-xs font-medium text-indigo-300 ring-1 ring-indigo-700/50 transition-colors hover:bg-indigo-800/50 hover:text-indigo-200 hover:ring-indigo-500/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
               >
                 {formatSlug(slug)}
-              </span>
+              </Link>
             ))}
           </div>
         </div>

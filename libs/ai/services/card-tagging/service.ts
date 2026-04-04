@@ -17,6 +17,7 @@ import type { TagPromptGroup } from './prompts';
 import type {
   CardTagResult,
   CardTaggingError,
+  SkippedTagEntry,
   TaggingConfig,
   TagEntry,
 } from './types';
@@ -81,12 +82,13 @@ export function createCardTaggingService(deps: {
     }
 
     const { parsed, usage } = completionResult.value;
-    const tags = postProcess(parsed, config.confidenceThreshold);
+    const { tags, skippedTags } = postProcess(parsed, config.confidenceThreshold);
 
     return ok({
       cardId: card.id,
       cardName: card.name,
       tags,
+      skippedTags,
       usage,
     });
   }
@@ -105,9 +107,32 @@ function hasTaggableText(card: Card): boolean {
 function postProcess(
   output: CardTaggingOutput,
   confidenceThreshold: number,
-): readonly TagEntry[] {
-  return output.tags
-    .sort((a, b) => b.confidence - a.confidence)
-    .slice(0, MAX_RETURNED_TAGS)
-    .filter(t => t.confidence >= confidenceThreshold);
+): { readonly tags: readonly TagEntry[]; readonly skippedTags: readonly SkippedTagEntry[] } {
+  const sorted = [...output.tags].sort((a, b) => b.confidence - a.confidence);
+  const skippedTags: SkippedTagEntry[] = [];
+
+  for (const t of sorted.slice(MAX_RETURNED_TAGS)) {
+    skippedTags.push({
+      tag: t.tag,
+      confidence: t.confidence,
+      evidence: t.evidence,
+      reason: 'exceeded_max_tags',
+    });
+  }
+
+  const tags: TagEntry[] = [];
+  for (const t of sorted.slice(0, MAX_RETURNED_TAGS)) {
+    if (t.confidence >= confidenceThreshold) {
+      tags.push(t);
+    } else {
+      skippedTags.push({
+        tag: t.tag,
+        confidence: t.confidence,
+        evidence: t.evidence,
+        reason: 'below_confidence_threshold',
+      });
+    }
+  }
+
+  return { tags, skippedTags };
 }

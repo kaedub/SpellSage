@@ -14,6 +14,8 @@ export type {
   TagTaxonomyDep,
   CardTagResult,
   CardTaggingError,
+  SkippedTagEntry,
+  SkippedTagReason,
   TagEntry,
   TaggingConfig,
   CardTagInput,

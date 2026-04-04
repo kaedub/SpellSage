@@ -59,11 +59,13 @@ export const SortSchema = z.object({
   direction: z.enum(['asc', 'desc']),
 });
 
-const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
 
+/** Matches card grid column counts (2, 3, 4) so a full page has no trailing empty cells. */
+export const DEFAULT_SEARCH_PAGE_LIMIT = 48;
+
 export const PaginationSchema = z.object({
-  limit: z.number().int().positive().max(MAX_LIMIT).default(DEFAULT_LIMIT),
+  limit: z.number().int().positive().max(MAX_LIMIT).default(DEFAULT_SEARCH_PAGE_LIMIT),
   offset: z.number().int().nonnegative().default(0),
 });
 

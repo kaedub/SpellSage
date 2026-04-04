@@ -1,18 +1,72 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import type { CardSearchFilter, Sort } from '@shared/search';
+import {
+  DEFAULT_SEARCH_PAGE_LIMIT,
+  type CardSearchFilter,
+  type Sort,
+} from '@shared/search';
 
 import { CardGrid } from '../../components/card-grid';
-import { FilterPanel } from '../../components/filter-panel';
+import {
+  FilterPanel,
+  type TagFilterUrlSeed,
+} from '../../components/filter-panel';
 import { MobileFilterToggle } from '../../components/mobile-filter-toggle';
 import { Pagination } from '../../components/pagination';
 import { SortControl } from '../../components/sort-control';
 import { useCardSearch } from '../../lib/use-card-search';
 
 const DEFAULT_SORT: Sort = { field: 'name', direction: 'asc' };
-const PAGE_SIZE = 50;
+
+function parseTagFilterFromSearchParams(
+  params: URLSearchParams,
+): TagFilterUrlSeed | undefined {
+  const single = params.get('tag')?.trim();
+  const multi = params.get('tags');
+  const slugs: string[] = [];
+  if (single) {
+    slugs.push(single);
+  }
+  if (multi) {
+    for (const part of multi.split(',')) {
+      const t = part.trim();
+      if (t.length > 0 && !slugs.includes(t)) {
+        slugs.push(t);
+      }
+    }
+  }
+  if (slugs.length === 0) {
+    return undefined;
+  }
+  const modeRaw = params.get('tagMode');
+  const mode =
+    modeRaw === 'all' || modeRaw === 'any' || modeRaw === 'none'
+      ? modeRaw
+      : 'any';
+  return { slugs, mode };
+}
 
 export function SearchPage() {
+  const [searchParams] = useSearchParams();
+  const tagParam = searchParams.get('tag');
+  const tagsParam = searchParams.get('tags');
+  const tagModeParam = searchParams.get('tagMode');
+
+  const tagFilterFromUrl = useMemo(() => {
+    const p = new URLSearchParams();
+    if (tagParam !== null && tagParam !== '') {
+      p.set('tag', tagParam);
+    }
+    if (tagsParam !== null && tagsParam !== '') {
+      p.set('tags', tagsParam);
+    }
+    if (tagModeParam !== null && tagModeParam !== '') {
+      p.set('tagMode', tagModeParam);
+    }
+    return parseTagFilterFromSearchParams(p);
+  }, [tagParam, tagsParam, tagModeParam]);
+
   const [filterFromPanel, setFilterFromPanel] = useState<CardSearchFilter>({});
   const [sort, setSort] = useState<Sort>(DEFAULT_SORT);
   const [offset, setOffset] = useState(0);
@@ -20,7 +74,7 @@ export function SearchPage() {
   const filter: CardSearchFilter = {
     ...filterFromPanel,
     sort,
-    pagination: { limit: PAGE_SIZE, offset },
+    pagination: { limit: DEFAULT_SEARCH_PAGE_LIMIT, offset },
   };
 
   const { data, loading, error } = useCardSearch(filter);
@@ -37,14 +91,20 @@ export function SearchPage() {
     <div className="-mx-4 -mt-8 flex h-[calc(100vh-52px)]">
       {/* Sidebar */}
       <aside className="hidden w-64 shrink-0 border-r border-gray-800 lg:block">
-        <FilterPanel onFilterChange={handleFilterChange} />
+        <FilterPanel
+          onFilterChange={handleFilterChange}
+          tagFilterFromUrl={tagFilterFromUrl}
+        />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile filter drawer */}
         <div className="border-b border-gray-800 lg:hidden">
           <MobileFilterToggle>
-            <FilterPanel onFilterChange={handleFilterChange} />
+            <FilterPanel
+              onFilterChange={handleFilterChange}
+              tagFilterFromUrl={tagFilterFromUrl}
+            />
           </MobileFilterToggle>
         </div>
 

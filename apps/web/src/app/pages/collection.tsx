@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { CardSearchFilter, Sort } from '@shared/search';
-import type { CollectionSummary } from '@shared/search';
+import {
+  DEFAULT_SEARCH_PAGE_LIMIT,
+  type CardSearchFilter,
+  type CollectionSummary,
+  type Sort,
+} from '@shared/search';
 
 import { CardGrid } from '../../components/card-grid';
 import { FilterPanel } from '../../components/filter-panel';
@@ -14,7 +18,6 @@ import { useCollectionCards } from '../../lib/use-collection';
 
 const SEED_USER_ID = 'seed-user';
 const DEFAULT_SORT: Sort = { field: 'name', direction: 'asc' };
-const PAGE_SIZE = 50;
 
 function useUserCollections(userId: string) {
   const [collections, setCollections] = useState<CollectionSummary[]>([]);
@@ -55,7 +58,7 @@ export function CollectionPage() {
       ? { collectionId: activeCollection.id }
       : { userId: SEED_USER_ID },
     sort,
-    pagination: { limit: PAGE_SIZE, offset },
+    pagination: { limit: DEFAULT_SEARCH_PAGE_LIMIT, offset },
   };
 
   const { data, loading, error } = useCardSearch(filter);

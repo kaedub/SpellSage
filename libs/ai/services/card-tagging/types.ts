@@ -29,10 +29,22 @@ export type TagEntry = {
   readonly evidence: string;
 };
 
+export type SkippedTagReason =
+  | 'below_confidence_threshold'
+  | 'exceeded_max_tags';
+
+export type SkippedTagEntry = {
+  readonly tag: string;
+  readonly confidence: number;
+  readonly evidence: string;
+  readonly reason: SkippedTagReason;
+};
+
 export type CardTagResult = {
   readonly cardId: string;
   readonly cardName: string;
   readonly tags: readonly TagEntry[];
+  readonly skippedTags: readonly SkippedTagEntry[];
   readonly usage: TokenUsage;
 };
 
@@ -51,5 +63,5 @@ export const DEFAULT_TAGGING_CONFIG: Required<TaggingConfig> = {
   model: 'gpt-4o-mini',
   temperature: 0.2,
   maxTokens: 1024,
-  confidenceThreshold: 0.6,
+  confidenceThreshold: 0.5,
 };

@@ -31,6 +31,7 @@ model Card {
   toughness        String?
   numericPower     Int?     @map("numeric_power")
   numericToughness Int?     @map("numeric_toughness")
+  keywordsCi       String[] @default([]) @map("keywords_ci")
   keywords         String[]
   producedMana     String[] @map("produced_mana")
   gameChanger      Boolean  @map("game_changer")
@@ -40,8 +41,9 @@ model Card {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
-  collectionCards CollectionCard[] @relation("CardCollectionCards")
-  tags            CardTag[]        @relation("CardTags")
+  collectionCards    CollectionCard[]        @relation("CardCollectionCards")
+  tags               CardTag[]               @relation("CardTags")
+  taggingCompletions CardTaggingCompletion[] @relation("CardTaggingCompletions")
 
   @@index([name])
   @@index([set])
@@ -129,6 +131,19 @@ model CardTag {
   @@unique([cardId, tagSlug, source])
   @@index([cardId])
   @@index([tagSlug])
+}
+
+/// Marks that the tagging pipeline finished for (cardId, source) with zero tags saved.
+/// Cards with one or more CardTag rows for that source are considered done without this row.
+model CardTaggingCompletion {
+  cardId      String   @map("card_id")
+  source      String
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  card Card @relation("CardTaggingCompletions", fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@id([cardId, source])
+  @@index([source])
 }
 
 model Keyword {

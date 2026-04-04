@@ -2,13 +2,41 @@ import 'dotenv/config';
 
 import {
   upsertCardTags,
-  findUntaggedCollectionCards,
+  findUntaggedCards,
+  getTaggingQueueStats,
   loadTagTaxonomy,
 } from '@platform/db';
 import { structuredCompletion, createCardTaggingService } from '@ai';
 
 const TAG_SOURCE = 'v0.0.1';
-const BATCH_SIZE = Number(process.env['TAG_BATCH_SIZE']) || 4000;
+const BATCH_SIZE = Number(process.env['TAG_BATCH_SIZE']) || 20000;
+
+type TaggerTagRow = { readonly tag: string; readonly confidence: number; readonly evidence: string };
+
+/**
+ * One DB row per slug per source; merge duplicate slugs using max confidence and combined evidence.
+ */
+function collapseDuplicateTags(tags: readonly TaggerTagRow[]): Array<{
+  tagSlug: string;
+  confidence: number;
+  evidence: string;
+}> {
+  const groups = new Map<string, { maxConfidence: number; evidenceParts: string[] }>();
+  for (const t of tags) {
+    const existing = groups.get(t.tag);
+    if (existing === undefined) {
+      groups.set(t.tag, { maxConfidence: t.confidence, evidenceParts: [t.evidence] });
+    } else {
+      existing.maxConfidence = Math.max(existing.maxConfidence, t.confidence);
+      existing.evidenceParts.push(t.evidence);
+    }
+  }
+  return [...groups.entries()].map(([tagSlug, g]) => ({
+    tagSlug,
+    confidence: g.maxConfidence,
+    evidence: g.evidenceParts.join('\n\n'),
+  }));
+}
 
 async function main(): Promise<void> {
   const taxonomyResult = await loadTagTaxonomy();
@@ -25,7 +53,7 @@ async function main(): Promise<void> {
     taxonomy,
   });
 
-  const cardsResult = await findUntaggedCollectionCards(BATCH_SIZE);
+  const cardsResult = await findUntaggedCards(BATCH_SIZE, TAG_SOURCE);
   if (!cardsResult.ok) {
     console.error(`Failed to find untagged cards [${cardsResult.error.kind}]:`, cardsResult.error);
     process.exit(1);
@@ -34,11 +62,31 @@ async function main(): Promise<void> {
   const cards = cardsResult.value;
 
   if (cards.length === 0) {
-    console.log('No untagged cards with oracle text found in collection.');
+    const statsResult = await getTaggingQueueStats(TAG_SOURCE);
+    if (!statsResult.ok) {
+      console.error(`Failed to load tagging queue stats [${statsResult.error.kind}]:`, statsResult.error);
+      return;
+    }
+    const s = statsResult.value;
+    console.log(`Tagging queue is empty for source "${TAG_SOURCE}".`);
+    console.log(
+      `  Total cards: ${s.totalCards}; with oracle text: ${s.cardsWithOracleText}; still pending for this source: ${s.pendingForTagSource}.`,
+    );
+    if (s.totalCards === 0) {
+      console.log('  No cards in the database. Import or sync cards first.');
+    } else if (s.cardsWithOracleText === 0) {
+      console.log(
+        '  No cards have top-level oracle text (empty string is excluded). Check card sync / data.',
+      );
+    } else {
+      console.log(
+        '  Every card with oracle text already has tags or a completion record for this source. Bump TAG_SOURCE or clear rows to re-run.',
+      );
+    }
     return;
   }
 
-  console.log(`Found ${cards.length} untagged cards to process (source: ${TAG_SOURCE})\n`);
+  console.log(`Found ${cards.length} cards pending tagging (source: ${TAG_SOURCE})\n`);
 
   for (const card of cards) {
     console.log(`${'='.repeat(60)}`);
@@ -56,7 +104,15 @@ async function main(): Promise<void> {
       continue;
     }
 
-    const { tags, usage } = result.value;
+    const { tags, skippedTags, usage } = result.value;
+
+    if (skippedTags.length > 0) {
+      for (const s of skippedTags) {
+        const why =
+          s.reason === 'below_confidence_threshold' ? 'below confidence cutoff' : 'exceeded max tags';
+        console.log(`  (skipped) ${s.tag.padEnd(22)} ${s.confidence.toFixed(2)}  ${why}  "${s.evidence}"`);
+      }
+    }
 
     if (tags.length === 0) {
       console.log('  (no tags assigned)');
@@ -68,11 +124,12 @@ async function main(): Promise<void> {
 
     console.log(`  tokens: ${usage.promptTokens} in / ${usage.completionTokens} out / ${usage.totalTokens} total`);
 
-    const saveResult = await upsertCardTags(
-      card.id,
-      TAG_SOURCE,
-      tags.map(t => ({ tagSlug: t.tag, confidence: t.confidence, evidence: t.evidence })),
-    );
+    const tagsForSave = collapseDuplicateTags(tags);
+    if (tagsForSave.length < tags.length) {
+      console.log(`  merged ${tags.length} tag row(s) → ${tagsForSave.length} unique slug(s) for save`);
+    }
+
+    const saveResult = await upsertCardTags(card.id, TAG_SOURCE, tagsForSave);
 
     if (!saveResult.ok) {
       console.error(`  SAVE ERROR [${saveResult.error.kind}]:`, saveResult.error);

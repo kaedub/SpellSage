@@ -1,6 +1,6 @@
 export { insertCards } from './card';
-export { upsertCardTags, findUntaggedCollectionCards } from './card-tag';
-export type { CardTagError, CardTagInput, UpsertCardTagsResult } from './card-tag';
+export { upsertCardTags, findUntaggedCards, getTaggingQueueStats } from './card-tag';
+export type { CardTagError, CardTagInput, UpsertCardTagsResult, TaggingQueueStats } from './card-tag';
 export {
   createCollection,
   getCollectionsByUser,

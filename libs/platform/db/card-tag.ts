@@ -1,9 +1,25 @@
+import type { Prisma } from '@prisma/client';
+
 import { ok, err } from '@shared/result';
 import type { Result } from '@shared/result';
 import { CardSchema } from '@shared/schemas';
 import type { Card } from '@shared/types';
 
 import { prisma } from '../adapters/prisma/client';
+
+function whereCardWithOracleText(): Prisma.CardWhereInput {
+  return {
+    AND: [{ oracleText: { not: null } }, { oracleText: { not: '' } }],
+  };
+}
+
+function wherePendingTaggingForSource(tagSource: string): Prisma.CardWhereInput {
+  return {
+    ...whereCardWithOracleText(),
+    tags: { none: { source: tagSource } },
+    taggingCompletions: { none: { source: tagSource } },
+  };
+}
 
 export type CardTagError =
   | { kind: 'card_not_found'; cardId: string }
@@ -39,8 +55,17 @@ export async function upsertCardTags(
       });
 
       if (tags.length === 0) {
+        await tx.cardTaggingCompletion.upsert({
+          where: { cardId_source: { cardId, source } },
+          create: { cardId, source },
+          update: { completedAt: new Date() },
+        });
         return { deleted, inserted: 0 };
       }
+
+      await tx.cardTaggingCompletion.deleteMany({
+        where: { cardId, source },
+      });
 
       const { count: inserted } = await tx.cardTag.createMany({
         data: tags.map(t => ({
@@ -67,19 +92,47 @@ export async function upsertCardTags(
   }
 }
 
-export async function findUntaggedCollectionCards(
+export type TaggingQueueStats = {
+  /** All rows in `Card`. */
+  readonly totalCards: number;
+  /** Cards with non-null, non-empty top-level `oracleText`. */
+  readonly cardsWithOracleText: number;
+  /** Eligible for tagging for `tagSource` (oracle text + not tagged + no empty-completion row). */
+  readonly pendingForTagSource: number;
+};
+
+/**
+ * Explains an empty tagging queue: eligible cards have oracle text on the row;
+ * this source's work is done when each has tags or a `CardTaggingCompletion` row.
+ */
+export async function getTaggingQueueStats(
+  tagSource: string,
+): Promise<Result<TaggingQueueStats, CardTagError>> {
+  try {
+    const [totalCards, cardsWithOracleText, pendingForTagSource] = await Promise.all([
+      prisma.card.count(),
+      prisma.card.count({ where: whereCardWithOracleText() }),
+      prisma.card.count({ where: wherePendingTaggingForSource(tagSource) }),
+    ]);
+
+    return ok({
+      totalCards,
+      cardsWithOracleText,
+      pendingForTagSource,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown database error';
+    return err({ kind: 'database_error' as const, message });
+  }
+}
+
+export async function findUntaggedCards(
   limit: number,
+  tagSource: string,
 ): Promise<Result<Card[], CardTagError>> {
   try {
     const rows = await prisma.card.findMany({
-      where: {
-        collectionCards: { some: {} },
-        tags: { none: {} },
-        AND: [
-          { oracleText: { not: null } },
-          { oracleText: { not: '' } },
-        ],
-      },
+      where: wherePendingTaggingForSource(tagSource),
       take: limit,
     });
 

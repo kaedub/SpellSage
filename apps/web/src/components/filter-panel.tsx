@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
   CardSearchFilter,
@@ -36,9 +36,16 @@ const EXTRA_CARD_TYPES = [
   'Vanguard',
 ] as const;
 
+export type TagFilterUrlSeed = {
+  readonly slugs: readonly string[];
+  readonly mode: 'all' | 'any' | 'none';
+};
+
 type FilterPanelProps = {
   readonly onFilterChange: (filter: CardSearchFilter) => void;
   readonly collectionUserId?: string;
+  /** When present (e.g. from `/search?tag=…`), seeds tag filter text and mode. */
+  readonly tagFilterFromUrl?: TagFilterUrlSeed;
 };
 
 type FilterState = {
@@ -79,6 +86,27 @@ const INITIAL_STATE: FilterState = {
   inCollection: false,
 };
 
+function applyTagUrlSeed(
+  base: FilterState,
+  seed: TagFilterUrlSeed | undefined,
+): FilterState {
+  if (seed === undefined || seed.slugs.length === 0) {
+    return base;
+  }
+  return {
+    ...base,
+    tagsText: seed.slugs.join(', '),
+    tagsMode: seed.mode,
+  };
+}
+
+function tagUrlSeedKey(seed: TagFilterUrlSeed | undefined): string {
+  if (seed === undefined || seed.slugs.length === 0) {
+    return '';
+  }
+  return `${[...seed.slugs].sort().join('\0')}:${seed.mode}`;
+}
+
 function splitCommaSeparated(text: string): string[] {
   return text
     .split(',')
@@ -89,8 +117,29 @@ function splitCommaSeparated(text: string): string[] {
 export function FilterPanel({
   onFilterChange,
   collectionUserId,
+  tagFilterFromUrl,
 }: FilterPanelProps) {
-  const [state, setState] = useState<FilterState>(INITIAL_STATE);
+  const [state, setState] = useState<FilterState>(() =>
+    applyTagUrlSeed(INITIAL_STATE, tagFilterFromUrl),
+  );
+
+  const urlSeedKey = tagUrlSeedKey(tagFilterFromUrl);
+  const prevUrlSeedKey = useRef(urlSeedKey);
+
+  useEffect(() => {
+    if (urlSeedKey === '') {
+      prevUrlSeedKey.current = '';
+      return;
+    }
+    if (prevUrlSeedKey.current === urlSeedKey) {
+      return;
+    }
+    prevUrlSeedKey.current = urlSeedKey;
+    if (tagFilterFromUrl === undefined || tagFilterFromUrl.slugs.length === 0) {
+      return;
+    }
+    setState((prev) => applyTagUrlSeed(prev, tagFilterFromUrl));
+  }, [urlSeedKey, tagFilterFromUrl]);
 
   const debouncedName = useDebouncedValue(state.nameText, DEBOUNCE_MS);
   const debouncedSubtypes = useDebouncedValue(state.subtypesText, DEBOUNCE_MS);
