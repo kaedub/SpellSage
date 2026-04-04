@@ -1,5 +1,7 @@
 import type { ColorFilter, ColorFilterMode } from '@shared/search';
 
+import { ManaSymbol } from './mana';
+
 type ColorCode = 'W' | 'U' | 'B' | 'R' | 'G' | 'C';
 
 type ColorPickerProps = {
@@ -61,13 +63,13 @@ export function ColorPicker({ value, onChange, showMode = true }: ColorPickerPro
               type="button"
               onClick={() => toggleColor(code)}
               title={label}
-              className={`h-7 w-7 rounded-full text-xs font-bold transition-all ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
                 isActive
                   ? `${activeBg} ${text} ring-2 ring-indigo-400 ring-offset-1 ring-offset-gray-900`
-                  : `${bg} text-gray-700 opacity-40 hover:opacity-70`
+                  : `${bg} opacity-40 hover:opacity-70`
               }`}
             >
-              {code}
+              <ManaSymbol symbol={code} size="md" />
             </button>
           );
         })}

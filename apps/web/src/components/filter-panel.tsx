@@ -9,6 +9,7 @@ import type {
 import { useDebouncedValue } from '../lib/use-debounced-value';
 import { ColorPicker } from './color-picker';
 import { FilterSection } from './filter-section';
+import { ManaSymbol } from './mana';
 import { NumericRangeInput } from './numeric-range-input';
 
 const DEBOUNCE_MS = 300;
@@ -409,13 +410,13 @@ export function FilterPanel({
                 type="button"
                 onClick={() => toggleProducedMana(code)}
                 title={label}
-                className={`h-7 w-7 rounded-full text-xs font-bold transition-all ${
+                className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
                   active
-                    ? `${activeBg} text-white ring-2 ring-indigo-400 ring-offset-1 ring-offset-gray-900`
-                    : 'bg-gray-700 text-gray-400 opacity-60 hover:opacity-90'
+                    ? `${activeBg} ring-2 ring-indigo-400 ring-offset-1 ring-offset-gray-900`
+                    : 'bg-gray-700 opacity-60 hover:opacity-90'
                 }`}
               >
-                {code}
+                <ManaSymbol symbol={code} size="md" />
               </button>
             );
           })}
