@@ -4,6 +4,7 @@ const navItems = [
   { to: '/', label: 'Home' },
   { to: '/search', label: 'Search' },
   { to: '/collection', label: 'Collection' },
+  { to: '/tags', label: 'Tags' },
 ] as const;
 
 export function Layout() {

@@ -5,6 +5,10 @@ import type {
   CollectionCardsResponse,
   CollectionSummary,
 } from '@shared/search';
+import {
+  TagTaxonomySchema,
+  type TagTaxonomy,
+} from '@shared/tag-taxonomy';
 
 export type ApiError = {
   readonly kind: 'network' | 'http' | 'parse';
@@ -118,4 +122,45 @@ export function removeCardFromCollection(
   return request(`/collections/${collectionId}/cards/${cardEntryId}`, {
     method: 'DELETE',
   });
+}
+
+export async function getTagTaxonomy(): Promise<
+  Result<TagTaxonomy, ApiError>
+> {
+  let response: Response;
+  try {
+    response = await fetch('/api/tags', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch {
+    return err({ kind: 'network', message: 'Failed to reach the server' });
+  }
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => '');
+    return err({
+      kind: 'http',
+      message: body || `Request failed with status ${response.status}`,
+      status: response.status,
+    });
+  }
+
+  let json: unknown;
+  try {
+    json = await response.json();
+  } catch {
+    return err({ kind: 'parse', message: 'Failed to parse response JSON' });
+  }
+
+  const parsed = TagTaxonomySchema.safeParse(json);
+  if (!parsed.success) {
+    return err({
+      kind: 'parse',
+      message: 'Invalid tag taxonomy response',
+    });
+  }
+
+  return ok(parsed.data);
 }

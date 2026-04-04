@@ -6,3 +6,4 @@ export * from './collection-text';
 export * from './result';
 export * from './search';
 export * from './slug';
+export * from './tag-taxonomy';

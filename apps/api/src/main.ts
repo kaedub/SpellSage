@@ -8,6 +8,7 @@ import {
 	addCardsToCollection,
 	removeCardFromCollection,
 	deleteCollection,
+	loadTagTaxonomy,
 	searchCards,
 } from '@platform/db';
 
@@ -168,6 +169,20 @@ app.post('/cards/search', async (request, reply) => {
 	if (!result.ok) {
 		const status = result.error.kind === 'invalid_filter' ? 400 : 500;
 		return reply.status(status).send({ error: result.error.message });
+	}
+
+	return result.value;
+});
+
+// --- Tag taxonomy (read-only) ---
+
+app.get('/tags', async (_request, reply) => {
+	const result = await loadTagTaxonomy();
+	if (!result.ok) {
+		const err = result.error;
+		const message =
+			err.kind === 'database_error' ? err.message : `Tag error: ${err.slug}`;
+		return reply.status(500).send({ error: message });
 	}
 
 	return result.value;
