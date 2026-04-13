@@ -22,8 +22,17 @@ export {
   findAllKeywords,
   upsertTagTaxonomy,
   loadTagTaxonomy,
+  getCollectionTagAggregates,
+  getCollectionCardInventoryStats,
+  getCollectionDistinctTaggedCardCount,
 } from './db/index';
-export type { CollectionError, CollectionSummary, CollectionCardEntry } from './db/index';
+export type {
+  CollectionError,
+  CollectionSummary,
+  CollectionCardEntry,
+  CollectionTagAggregate,
+  CollectionCardInventoryStats,
+} from './db/index';
 export type { CardTagError, CardTagInput, UpsertCardTagsResult, TaggingQueueStats } from './db/index';
 export type { KeywordError, KeywordInput, UpsertKeywordsResult } from './db/index';
 export type { SearchError } from './db/index';

@@ -12,7 +12,10 @@
     "search:example": "tsx --tsconfig tools/tsconfig.json tools/search-example.ts",
     "seed:tag-taxonomy": "tsx --tsconfig tools/tsconfig.json tools/seed-tag-taxonomy.ts",
     "tag:cards": "tsx --tsconfig tools/tsconfig.json tools/tag-cards.ts",
-    "tag:print": "tsx --tsconfig tools/tsconfig.json tools/print-db.ts"
+    "tag:print": "tsx --tsconfig tools/tsconfig.json tools/print-db.ts",
+    "suggest:archetypes": "tsx --tsconfig tools/tsconfig.json tools/suggest-deck-archetypes.ts",
+    "deck:build": "tsx --tsconfig tools/tsconfig.json tools/build-deck.ts",
+    "tag:list": "tsx --tsconfig tools/tsconfig.json tools/list-tags.ts"
   },
   "private": true,
   "dependencies": {

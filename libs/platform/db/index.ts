@@ -18,6 +18,15 @@ export {
   upsertCollectionEntries,
 } from './collection';
 export type { CollectionError, CollectionSummary, CollectionCardEntry } from './collection';
+export {
+  getCollectionTagAggregates,
+  getCollectionCardInventoryStats,
+  getCollectionDistinctTaggedCardCount,
+} from './collection-tags';
+export type {
+  CollectionTagAggregate,
+  CollectionCardInventoryStats,
+} from './collection-tags';
 export { upsertKeywords, findKeywordBySlug, findAllKeywords } from './keyword';
 export type { KeywordError, KeywordInput, UpsertKeywordsResult } from './keyword';
 export { searchCards } from './search';
