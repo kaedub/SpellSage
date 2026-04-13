@@ -9,5 +9,5 @@
     "module": "ESNext",
     "moduleResolution": "bundler"
   },
-  "include": ["./**/*.ts", "../libs/platform/**/*.ts"]
+  "include": ["./**/*.ts"]
 }
