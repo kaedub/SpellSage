@@ -1,5 +1,11 @@
 export { insertCards } from './card';
-export { upsertCardTags, findUntaggedCards, getTaggingQueueStats } from './card-tag';
+export {
+  upsertCardTags,
+  findUntaggedCards,
+  getTaggingQueueStats,
+  isCardEligibleForLlmTagging,
+  TAGGABLE_CARD_TYPES,
+} from './card-tag';
 export type { CardTagError, CardTagInput, UpsertCardTagsResult, TaggingQueueStats } from './card-tag';
 export {
   createCollection,

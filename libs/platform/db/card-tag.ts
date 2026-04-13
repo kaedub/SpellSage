@@ -7,15 +7,67 @@ import type { Card } from '@shared/types';
 
 import { prisma } from '../adapters/prisma/client';
 
+/**
+ * Card types we run through the tagging LLM (deck-relevant permanents and spells).
+ * Lands, basic lands, tokens-only layouts without these types, etc. stay out of the queue.
+ */
+export const TAGGABLE_CARD_TYPES = [
+  'Artifact',
+  'Battle',
+  'Creature',
+  'Enchantment',
+  'Instant',
+  'Kindred',
+  'Planeswalker',
+  'Sorcery',
+  'Tribal',
+] as const;
+
 function whereCardWithOracleText(): Prisma.CardWhereInput {
   return {
     AND: [{ oracleText: { not: null } }, { oracleText: { not: '' } }],
   };
 }
 
+/** Non-empty type line (DB cannot trim; whitespace-only lines filtered in `isCardEligibleForLlmTagging`). */
+function whereCardHasTypeLine(): Prisma.CardWhereInput {
+  return { typeLine: { not: '' } };
+}
+
+/** Excludes Basic Lands (including snow); non-basic lands are excluded when they have no taggable card type. */
+function whereNotBasicLand(): Prisma.CardWhereInput {
+  return {
+    NOT: {
+      AND: [{ supertypes: { has: 'Basic' } }, { types: { has: 'Land' } }],
+    },
+  };
+}
+
+function whereHasTaggableCardType(): Prisma.CardWhereInput {
+  return { types: { hasSome: [...TAGGABLE_CARD_TYPES] } };
+}
+
+function whereEligibleForLlmTagging(): Prisma.CardWhereInput {
+  return {
+    AND: [whereCardHasTypeLine(), whereNotBasicLand(), whereHasTaggableCardType()],
+  };
+}
+
+export function isCardEligibleForLlmTagging(
+  card: Pick<Card, 'typeLine' | 'supertypes' | 'types'>,
+): boolean {
+  if (card.typeLine.trim() === '') {
+    return false;
+  }
+  if (card.supertypes.includes('Basic') && card.types.includes('Land')) {
+    return false;
+  }
+  return TAGGABLE_CARD_TYPES.some(t => card.types.includes(t));
+}
+
 function wherePendingTaggingForSource(tagSource: string): Prisma.CardWhereInput {
   return {
-    ...whereCardWithOracleText(),
+    AND: [whereCardWithOracleText(), whereEligibleForLlmTagging()],
     tags: { none: { source: tagSource } },
     taggingCompletions: { none: { source: tagSource } },
   };
@@ -97,7 +149,7 @@ export type TaggingQueueStats = {
   readonly totalCards: number;
   /** Cards with non-null, non-empty top-level `oracleText`. */
   readonly cardsWithOracleText: number;
-  /** Eligible for tagging for `tagSource` (oracle text + not tagged + no empty-completion row). */
+  /** Eligible for tagging for `tagSource` (oracle + type line + taggable types + not basic land + not tagged + no completion row). */
   readonly pendingForTagSource: number;
 };
 

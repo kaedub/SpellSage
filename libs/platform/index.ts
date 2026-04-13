@@ -14,6 +14,8 @@ export {
   upsertCardTags,
   findUntaggedCards,
   getTaggingQueueStats,
+  isCardEligibleForLlmTagging,
+  TAGGABLE_CARD_TYPES,
   upsertCollectionEntries,
   upsertKeywords,
   findKeywordBySlug,

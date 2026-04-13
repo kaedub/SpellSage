@@ -4,6 +4,7 @@ import {
   upsertCardTags,
   findUntaggedCards,
   getTaggingQueueStats,
+  isCardEligibleForLlmTagging,
   loadTagTaxonomy,
 } from '@platform/db';
 import { structuredCompletion, createCardTaggingService } from '@ai';
@@ -70,7 +71,7 @@ async function main(): Promise<void> {
     const s = statsResult.value;
     console.log(`Tagging queue is empty for source "${TAG_SOURCE}".`);
     console.log(
-      `  Total cards: ${s.totalCards}; with oracle text: ${s.cardsWithOracleText}; still pending for this source: ${s.pendingForTagSource}.`,
+      `  Total cards: ${s.totalCards}; with oracle text: ${s.cardsWithOracleText}; pending (oracle + taggable types, not basic land): ${s.pendingForTagSource}.`,
     );
     if (s.totalCards === 0) {
       console.log('  No cards in the database. Import or sync cards first.');
@@ -80,7 +81,7 @@ async function main(): Promise<void> {
       );
     } else {
       console.log(
-        '  Every card with oracle text already has tags or a completion record for this source. Bump TAG_SOURCE or clear rows to re-run.',
+        '  Every eligible card (artifact, creature, enchantment, instant, planeswalker, sorcery, etc.—not basic lands or typeless) already has tags or a completion for this source. Bump TAG_SOURCE or clear rows to re-run.',
       );
     }
     return;
@@ -89,6 +90,20 @@ async function main(): Promise<void> {
   console.log(`Found ${cards.length} cards pending tagging (source: ${TAG_SOURCE})\n`);
 
   for (const card of cards) {
+    if (!isCardEligibleForLlmTagging(card)) {
+      console.log(`${'='.repeat(60)}`);
+      console.log(`  SKIP (not taggable): ${card.name}`);
+      console.log(`  ${card.typeLine}`);
+      console.log(`${'='.repeat(60)}`);
+      const skipSave = await upsertCardTags(card.id, TAG_SOURCE, []);
+      if (!skipSave.ok) {
+        console.error(`  SAVE ERROR [${skipSave.error.kind}]:`, skipSave.error);
+      } else {
+        console.log(`  marked complete with no tags (${skipSave.value.inserted} inserted, ${skipSave.value.deleted} deleted)`);
+      }
+      continue;
+    }
+
     console.log(`${'='.repeat(60)}`);
     console.log(`  ${card.name} ${card.manaCost ?? ''}`);
     console.log(`  ${card.typeLine}`);
@@ -96,6 +111,26 @@ async function main(): Promise<void> {
       console.log(`  "${card.oracleText}"`);
     }
     console.log(`${'='.repeat(60)}`);
+
+    if (card.supertypes.includes('Basic') && card.types.includes('Land')) {
+      console.log(`  SKIP (basic land): ${card.name}`);
+      console.log(`  ${card.typeLine}`);
+      console.log(`${'='.repeat(60)}`);
+      const skipSave = await upsertCardTags(card.id, TAG_SOURCE, []);
+      if (!skipSave.ok) {
+        console.error(`  SAVE ERROR [${skipSave.error.kind}]:`, skipSave.error);
+      }
+    }
+
+    if (card.typeLine.includes('Token Creature')) {
+      console.log(`  SKIP (token creature): ${card.name}`);
+      console.log(`  ${card.typeLine}`);
+      console.log(`${'='.repeat(60)}`);
+      const skipSave = await upsertCardTags(card.id, TAG_SOURCE, []);
+      if (!skipSave.ok) {
+        console.error(`  SAVE ERROR [${skipSave.error.kind}]:`, skipSave.error);
+      }
+    }
 
     const result = await tagger.tagCard(card);
 

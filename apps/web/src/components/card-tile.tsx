@@ -25,7 +25,7 @@ export function CardTile({ card, collectionMeta, onSelect }: CardTileProps) {
       </div>
 
       {collectionMeta && (
-        <div className="absolute right-1.5 top-1.5 flex items-center gap-1">
+        <div className="absolute bottom-1.5 left-1.5 flex items-center gap-1">
           <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-bold text-white shadow">
             x{collectionMeta.quantity}
           </span>
