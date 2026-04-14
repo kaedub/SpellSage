@@ -11,13 +11,19 @@ export {
   createCollection,
   getCollectionsByUser,
   getCollectionCards,
+  getCollectionCardsByTags,
   addCardsToCollection,
   removeCardFromCollection,
   deleteCollection,
   findCardsByCollectorInfo,
   upsertCollectionEntries,
 } from './collection';
-export type { CollectionError, CollectionSummary, CollectionCardEntry } from './collection';
+export type {
+  CollectionError,
+  CollectionSummary,
+  CollectionCardEntry,
+  CollectionCardWithSummary,
+} from './collection';
 export {
   getCollectionTagAggregates,
   getCollectionCardInventoryStats,

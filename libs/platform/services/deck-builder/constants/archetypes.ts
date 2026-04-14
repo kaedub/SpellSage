@@ -1,0 +1,337 @@
+export const ARCHETYPES = {
+    "archetypes": [
+        {
+            "name": "Aggro",
+            "description": "Fast proactive shell focused on ending the game before slower decks can stabilize.",
+            "gameplan": "Deploy efficient early threats, convert tempo into damage, and use cheap disruption to keep attacking.",
+            "win_conditions": [
+                "Early and sustained combat damage"
+            ],
+            "core_tags": [
+                "threat",
+                "cheap_interaction"
+            ],
+            "support_tags": [
+                "evasive_threat",
+                "haste_enabler",
+                "combat_trick"
+            ],
+            "anti_tags": [
+                "board_wipe",
+                "draw_engine",
+                "mana_sink"
+            ]
+        },
+        {
+            "name": "Midrange",
+            "description": "Flexible shell that trades resources early and wins through stronger standalone cards and board control.",
+            "gameplan": "Interact early, stabilize the board, then pull ahead with resilient threats and efficient material advantage.",
+            "win_conditions": [
+                "Sustained combat pressure from superior threats",
+                "Resource advantage over time"
+            ],
+            "core_tags": [
+                "threat",
+                "spot_removal"
+            ],
+            "support_tags": [
+                "card_advantage",
+                "value_engine",
+                "sticky_threat",
+                "card_selection"
+            ],
+            "anti_tags": [
+                "storm",
+                "combat_trick",
+                "board_wipe"
+            ]
+        },
+        {
+            "name": "Control",
+            "description": "Reactive shell built to prolong the game, answer opposing threats, and eventually win from a dominant late-game position.",
+            "gameplan": "Trade resources efficiently, suppress opposing development, and convert inevitability into a clean finish.",
+            "win_conditions": [
+                "Inevitability through repeated answers and late-game dominance",
+                "A small number of finishers after stabilization"
+            ],
+            "core_tags": [
+                "counterspell",
+                "board_wipe",
+                "card_draw"
+            ],
+            "support_tags": [
+                "spot_removal",
+                "card_selection",
+                "value_engine",
+                "threat"
+            ],
+            "anti_tags": [
+                "combat_trick",
+                "go_wide",
+                "haste_enabler"
+            ]
+        },
+        {
+            "name": "Tempo",
+            "description": "Pressure-plus-disruption shell that seeks to get ahead on board and keep the opponent off balance.",
+            "gameplan": "Stick an efficient threat, protect it, and trade mana favorably while continuing to attack.",
+            "win_conditions": [
+                "Incremental evasive damage backed by efficient disruption"
+            ],
+            "core_tags": [
+                "evasive_threat",
+                "cheap_interaction"
+            ],
+            "support_tags": [
+                "bounce",
+                "counterspell",
+                "protection",
+                "card_selection"
+            ],
+            "anti_tags": [
+                "board_wipe",
+                "mana_sink",
+                "value_engine"
+            ]
+        },
+        {
+            "name": "Ramp",
+            "description": "Mana-acceleration shell built to jump ahead on mana and deploy oversized threats or scalable effects early.",
+            "gameplan": "Accelerate mana development, then leverage that mana advantage into large threats or mana sinks.",
+            "win_conditions": [
+                "Ahead-of-curve haymakers",
+                "Mana advantage into overwhelming late-game pressure"
+            ],
+            "core_tags": [
+                "ramp",
+                "mana_sink"
+            ],
+            "support_tags": [
+                "mana_dork",
+                "mana_rock",
+                "land_ramp",
+                "threat",
+                "card_advantage"
+            ],
+            "anti_tags": [
+                "cheap_interaction",
+                "combat_trick",
+                "cantrip"
+            ]
+        },
+        {
+            "name": "Tokens",
+            "description": "Wide-board synergy archetype built around producing many tokens and converting them into pressure or value.",
+            "gameplan": "Generate many bodies, then scale them with global buffs, go-wide rewards, or sacrifice conversions.",
+            "win_conditions": [
+                "Wide-board combat damage",
+                "Token-driven snowballing advantage"
+            ],
+            "core_tags": [
+                "token_maker",
+                "go_wide"
+            ],
+            "support_tags": [
+                "anthem",
+                "token_payoff",
+                "sac_fodder",
+                "value_engine"
+            ],
+            "anti_tags": [
+                "go_tall",
+                "counterspell",
+                "mana_sink"
+            ]
+        },
+        {
+            "name": "Aristocrats",
+            "description": "Sacrifice-value archetype that turns expendable permanents and death loops into damage or resource gain.",
+            "gameplan": "Create fodder, sacrifice it repeatedly, and convert those deaths into drain, cards, recursion, or board advantage.",
+            "win_conditions": [
+                "Incremental life drain",
+                "Sacrifice loops generating overwhelming value"
+            ],
+            "core_tags": [
+                "sacrifice_outlet",
+                "sac_fodder",
+                "death_payoff"
+            ],
+            "support_tags": [
+                "sac_payoff",
+                "life_drain",
+                "recursion",
+                "token_maker",
+                "aristocrats"
+            ],
+            "anti_tags": [
+                "counterspell",
+                "combat_trick",
+                "board_wipe"
+            ]
+        },
+        {
+            "name": "Reanimator",
+            "description": "Graveyard-focused archetype that puts large creatures into the graveyard and returns them directly to the battlefield ahead of curve.",
+            "gameplan": "Stock the graveyard quickly, then reanimate oversized threats before they could normally be cast.",
+            "win_conditions": [
+                "Early battlefield deployment of oversized threats"
+            ],
+            "core_tags": [
+                "reanimation",
+                "graveyard_enabler"
+            ],
+            "support_tags": [
+                "discard_outlet",
+                "self_mill",
+                "threat",
+                "cost_cheat"
+            ],
+            "anti_tags": [
+                "combat_trick",
+                "go_wide",
+                "board_wipe"
+            ]
+        },
+        {
+            "name": "Counters",
+            "description": "Synergy archetype built around accumulating and exploiting +1/+1 counters for scaling pressure or value.",
+            "gameplan": "Develop creatures with counters, then multiply or exploit those counters for superior board presence.",
+            "win_conditions": [
+                "Scaling creatures that outgrow combat",
+                "Counter synergies turning growth into advantage"
+            ],
+            "core_tags": [
+                "plus1_plus1_counters",
+                "counters_payoff"
+            ],
+            "support_tags": [
+                "proliferate",
+                "go_tall",
+                "threat"
+            ],
+            "anti_tags": [
+                "board_wipe",
+                "counterspell",
+                "wheel"
+            ]
+        },
+        {
+            "name": "Spellslinger",
+            "description": "Spell-synergy archetype centered on repeatedly casting noncreature spells for damage, cards, or board presence.",
+            "gameplan": "Chain cheap spells, trigger spell payoffs, and convert spell volume into pressure or advantage.",
+            "win_conditions": [
+                "Spell-based pressure",
+                "Overwhelming value from repeated spell triggers"
+            ],
+            "core_tags": [
+                "spellslinger",
+                "cantrip"
+            ],
+            "support_tags": [
+                "prowess",
+                "copy_spell",
+                "cast_from_elsewhere",
+                "card_draw",
+                "storm"
+            ],
+            "anti_tags": [
+                "board_wipe",
+                "go_wide",
+                "lord"
+            ]
+        },
+        {
+            "name": "Blink",
+            "description": "Value-engine archetype built around reusing enter-the-battlefield effects through exile-and-return effects.",
+            "gameplan": "Assemble ETB permanents and blink effects, then repeatedly reuse those ETB triggers for cards, removal, or board advantage.",
+            "win_conditions": [
+                "Value accumulation from repeated ETB reuse",
+                "Board control through repeated ETB effects"
+            ],
+            "core_tags": [
+                "blink",
+                "etb"
+            ],
+            "support_tags": [
+                "etb_payoff",
+                "value_engine",
+                "protection"
+            ],
+            "anti_tags": [
+                "combat_trick",
+                "storm",
+                "mana_sink"
+            ]
+        },
+        {
+            "name": "Graveyard Value",
+            "description": "Recursive grind archetype that treats the graveyard as a long-term resource rather than a one-shot combo zone.",
+            "gameplan": "Fill the graveyard, recur cards repeatedly, and outlast the opponent through recursive material advantage.",
+            "win_conditions": [
+                "Recursive advantage over time",
+                "Outgrinding opposing answers"
+            ],
+            "core_tags": [
+                "recursion",
+                "graveyard_payoff"
+            ],
+            "support_tags": [
+                "self_mill",
+                "graveyard_enabler",
+                "value_engine",
+                "card_advantage"
+            ],
+            "anti_tags": [
+                "combat_trick",
+                "haste_enabler",
+                "storm"
+            ]
+        },
+        {
+            "name": "Typal",
+            "description": "Synergy archetype built around a specific creature type and subtype-based rewards.",
+            "gameplan": "Concentrate on one creature type, then amplify it with subtype-based payoffs, lords, and tribal support pieces.",
+            "win_conditions": [
+                "Subtype-synergy combat pressure",
+                "Tribal scaling advantages"
+            ],
+            "core_tags": [
+                "typal",
+                "lord"
+            ],
+            "support_tags": [
+                "go_wide",
+                "card_advantage",
+                "threat"
+            ],
+            "anti_tags": [
+                "storm",
+                "board_wipe",
+                "counterspell"
+            ]
+        },
+        {
+            "name": "Goodstuff",
+            "description": "Low-synergy shell built from individually strong, efficient cards rather than a dedicated mechanical engine.",
+            "gameplan": "Play generically powerful threats, answers, and value cards without relying on a narrow synergy package.",
+            "win_conditions": [
+                "Winning through superior average card quality"
+            ],
+            "core_tags": [
+                "threat",
+                "spot_removal",
+                "card_advantage"
+            ],
+            "support_tags": [
+                "card_draw",
+                "value_engine",
+                "sticky_threat"
+            ],
+            "anti_tags": [
+                "storm",
+                "sacrifice_outlet",
+                "typal"
+            ]
+        }
+    ]
+};

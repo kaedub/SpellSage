@@ -1,5 +1,6 @@
 import type { Collection, CollectionCard } from '@prisma/client';
 
+import type { CardSummary } from '@shared/search';
 import { ok, err } from '@shared/result';
 import type { Result } from '@shared/result';
 import { collectionCardKey } from '@shared/collection-text';
@@ -93,6 +94,60 @@ export async function getCollectionCards(
       rows.map((row) => ({
         collectionCardId: row.id,
         collectionId: row.collectionId,
+        cardId: row.cardId,
+        quantity: row.quantity,
+        foil: row.foil,
+        card: toCardSummary(row.card),
+      })),
+    );
+  } catch (error) {
+    return err({ kind: 'database_error', message: errorMessage(error) });
+  }
+}
+
+export type CollectionCardWithSummary = {
+  readonly cardId: string;
+  readonly quantity: number;
+  readonly foil: boolean;
+  readonly card: CardSummary;
+};
+
+/**
+ * Collection rows whose card has at least one of the given tag slugs (OR).
+ * One row per (collectionId, cardId, foil); merge in the service layer if needed.
+ */
+export async function getCollectionCardsByTags(
+  collectionId: number,
+  tagSlugs: readonly string[],
+): Promise<Result<CollectionCardWithSummary[], CollectionError>> {
+  if (tagSlugs.length === 0) {
+    return ok([]);
+  }
+
+  try {
+    const collection = await prisma.collection.findUnique({
+      where: { id: collectionId },
+      select: { id: true },
+    });
+    if (!collection) {
+      return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
+    }
+
+    const rows = await prisma.collectionCard.findMany({
+      where: {
+        collectionId,
+        card: {
+          tags: {
+            some: { tagSlug: { in: [...tagSlugs] } },
+          },
+        },
+      },
+      include: { card: { select: CARD_SUMMARY_SELECT } },
+      orderBy: { card: { name: 'asc' } },
+    });
+
+    return ok(
+      rows.map((row) => ({
         cardId: row.cardId,
         quantity: row.quantity,
         foil: row.foil,

@@ -25,6 +25,7 @@
       "@platform/clients/scryfall": ["libs/platform/adapters/scryfall/client.ts"],
       "@platform/scryfall/transform": ["libs/platform/adapters/scryfall/transform.ts"],
       "@platform/ai": ["libs/platform/ai.ts"],
+      "@platform/deck-builder": ["libs/platform/services/deck-builder/index.ts"],
       "@temporal/workflows": ["libs/temporal/workflows/index.ts"],
       "@temporal/activities": ["libs/temporal/activities/index.ts"]
     }

@@ -1,30 +1,22 @@
 import 'dotenv/config';
 
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
 import { stdin as input, stdout as output } from 'node:process';
 import { createInterface } from 'node:readline/promises';
-import { fileURLToPath } from 'node:url';
 
+import { getCollectionsByUser } from '@platform/db';
 import {
-  getCollectionDistinctTaggedCardCount,
-  getCollectionTagAggregates,
-  getCollectionsByUser,
-  loadTagTaxonomy,
-} from '@platform/db';
+  scoreArchetypesForCollection,
+  ANTI_PENALTY,
+  SUPPORT_WEIGHT,
+  filterCandidatePool,
+} from '@platform/deck-builder';
+import { ARCHETYPES } from 'libs/platform/services/deck-builder/constants/archetypes';
 
-import {
-  archetypeSlugsMissingFromTaxonomy,
-  buildSignalMapFromAggregates,
-  loadArchetypesFile,
-  scoreAndSortArchetypes,
-} from './deck-archetype-ranking';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const SEED_USER_ID = process.env['SEED_USER_ID'] ?? 'seed-user';
 const SEED_COLLECTION_NAME = process.env['SEED_COLLECTION_NAME'] ?? 'Main';
 const TOP_ARCHETYPES = 10;
+
 
 async function promptArchetypeIndex(max: number): Promise<number> {
   const rl = createInterface({ input, output });
@@ -45,7 +37,7 @@ async function promptArchetypeIndex(max: number): Promise<number> {
 type DeckList = {
   readonly name: string;
   readonly description: string;
-  readonly cards: readonly { readonly cardId: string;  readonly name: string; readonly quantity: number }[];
+  readonly cards: readonly { readonly cardId: string; readonly name: string; readonly quantity: number }[];
 };
 
 async function generateDeck(archetype: string, collectionId: number): Promise<DeckList> {
@@ -53,45 +45,35 @@ async function generateDeck(archetype: string, collectionId: number): Promise<De
 
   /**
    * Generate a deck for the given archetype and collection.
+   *
    * 
-   * First look up the needed tags for this archetype and creatue buckets for each group of cards in the deck 
    */
 
-  return Promise.resolve({
-    name: 'Deck',
-    description: 'Deck',
-    cards: [],  
-  });
+  const archetypeRow = ARCHETYPES.archetypes.find((a) => a.name === archetype);
+  if (archetypeRow === undefined) {
+    throw new Error(`Archetype "${archetype}" not found.`);
+  }
+  const candidatePool = await filterCandidatePool(collectionId, archetypeRow);
+  console.log(`Candidate pool: ${candidatePool.length} cards`);
+  const deck = {
+    name: archetype,
+    description: archetypeRow.description,
+    cards: candidatePool.map((c) => ({
+      cardId: c.card.id,
+      name: c.card.name,
+      quantity: c.quantity,
+    })),
+  }
+
+  console.log('Deck:', deck);
+  console.log('Cards:', deck.cards.slice(0, 10).map((c) => `${c.name} (${c.quantity})`).join(', '));
+  return Promise.resolve(deck);
 }
 
 async function main(): Promise<void> {
   if (!input.isTTY) {
     console.error('This script requires an interactive terminal (stdin must be a TTY).');
     process.exit(1);
-  }
-
-  const archetypesPath = path.resolve(__dirname, 'archetypes.json');
-  const rawJson: unknown = JSON.parse(await readFile(archetypesPath, 'utf8'));
-  const { archetypes } = loadArchetypesFile(rawJson);
-  if (archetypes.length === 0) {
-    console.error('archetypes.json contains no archetypes.');
-    process.exit(1);
-  }
-
-  const taxonomyResult = await loadTagTaxonomy();
-  if (!taxonomyResult.ok) {
-    console.error(`Failed to load tag taxonomy [${taxonomyResult.error.kind}]:`, taxonomyResult.error);
-    process.exit(1);
-  }
-  const taxonomySlugs = new Set(taxonomyResult.value.allSlugs);
-
-  const unknownSlugs = archetypeSlugsMissingFromTaxonomy(archetypes, taxonomySlugs);
-  if (unknownSlugs.length > 0) {
-    const preview = unknownSlugs.slice(0, 15).join(', ');
-    const suffix = unknownSlugs.length > 15 ? '…' : '';
-    console.warn(
-      `Warning: ${unknownSlugs.length} tag slug(s) in archetypes.json are not in the DB taxonomy (scored as 0): ${preview}${suffix}\n`,
-    );
   }
 
   const listResult = await getCollectionsByUser(SEED_USER_ID);
@@ -110,32 +92,10 @@ async function main(): Promise<void> {
 
   const collectionId = collection.id;
 
-  const [taggedCountResult, aggregatesResult] = await Promise.all([
-    getCollectionDistinctTaggedCardCount(collectionId),
-    getCollectionTagAggregates(collectionId),
-  ]);
-
-  if (!taggedCountResult.ok) {
-    console.error(`Failed to count tagged cards [${taggedCountResult.error.kind}]:`, taggedCountResult.error.message);
-    process.exit(1);
-  }
-  if (!aggregatesResult.ok) {
-    console.error(`Failed to load tag aggregates [${aggregatesResult.error.kind}]:`, aggregatesResult.error.message);
-    process.exit(1);
-  }
-
-  const distinctTagged = taggedCountResult.value;
-  const aggregates = aggregatesResult.value;
+  const scored = await scoreArchetypesForCollection(collectionId);
 
   console.log(`Deck builder — collection "${SEED_COLLECTION_NAME}" (id=${collectionId}) for user "${SEED_USER_ID}"`);
-  if (distinctTagged === 0) {
-    console.log('Note: no tagged cards in this collection yet; archetype scores may be flat. Run `yarn tag:cards` if needed.\n');
-  } else {
-    console.log('');
-  }
 
-  const signal = buildSignalMapFromAggregates(aggregates);
-  const scored = scoreAndSortArchetypes(archetypes, signal);
   const top = scored.slice(0, TOP_ARCHETYPES);
   const displayCount = top.length;
   if (displayCount === 0) {
@@ -145,8 +105,12 @@ async function main(): Promise<void> {
 
   console.log(`Top ${displayCount} archetypes for your collection (by tag fit):\n`);
   top.forEach((row, i) => {
-    const label = row.weak ? ' (weak)' : '';
-    console.log(`${i + 1}. ${row.archetype.name}${label} — score ${row.total.toFixed(2)}`);
+    const { core, support, anti, total } = row.score;
+    const weak = core === 0 ? ' (weak — no core tag hits)' : '';
+    console.log(
+      `${i + 1}. ${row.archetype.name}${weak}  score=${total.toFixed(2)}  (core=${core}, support×${SUPPORT_WEIGHT}=${(SUPPORT_WEIGHT * support).toFixed(2)}, anti×${ANTI_PENALTY}=${(ANTI_PENALTY * anti).toFixed(2)})`,
+    );
+    console.log(`   ${row.archetype.description}`);
   });
   console.log('');
 
@@ -159,10 +123,8 @@ async function main(): Promise<void> {
   console.log(`Selected: ${selected.archetype.name}`);
   console.log('Deck building coming soon....');
 
-
   const deck = await generateDeck(selected.archetype.name, collectionId);
   console.log(`Deck: ${deck}`);
-
 }
 
 main().catch((error: unknown) => {
