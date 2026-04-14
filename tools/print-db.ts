@@ -26,14 +26,12 @@ function bold(text: string): string {
 async function summary(): Promise<void> {
   header('Summary');
 
-  const totalTags = await prisma.cardTag.count({ where: { source: 'ai' } });
+  const totalTags = await prisma.cardTag.count();
   const distinctCards = await prisma.cardTag.groupBy({
     by: ['cardId'],
-    where: { source: 'ai' },
   });
   const distinctTagNames = await prisma.cardTag.groupBy({
     by: ['tagSlug'],
-    where: { source: 'ai' },
   });
 
   console.log(`  Total tag rows:     ${bold(String(totalTags))}`);
@@ -69,7 +67,6 @@ async function tagsByCard(): Promise<void> {
   header('All Tags Grouped by Card');
 
   const rows = await prisma.cardTag.findMany({
-    where: { source: 'ai' },
     orderBy: { card: { name: 'asc' } },
     include: { card: { select: CARD_SELECT } },
   });
@@ -110,7 +107,6 @@ async function tagFrequency(): Promise<void> {
 
   const rows = await prisma.cardTag.groupBy({
     by: ['tagSlug'],
-    where: { source: 'ai' },
     _count: { tagSlug: true },
     orderBy: { _count: { tagSlug: 'desc' } },
   });

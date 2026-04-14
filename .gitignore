@@ -18,6 +18,7 @@ node_modules
 .settings/
 *.sublime-workspace
 .notes/
+spellsage.sql
 
 # IDE - VSCode
 .vscode/*
