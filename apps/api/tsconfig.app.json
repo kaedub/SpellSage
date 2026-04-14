@@ -10,7 +10,6 @@
   },
   "include": [
     "src/**/*.ts",
-    "../../libs/ai/**/*.ts",
     "../../libs/platform/**/*.ts",
     "../../libs/shared/**/*.ts"
   ],

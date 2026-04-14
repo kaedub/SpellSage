@@ -25,3 +25,6 @@ alwaysApply: false
 
 ## Composition over inheritance
 - Prefer small, single-purpose types and **composition** (e.g. services that depend on other services via interfaces) over deep class hierarchies. Flat services and composition over inheritance.
+
+## Things to look out for
+- If using aliases to import, do not import from alias if it is from within the alias.

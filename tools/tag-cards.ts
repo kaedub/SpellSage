@@ -7,7 +7,7 @@ import {
   isCardEligibleForLlmTagging,
   loadTagTaxonomy,
 } from '@platform/db';
-import { structuredCompletion, createCardTaggingService } from '@ai';
+import { structuredCompletion, createCardTaggingService } from '@platform/ai';
 
 const TAG_SOURCE = 'v0.0.1';
 const BATCH_SIZE = Number(process.env['TAG_BATCH_SIZE']) || 20000;
