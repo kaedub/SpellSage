@@ -11,6 +11,7 @@ datasource db {
 
 model Card {
   id               String   @id @db.Text
+  oracleId         String   @map("oracle_id")
   name             String
   set              String
   setId            String   @map("set_id")
@@ -58,6 +59,56 @@ model Card {
   @@index([subtypes], type: Gin)
   @@index([keywords], type: Gin)
   @@index([producedMana], type: Gin)
+}
+
+model OracleCard {
+  id               String   @id @db.Text
+  name             String
+  set              String
+  setId            String   @map("set_id")
+  collectorNum     String   @map("collector_num")
+  typeLine         String   @map("type_line")
+  supertypes       String[]
+  types            String[]
+  subtypes         String[]
+  isLegendary      Boolean  @map("is_legendary")
+  colors           String[]
+  colorIdentity    String[] @map("color_identity")
+  manaCost         String?  @map("mana_cost")
+  cmc              Float?
+  oracleText       String?  @map("oracle_text")
+  layout           String
+  faces            Json?
+  power            String?
+  toughness        String?
+  numericPower     Int?     @map("numeric_power")
+  numericToughness Int?     @map("numeric_toughness")
+  keywordsCi       String[] @default([]) @map("keywords_ci")
+  keywords         String[]
+  producedMana     String[] @map("produced_mana")
+  gameChanger      Boolean  @map("game_changer")
+  scryfallUri      String   @map("scryfall_uri")
+  imageUri         String   @map("image_uri")
+  rarity           String
+  price            String
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@index([name])
+  @@index([set])
+  @@index([setId])
+  @@index([typeLine])
+  @@index([isLegendary])
+  @@index([gameChanger])
+  @@index([cmc])
+  @@index([colors], type: Gin)
+  @@index([colorIdentity], type: Gin)
+  @@index([types], type: Gin)
+  @@index([subtypes], type: Gin)
+  @@index([supertypes], type: Gin)
+  @@index([keywords], type: Gin)
+  @@index([producedMana], type: Gin)
+  @@index([rarity])
 }
 
 model Collection {

@@ -12,6 +12,7 @@ export {
   getCollectionsByUser,
   getCollectionCards,
   getCollectionCardsByTags,
+  getCollectionLandCards,
   addCardsToCollection,
   removeCardFromCollection,
   deleteCollection,

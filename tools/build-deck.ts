@@ -9,6 +9,7 @@ import {
   ANTI_PENALTY,
   SUPPORT_WEIGHT,
   filterCandidatePool,
+  type Bucket,
 } from '@platform/deck-builder';
 import { ARCHETYPES } from 'libs/platform/services/deck-builder/constants/archetypes';
 
@@ -55,6 +56,24 @@ async function generateDeck(archetype: string, collectionId: number): Promise<De
   }
   const candidatePool = await filterCandidatePool(collectionId, archetypeRow);
   console.log(`Candidate pool: ${candidatePool.length} cards`);
+  // Count by primary bucket (first in array); also surface multi-bucket cards.
+  const bucketCounts = new Map<Bucket, number>();
+  let multiBucketCount = 0;
+  const bucketMap = new Map<Bucket, {name: string, quantity: number}[]>();
+  for (const c of candidatePool) {
+    const primary = c.buckets[0];
+    bucketCounts.set(primary, (bucketCounts.get(primary) ?? 0) + 1);
+    if (c.buckets.length > 1) {
+      multiBucketCount += 1;
+    }
+    bucketMap.set(primary, [...(bucketMap.get(primary) ?? []), { name: c.card.name, quantity: c.quantity }]);
+  }
+  console.log(
+    `Buckets — threat=${bucketCounts.get('threat') ?? 0} interaction=${bucketCounts.get('interaction') ?? 0} utility=${bucketCounts.get('utility') ?? 0} land=${bucketCounts.get('land') ?? 0} (${multiBucketCount} multi-role)`,
+  );
+  for (const [bucket, cards] of bucketMap.entries()) {
+    console.log(`  ${bucket}: ${cards.map((c) => `${c.name} (${c.quantity})`).slice(0, 10).join(', ')}`);
+  }
   const deck = {
     name: archetype,
     description: archetypeRow.description,
@@ -65,8 +84,6 @@ async function generateDeck(archetype: string, collectionId: number): Promise<De
     })),
   }
 
-  console.log('Deck:', deck);
-  console.log('Cards:', deck.cards.slice(0, 10).map((c) => `${c.name} (${c.quantity})`).join(', '));
   return Promise.resolve(deck);
 }
 
@@ -124,7 +141,9 @@ async function main(): Promise<void> {
   console.log('Deck building coming soon....');
 
   const deck = await generateDeck(selected.archetype.name, collectionId);
-  console.log(`Deck: ${deck}`);
+  console.log(`Deck: ${deck.name}`);
+  console.log(`Description: ${deck.description}`);
+  console.log(`Cards:\n${deck.cards.map((c) => `    - ${c.name} (${c.quantity})`).slice(0, 10).join('\n')}`);
 }
 
 main().catch((error: unknown) => {

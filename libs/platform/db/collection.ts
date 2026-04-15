@@ -159,6 +159,46 @@ export async function getCollectionCardsByTags(
   }
 }
 
+/**
+ * Collection rows whose Oracle type line indicates a land (e.g. "Basic Land — Forest", "Land Creature").
+ * Used to merge mana sources into archetype-tagged candidate pools.
+ */
+export async function getCollectionLandCards(
+  collectionId: number,
+): Promise<Result<CollectionCardWithSummary[], CollectionError>> {
+  try {
+    const collection = await prisma.collection.findUnique({
+      where: { id: collectionId },
+      select: { id: true },
+    });
+    if (!collection) {
+      return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
+    }
+
+    const rows = await prisma.collectionCard.findMany({
+      where: {
+        collectionId,
+        card: {
+          typeLine: { contains: 'Land', mode: 'insensitive' },
+        },
+      },
+      include: { card: { select: CARD_SUMMARY_SELECT } },
+      orderBy: { card: { name: 'asc' } },
+    });
+
+    return ok(
+      rows.map((row) => ({
+        cardId: row.cardId,
+        quantity: row.quantity,
+        foil: row.foil,
+        card: toCardSummary(row.card),
+      })),
+    );
+  } catch (error) {
+    return err({ kind: 'database_error', message: errorMessage(error) });
+  }
+}
+
 export interface CollectionCardEntry {
   collectionCardId: number;
   collectionId: number;
