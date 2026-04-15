@@ -1,4 +1,5 @@
 export { insertCards } from './card';
+export { insertOracleCards } from './oracle-card';
 export {
   upsertCardTags,
   findUntaggedCards,

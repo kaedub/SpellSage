@@ -10,6 +10,7 @@ export {
   deleteCollection,
   findCardsByCollectorInfo,
   insertCards,
+  insertOracleCards,
   searchCards,
   upsertCardTags,
   findUntaggedCards,

@@ -11,61 +11,6 @@ export const Color = {
 
 export const ColorSchema = z.enum(Color);
 
-export const SupertypeSchema = z.enum([
-    'Legendary',
-    'Basic',
-    'Snow',
-    'World',
-    'Ongoing',
-]);
-
-export const CardTypeSchema = z.enum([
-    'Artifact',
-    'Battle',
-    'Conspiracy',
-    'Creature',
-    'Dungeon',
-    'Enchantment',
-    'Host',
-    'Instant',
-    'Kindred',
-    'Land',
-    'Phenomenon',
-    'Plane',
-    'Planeswalker',
-    'Scheme',
-    'Sorcery',
-    'Tribal',
-    'Vanguard',
-]);
-
-export const LayoutSchema = z.enum([
-    'normal',
-    'split',
-    'flip',
-    'transform',
-    'modal_dfc',
-    'meld',
-    'leveler',
-    'class',
-    'case',
-    'saga',
-    'adventure',
-    'mutate',
-    'prototype',
-    'battle',
-    'planar',
-    'scheme',
-    'vanguard',
-    'token',
-    'double_faced_token',
-    'emblem',
-    'augment',
-    'host',
-    'art_series',
-    'reversible_card',
-]);
-
 export const CardFaceSchema = z.object({
     name: z.string(),
     typeLine: z.string(),
@@ -78,22 +23,27 @@ export const CardFaceSchema = z.object({
 });
 
 export const CardSchema = z.object({
+    // id is the Scryfall card id
     id: z.string(),
+    // oracleId is the Scryfall oracle id (unique)
+    oracleId: z.string(),
     name: z.string(),
     set: z.string(),
     setId: z.string(),
     collectorNum: z.string(),
     typeLine: z.string(),
-    supertypes: z.array(SupertypeSchema),
-    types: z.array(CardTypeSchema),
+    supertypes: z.array(z.string()),
+    types: z.array(z.string()),
     subtypes: z.array(z.string()),
     isLegendary: z.boolean(),
+    rarity: z.string(),
+    price: z.string(),
     colors: z.array(ColorSchema).optional(),
     colorIdentity: z.array(ColorSchema).optional(),
     manaCost: z.string().optional(),
     cmc: z.number().optional(),
     oracleText: z.string().optional(),
-    layout: LayoutSchema,
+    layout: z.string(),
     faces: z.array(CardFaceSchema).nullable(),
     power: z.string().nullable(),
     toughness: z.string().nullable(),
@@ -105,4 +55,8 @@ export const CardSchema = z.object({
     scryfallUri: z.string().url(),
     imageUri: z.string(),
     rawJson: z.record(z.string(), z.unknown()),
+});
+
+export const OracleCardSchema = CardSchema.omit({
+    rawJson: true,
 });

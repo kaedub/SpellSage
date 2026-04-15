@@ -7,6 +7,7 @@ import { prisma } from '../adapters/prisma/client';
 function toPrismaData(card: Card) {
   return {
     id: card.id,
+    oracleId: card.oracleId,
     name: card.name,
     set: card.set,
     setId: card.setId,

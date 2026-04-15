@@ -42,6 +42,7 @@ model Card {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
+  oracleCard         OracleCard              @relation(fields: [oracleId], references: [oracleId])
   collectionCards    CollectionCard[]        @relation("CardCollectionCards")
   tags               CardTag[]               @relation("CardTags")
   taggingCompletions CardTaggingCompletion[] @relation("CardTaggingCompletions")
@@ -53,6 +54,7 @@ model Card {
   @@index([isLegendary])
   @@index([gameChanger])
   @@index([cmc])
+  @@index([oracleId])
   @@index([colors], type: Gin)
   @@index([colorIdentity], type: Gin)
   @@index([types], type: Gin)
@@ -63,6 +65,7 @@ model Card {
 
 model OracleCard {
   id               String   @id @db.Text
+  oracleId         String   @unique @map("oracle_id")
   name             String
   set              String
   setId            String   @map("set_id")
@@ -93,6 +96,9 @@ model OracleCard {
   price            String
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
+
+  cards Card[]
+  tags  OracleCardTag[] @relation("OracleCardTags")
 
   @@index([name])
   @@index([set])
@@ -161,8 +167,9 @@ model Tag {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  group TagGroup  @relation("TagGroupTags", fields: [groupSlug], references: [slug])
-  cards CardTag[] @relation("TagCardTags")
+  group       TagGroup        @relation("TagGroupTags", fields: [groupSlug], references: [slug])
+  cards       CardTag[]       @relation("TagCardTags")
+  oracleCards OracleCardTag[] @relation("TagOracleCardTags")
 
   @@index([groupSlug])
 }
@@ -181,6 +188,22 @@ model CardTag {
 
   @@unique([cardId, tagSlug, source])
   @@index([cardId])
+  @@index([tagSlug])
+}
+
+model OracleCardTag {
+  id           Int      @id @default(autoincrement())
+  oracleCardId String   @map("oracle_card_id")
+  tagSlug      String   @map("tag_slug")
+  source       String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  oracleCard OracleCard @relation("OracleCardTags", fields: [oracleCardId], references: [oracleId])
+  tag        Tag        @relation("TagOracleCardTags", fields: [tagSlug], references: [slug])
+
+  @@unique([oracleCardId, tagSlug, source])
+  @@index([oracleCardId])
   @@index([tagSlug])
 }
 

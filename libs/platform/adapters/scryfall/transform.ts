@@ -1,9 +1,36 @@
-import { CardSchema, SupertypeSchema, CardTypeSchema } from '@shared/schemas';
-import type { Card, CardFace } from '@shared/types';
+import { CardSchema, OracleCardSchema } from '@shared/schemas';
+import type { Card, CardFace, OracleCard } from '@shared/types';
 import type { ScryfallCard, CardFace as ScryfallCardFace } from './types';
 
-const SUPERTYPES = new Set<string>(SupertypeSchema.options);
-const CARD_TYPES = new Set<string>(CardTypeSchema.options);
+/** Words Scryfall uses as supertypes in `type_line` (for splitting only; not validated). */
+const SUPERTYPES = new Set<string>([
+    'Legendary',
+    'Basic',
+    'Snow',
+    'World',
+    'Ongoing',
+]);
+
+/** Words Scryfall uses as card types in `type_line` (for splitting only; not validated). */
+const CARD_TYPES = new Set<string>([
+    'Artifact',
+    'Battle',
+    'Conspiracy',
+    'Creature',
+    'Dungeon',
+    'Enchantment',
+    'Host',
+    'Instant',
+    'Kindred',
+    'Land',
+    'Phenomenon',
+    'Plane',
+    'Planeswalker',
+    'Scheme',
+    'Sorcery',
+    'Tribal',
+    'Vanguard',
+]);
 
 function parseTypeLine(typeLine: string): {
     supertypes: string[];
@@ -70,7 +97,26 @@ function uniqueColors(faces: ScryfallCardFace[]): string[] {
     return [...seen];
 }
 
-export function toCard(raw: ScryfallCard): Card {
+function pickDisplayPrice(raw: ScryfallCard): string {
+    const p = raw.prices;
+    const candidates = [
+        p.usd,
+        p.usd_foil,
+        p.usd_etched,
+        p.eur,
+        p.eur_foil,
+        p.tix,
+    ] as const;
+    for (const c of candidates) {
+        if (c !== null && c !== undefined && c !== '') {
+            return c;
+        }
+    }
+    return '0';
+}
+
+/** Shared print/oracle fields from a Scryfall `card` JSON object (default or oracle bulk). */
+function scryfallCardShared(raw: ScryfallCard) {
     const front = raw.card_faces?.[0];
 
     const typeLine =
@@ -85,11 +131,12 @@ export function toCard(raw: ScryfallCard): Card {
 
     const colors = raw.colors ?? (front ? uniqueColors(raw.card_faces!) : []);
 
-    const card = {
+    return {
         id: raw.id,
         name: raw.name,
         set: raw.set,
         setId: raw.set_id,
+        oracleId: raw.oracle_id,
         collectorNum: raw.collector_number,
         typeLine,
         supertypes,
@@ -112,8 +159,24 @@ export function toCard(raw: ScryfallCard): Card {
         gameChanger: raw.game_changer,
         scryfallUri: raw.scryfall_uri,
         imageUri: resolveImageUri(raw),
+    };
+}
+
+export function toCard(raw: ScryfallCard): Card {
+    const card = {
+        ...scryfallCardShared(raw),
         rawJson: raw as unknown as Record<string, unknown>,
     };
 
     return CardSchema.parse(card);
+}
+
+export function toOracleCard(raw: ScryfallCard): OracleCard {
+    const oracle = {
+        ...scryfallCardShared(raw),
+        rarity: raw.rarity !== undefined && raw.rarity !== '' ? raw.rarity : 'unknown',
+        price: pickDisplayPrice(raw),
+    };
+
+    return OracleCardSchema.parse(oracle);
 }
