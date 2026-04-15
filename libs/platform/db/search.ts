@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 
 import type {
+  CardRarity,
   CardSearchFilter,
   CardSearchResult,
   CardSummary,
@@ -153,6 +154,10 @@ function buildProducedManaFilter(colors: string[]): Prisma.OracleCardWhereInput 
   return { producedMana: { hasSome: colors } };
 }
 
+function buildRarityFilter(rarities: CardRarity[]): Prisma.OracleCardWhereInput {
+  return { rarity: { in: rarities } };
+}
+
 function buildCollectionFilter(filter: CollectionFilter): Prisma.OracleCardWhereInput {
   const quantityClause =
     filter.minQuantity !== undefined ? { quantity: { gte: filter.minQuantity } } : {};
@@ -243,6 +248,9 @@ function buildWhereClause(filter: CardSearchFilter): Prisma.OracleCardWhereInput
   }
   if (filter.producedMana !== undefined) {
     conditions.push(buildProducedManaFilter(filter.producedMana));
+  }
+  if (filter.rarity !== undefined && filter.rarity.length > 0) {
+    conditions.push(buildRarityFilter(filter.rarity));
   }
   if (filter.tags !== undefined) {
     conditions.push(...buildTagFilter(filter.tags));

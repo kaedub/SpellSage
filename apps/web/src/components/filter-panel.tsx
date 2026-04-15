@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
+  CardRarity,
   CardSearchFilter,
   ColorFilter,
   NumericRange,
@@ -39,6 +40,13 @@ const EXTRA_CARD_TYPES = [
   'Vanguard',
 ] as const;
 
+const RARITY_OPTIONS: ReadonlyArray<{ value: CardRarity; label: string }> = [
+  { value: 'common', label: 'Common' },
+  { value: 'uncommon', label: 'Uncommon' },
+  { value: 'rare', label: 'Rare' },
+  { value: 'mythic', label: 'Mythic' },
+];
+
 export type TagFilterUrlSeed = {
   readonly slugs: readonly string[];
   readonly mode: 'all' | 'any' | 'none';
@@ -56,6 +64,7 @@ type FilterState = {
   colors: ColorFilter | undefined;
   colorIdentity: ColorFilter | undefined;
   selectedTypes: string[];
+  selectedRarities: CardRarity[];
   showExtraTypes: boolean;
   subtypesText: string;
   cmcRange: NumericRange | undefined;
@@ -76,6 +85,7 @@ const INITIAL_STATE: FilterState = {
   colors: undefined,
   colorIdentity: undefined,
   selectedTypes: [],
+  selectedRarities: [],
   showExtraTypes: false,
   subtypesText: '',
   cmcRange: undefined,
@@ -163,6 +173,7 @@ export function FilterPanel({
     if (state.colors) f.colors = state.colors;
     if (state.colorIdentity) f.colorIdentity = state.colorIdentity;
     if (state.selectedTypes.length > 0) f.types = state.selectedTypes;
+    if (state.selectedRarities.length > 0) f.rarity = [...state.selectedRarities];
 
     const subtypes = splitCommaSeparated(debouncedSubtypes);
     if (subtypes.length > 0) f.subtypes = subtypes;
@@ -201,6 +212,7 @@ export function FilterPanel({
     state.colors,
     state.colorIdentity,
     state.selectedTypes,
+    state.selectedRarities,
     debouncedSubtypes,
     state.cmcRange,
     state.powerRange,
@@ -232,6 +244,15 @@ export function FilterPanel({
         ? prev.selectedTypes.filter((t) => t !== type)
         : [...prev.selectedTypes, type];
       return { ...prev, selectedTypes: next };
+    });
+  }
+
+  function toggleRarity(rarity: CardRarity) {
+    setState((prev) => {
+      const next = prev.selectedRarities.includes(rarity)
+        ? prev.selectedRarities.filter((r) => r !== rarity)
+        : [...prev.selectedRarities, rarity];
+      return { ...prev, selectedRarities: next };
     });
   }
 
@@ -326,6 +347,37 @@ export function FilterPanel({
               );
             })}
           </div>
+        )}
+      </FilterSection>
+
+      <FilterSection title="Rarity">
+        <div className="flex flex-wrap gap-1.5">
+          {RARITY_OPTIONS.map(({ value, label }) => {
+            const active = state.selectedRarities.includes(value);
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => toggleRarity(value)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  active
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200'
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+        {state.selectedRarities.length > 0 && (
+          <button
+            type="button"
+            onClick={() => update('selectedRarities', [])}
+            className="mt-2 text-xs text-gray-500 hover:text-gray-300"
+          >
+            Clear rarity
+          </button>
         )}
       </FilterSection>
 

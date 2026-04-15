@@ -1,7 +1,8 @@
 import 'dotenv/config';
 
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { homedir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 import {
     parseCollectionText,
@@ -18,8 +19,30 @@ const SEED_USER_ID = process.env['SEED_USER_ID'] ?? 'seed-user';
 const SEED_COLLECTION_NAME = process.env['SEED_COLLECTION_NAME'] ?? 'Main';
 const BATCH_SIZE = 200;
 
+function expandHome(path: string): string {
+    if (path === '~') {
+        return homedir();
+    }
+    if (path.startsWith('~/')) {
+        return join(homedir(), path.slice(2));
+    }
+    return path;
+}
+
+function resolveCollectionFilePath(): string {
+    const fromCli = process.argv[2]?.trim();
+    if (fromCli !== undefined && fromCli !== '') {
+        return expandHome(fromCli);
+    }
+    const fromEnv = process.env['COLLECTION_PATH']?.trim();
+    if (fromEnv !== undefined && fromEnv !== '') {
+        return expandHome(fromEnv);
+    }
+    return resolve(__dirname, 'collection.txt');
+}
+
 function loadCollectionFile(): string {
-    const filePath = process.argv[2] ?? resolve(__dirname, 'collection.txt');
+    const filePath = resolveCollectionFilePath();
     console.log(`Reading collection from ${filePath}…`);
     return readFileSync(filePath, 'utf-8');
 }

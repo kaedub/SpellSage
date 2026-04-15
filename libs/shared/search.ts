@@ -59,6 +59,8 @@ export const SortSchema = z.object({
   direction: z.enum(['asc', 'desc']),
 });
 
+export const CardRaritySchema = z.enum(['common', 'uncommon', 'rare', 'mythic']);
+
 const MAX_LIMIT = 200;
 
 /** Matches card grid column counts (2, 3, 4) so a full page has no trailing empty cells. */
@@ -73,6 +75,7 @@ export const PaginationSchema = z.object({
 
 export const CardSearchFilterSchema = z.object({
   name: z.string().optional(),
+  rarity: z.array(CardRaritySchema).optional(),
   colors: ColorFilterSchema.optional(),
   colorIdentity: ColorFilterSchema.optional(),
   cmc: CmcFilterSchema.optional(),
@@ -162,6 +165,7 @@ export type CollectionFilter = z.infer<typeof CollectionFilterSchema>;
 export type TagFilter = z.infer<typeof TagFilterSchema>;
 export type SortableField = z.infer<typeof SortableFieldSchema>;
 export type Sort = z.infer<typeof SortSchema>;
+export type CardRarity = z.infer<typeof CardRaritySchema>;
 export type Pagination = z.infer<typeof PaginationSchema>;
 export type CardSearchFilter = z.infer<typeof CardSearchFilterSchema>;
 export type CardTagSummary = z.infer<typeof CardTagSummarySchema>;
