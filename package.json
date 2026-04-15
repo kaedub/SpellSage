@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nx run-many -t build --all",
     "prisma:generate": "prisma generate --schema=libs/platform/prisma/schema.prisma",
+    "seed:all": "bash tools/seed-all.sh",
     "seed:random": "tsx --tsconfig tools/tsconfig.json tools/seed-random-cards.ts",
     "seed:bulk": "tsx --tsconfig tools/tsconfig.json tools/seed-bulk-cards.ts",
     "seed:keywords": "tsx --tsconfig tools/tsconfig.json tools/seed-keywords.ts",
