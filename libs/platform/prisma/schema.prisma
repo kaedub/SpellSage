@@ -9,7 +9,63 @@ datasource db {
   provider = "postgresql"
 }
 
-model Card {
+model OracleCard {
+  id               String   @id @db.Text
+  oracleId         String   @unique @map("oracle_id")
+  name             String
+  set              String
+  setId            String   @map("set_id")
+  collectorNum     String   @map("collector_num")
+  typeLine         String   @map("type_line")
+  supertypes       String[]
+  types            String[]
+  subtypes         String[]
+  rarity           String
+  isLegendary      Boolean  @map("is_legendary")
+  colors           String[]
+  colorIdentity    String[] @map("color_identity")
+  manaCost         String?  @map("mana_cost")
+  cmc              Float?
+  oracleText       String?  @map("oracle_text")
+  layout           String
+  faces            Json?
+  power            String?
+  toughness        String?
+  price            String?
+  numericPower     Int?     @map("numeric_power")
+  numericToughness Int?     @map("numeric_toughness")
+  keywordsCi       String[] @default([]) @map("keywords_ci")
+  keywords         String[]
+  producedMana     String[] @map("produced_mana")
+  gameChanger      Boolean  @map("game_changer")
+  scryfallUri      String   @map("scryfall_uri")
+  imageUri         String   @map("image_uri")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  printings           CardPrinting[]
+  tags                OracleCardTag[]               @relation("OracleCardTags")
+  collectionPrintings CollectionCardPrinting[]      @relation("OracleCardCollectionPrintings")
+  taggingCompletions  OracleCardTaggingCompletion[] @relation("OracleCardTaggingCompletions")
+
+  @@index([name])
+  @@index([set])
+  @@index([setId])
+  @@index([typeLine])
+  @@index([isLegendary])
+  @@index([gameChanger])
+  @@index([cmc])
+  @@index([colors], type: Gin)
+  @@index([colorIdentity], type: Gin)
+  @@index([types], type: Gin)
+  @@index([subtypes], type: Gin)
+  @@index([supertypes], type: Gin)
+  @@index([keywords], type: Gin)
+  @@index([producedMana], type: Gin)
+  @@index([rarity])
+}
+
+model CardPrinting {
   id               String   @id @db.Text
   oracleId         String   @map("oracle_id")
   name             String
@@ -30,6 +86,8 @@ model Card {
   faces            Json?
   power            String?
   toughness        String?
+  rarity           String
+  price            String?
   numericPower     Int?     @map("numeric_power")
   numericToughness Int?     @map("numeric_toughness")
   keywordsCi       String[] @default([]) @map("keywords_ci")
@@ -42,10 +100,8 @@ model Card {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
-  oracleCard         OracleCard              @relation(fields: [oracleId], references: [oracleId])
-  collectionCards    CollectionCard[]        @relation("CardCollectionCards")
-  tags               CardTag[]               @relation("CardTags")
-  taggingCompletions CardTaggingCompletion[] @relation("CardTaggingCompletions")
+  oracleCard      OracleCard               @relation(fields: [oracleId], references: [oracleId])
+  collectionCards CollectionCardPrinting[] @relation("CardCollectionCards")
 
   @@index([name])
   @@index([set])
@@ -63,60 +119,6 @@ model Card {
   @@index([producedMana], type: Gin)
 }
 
-model OracleCard {
-  id               String   @id @db.Text
-  oracleId         String   @unique @map("oracle_id")
-  name             String
-  set              String
-  setId            String   @map("set_id")
-  collectorNum     String   @map("collector_num")
-  typeLine         String   @map("type_line")
-  supertypes       String[]
-  types            String[]
-  subtypes         String[]
-  isLegendary      Boolean  @map("is_legendary")
-  colors           String[]
-  colorIdentity    String[] @map("color_identity")
-  manaCost         String?  @map("mana_cost")
-  cmc              Float?
-  oracleText       String?  @map("oracle_text")
-  layout           String
-  faces            Json?
-  power            String?
-  toughness        String?
-  numericPower     Int?     @map("numeric_power")
-  numericToughness Int?     @map("numeric_toughness")
-  keywordsCi       String[] @default([]) @map("keywords_ci")
-  keywords         String[]
-  producedMana     String[] @map("produced_mana")
-  gameChanger      Boolean  @map("game_changer")
-  scryfallUri      String   @map("scryfall_uri")
-  imageUri         String   @map("image_uri")
-  rarity           String
-  price            String
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
-
-  cards Card[]
-  tags  OracleCardTag[] @relation("OracleCardTags")
-
-  @@index([name])
-  @@index([set])
-  @@index([setId])
-  @@index([typeLine])
-  @@index([isLegendary])
-  @@index([gameChanger])
-  @@index([cmc])
-  @@index([colors], type: Gin)
-  @@index([colorIdentity], type: Gin)
-  @@index([types], type: Gin)
-  @@index([subtypes], type: Gin)
-  @@index([supertypes], type: Gin)
-  @@index([keywords], type: Gin)
-  @@index([producedMana], type: Gin)
-  @@index([rarity])
-}
-
 model Collection {
   id        Int      @id @default(autoincrement())
   userId    String   @map("user_id")
@@ -124,27 +126,29 @@ model Collection {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  cards CollectionCard[] @relation("CollectionCards")
+  cards CollectionCardPrinting[] @relation("CollectionCards")
 
   @@unique([userId, name])
   @@index([userId])
 }
 
-model CollectionCard {
+model CollectionCardPrinting {
   id           Int      @id @default(autoincrement())
   collectionId Int      @map("collection_id")
-  cardId       String   @map("card_id")
+  printId      String   @map("card_id")
+  oracleId     String   @map("oracle_id")
   quantity     Int
   foil         Boolean  @default(false)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  collection Collection @relation("CollectionCards", fields: [collectionId], references: [id], onDelete: Cascade)
-  card       Card       @relation("CardCollectionCards", fields: [cardId], references: [id])
+  collection Collection   @relation("CollectionCards", fields: [collectionId], references: [id], onDelete: Cascade)
+  card       CardPrinting @relation("CardCollectionCards", fields: [printId], references: [id])
+  oracleCard OracleCard   @relation("OracleCardCollectionPrintings", fields: [oracleId], references: [oracleId])
 
-  @@unique([collectionId, cardId, foil])
+  @@unique([collectionId, printId, foil])
   @@index([collectionId])
-  @@index([cardId])
+  @@index([printId])
 }
 
 model TagGroup {
@@ -168,55 +172,37 @@ model Tag {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   group       TagGroup        @relation("TagGroupTags", fields: [groupSlug], references: [slug])
-  cards       CardTag[]       @relation("TagCardTags")
   oracleCards OracleCardTag[] @relation("TagOracleCardTags")
 
   @@index([groupSlug])
 }
 
-model CardTag {
-  id         Int      @id @default(autoincrement())
-  cardId     String   @map("card_id")
-  tagSlug    String   @map("tag_slug")
-  source     String
-  confidence Float?   @map("confidence")
-  evidence   String?  @map("evidence")
-  createdAt  DateTime @default(now()) @map("created_at")
-
-  card Card @relation("CardTags", fields: [cardId], references: [id])
-  tag  Tag  @relation("TagCardTags", fields: [tagSlug], references: [slug])
-
-  @@unique([cardId, tagSlug, source])
-  @@index([cardId])
-  @@index([tagSlug])
-}
-
 model OracleCardTag {
-  id           Int      @id @default(autoincrement())
-  oracleCardId String   @map("oracle_card_id")
-  tagSlug      String   @map("tag_slug")
-  source       String
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id        Int      @id @default(autoincrement())
+  oracleId  String   @map("oracle_id")
+  tagSlug   String   @map("tag_slug")
+  source    String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  oracleCard OracleCard @relation("OracleCardTags", fields: [oracleCardId], references: [oracleId])
+  oracleCard OracleCard @relation("OracleCardTags", fields: [oracleId], references: [oracleId])
   tag        Tag        @relation("TagOracleCardTags", fields: [tagSlug], references: [slug])
 
-  @@unique([oracleCardId, tagSlug, source])
-  @@index([oracleCardId])
+  @@unique([oracleId, tagSlug, source])
+  @@index([oracleId])
   @@index([tagSlug])
 }
 
 /// Marks that the tagging pipeline finished for (cardId, source) with zero tags saved.
 /// Cards with one or more CardTag rows for that source are considered done without this row.
-model CardTaggingCompletion {
-  cardId      String   @map("card_id")
+model OracleCardTaggingCompletion {
+  oracleId    String   @map("oracle_id")
   source      String
   completedAt DateTime @default(now()) @map("completed_at")
 
-  card Card @relation("CardTaggingCompletions", fields: [cardId], references: [id], onDelete: Cascade)
+  oracleCard OracleCard @relation("OracleCardTaggingCompletions", fields: [oracleId], references: [oracleId])
 
-  @@id([cardId, source])
+  @@id([oracleId, source])
   @@index([source])
 }
 

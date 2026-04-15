@@ -86,18 +86,25 @@ export async function getCollectionCards(
 
     const rows = await prisma.collectionCard.findMany({
       where: { collectionId },
-      include: { card: { select: CARD_SUMMARY_SELECT } },
-      orderBy: { card: { name: 'asc' } },
+      include: {
+        card: {
+          select: {
+            oracleId: true,
+            oracleCard: { select: CARD_SUMMARY_SELECT },
+          },
+        },
+      },
+      orderBy: { card: { oracleCard: { name: 'asc' } } },
     });
 
     return ok(
       rows.map((row) => ({
         collectionCardId: row.id,
         collectionId: row.collectionId,
-        cardId: row.cardId,
+        cardId: row.card.oracleId,
         quantity: row.quantity,
         foil: row.foil,
-        card: toCardSummary(row.card),
+        card: toCardSummary(row.card.oracleCard),
       })),
     );
   } catch (error) {
@@ -137,21 +144,32 @@ export async function getCollectionCardsByTags(
       where: {
         collectionId,
         card: {
-          tags: {
-            some: { tagSlug: { in: [...tagSlugs] } },
+          oracleCard: {
+            is: {
+              tags: {
+                some: { tagSlug: { in: [...tagSlugs] } },
+              },
+            },
           },
         },
       },
-      include: { card: { select: CARD_SUMMARY_SELECT } },
-      orderBy: { card: { name: 'asc' } },
+      include: {
+        card: {
+          select: {
+            oracleId: true,
+            oracleCard: { select: CARD_SUMMARY_SELECT },
+          },
+        },
+      },
+      orderBy: { card: { oracleCard: { name: 'asc' } } },
     });
 
     return ok(
       rows.map((row) => ({
-        cardId: row.cardId,
+        cardId: row.card.oracleId,
         quantity: row.quantity,
         foil: row.foil,
-        card: toCardSummary(row.card),
+        card: toCardSummary(row.card.oracleCard),
       })),
     );
   } catch (error) {
@@ -179,19 +197,30 @@ export async function getCollectionLandCards(
       where: {
         collectionId,
         card: {
-          typeLine: { contains: 'Land', mode: 'insensitive' },
+          oracleCard: {
+            is: {
+              typeLine: { contains: 'Land', mode: 'insensitive' },
+            },
+          },
         },
       },
-      include: { card: { select: CARD_SUMMARY_SELECT } },
-      orderBy: { card: { name: 'asc' } },
+      include: {
+        card: {
+          select: {
+            oracleId: true,
+            oracleCard: { select: CARD_SUMMARY_SELECT },
+          },
+        },
+      },
+      orderBy: { card: { oracleCard: { name: 'asc' } } },
     });
 
     return ok(
       rows.map((row) => ({
-        cardId: row.cardId,
+        cardId: row.card.oracleId,
         quantity: row.quantity,
         foil: row.foil,
-        card: toCardSummary(row.card),
+        card: toCardSummary(row.card.oracleCard),
       })),
     );
   } catch (error) {

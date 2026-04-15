@@ -1,5 +1,7 @@
 export { insertCards } from './card';
 export { insertOracleCards } from './oracle-card';
+export { upsertOracleCardTags } from './oracle-card-tag';
+export type { OracleCardTagSeedInput } from './oracle-card-tag';
 export {
   upsertCardTags,
   findUntaggedCards,

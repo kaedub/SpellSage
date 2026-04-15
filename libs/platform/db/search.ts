@@ -25,7 +25,7 @@ export type SearchError =
 // --- Prisma select for CardSummary projection ---
 
 export const CARD_SUMMARY_SELECT = {
-  id: true,
+  oracleId: true,
   name: true,
   set: true,
   manaCost: true,
@@ -47,15 +47,31 @@ export const CARD_SUMMARY_SELECT = {
       tag: { select: { groupSlug: true } },
     },
   },
-} satisfies Prisma.CardSelect;
+} satisfies Prisma.OracleCardSelect;
 
-type RawCardSummaryRow = Omit<CardSummary, 'tags'> & {
+type RawCardSummaryRow = Omit<CardSummary, 'tags' | 'id'> & {
+  oracleId: string;
   tags: Array<{ tagSlug: string; tag: { groupSlug: string } }>;
 };
 
 export function toCardSummary(row: RawCardSummaryRow): CardSummary {
   return {
-    ...row,
+    id: row.oracleId,
+    name: row.name,
+    set: row.set,
+    manaCost: row.manaCost,
+    cmc: row.cmc,
+    typeLine: row.typeLine,
+    colors: row.colors,
+    colorIdentity: row.colorIdentity,
+    oracleText: row.oracleText,
+    power: row.power,
+    toughness: row.toughness,
+    numericPower: row.numericPower,
+    numericToughness: row.numericToughness,
+    keywords: row.keywords,
+    imageUri: row.imageUri,
+    isLegendary: row.isLegendary,
     tags: row.tags.map((t) => ({
       tagSlug: t.tagSlug,
       groupSlug: t.tag.groupSlug,
@@ -65,14 +81,14 @@ export function toCardSummary(row: RawCardSummaryRow): CardSummary {
 
 // --- Individual filter builders ---
 
-function buildNameFilter(name: string): Prisma.CardWhereInput {
+function buildNameFilter(name: string): Prisma.OracleCardWhereInput {
   return { name: { contains: name, mode: 'insensitive' } };
 }
 
 function buildColorFilter(
   filter: ColorFilter,
   field: 'colors' | 'colorIdentity',
-): Prisma.CardWhereInput | undefined {
+): Prisma.OracleCardWhereInput | undefined {
   const sorted = [...filter.values].sort();
 
   switch (filter.mode) {
@@ -86,7 +102,7 @@ function buildColorFilter(
   }
 }
 
-function buildCmcFilter(filter: CmcFilter): Prisma.CardWhereInput {
+function buildCmcFilter(filter: CmcFilter): Prisma.OracleCardWhereInput {
   const cmc: Record<string, number> = {};
   if (filter.eq !== undefined) cmc['equals'] = filter.eq;
   if (filter.gte !== undefined) cmc['gte'] = filter.gte;
@@ -94,24 +110,24 @@ function buildCmcFilter(filter: CmcFilter): Prisma.CardWhereInput {
   return { cmc };
 }
 
-function buildManaCostFilter(cost: string): Prisma.CardWhereInput {
+function buildManaCostFilter(cost: string): Prisma.OracleCardWhereInput {
   return { manaCost: { contains: cost } };
 }
 
 function buildArrayFilter(
   field: 'types' | 'subtypes',
   values: string[],
-): Prisma.CardWhereInput {
+): Prisma.OracleCardWhereInput {
   return { [field]: { hasEvery: values } };
 }
 
-function buildKeywordsCiFilter(values: string[]): Prisma.CardWhereInput {
+function buildKeywordsCiFilter(values: string[]): Prisma.OracleCardWhereInput {
   return {
     keywordsCi: { hasEvery: values.map((v) => v.toLowerCase()) },
   };
 }
 
-function buildOracleTextFilter(terms: string[]): Prisma.CardWhereInput {
+function buildOracleTextFilter(terms: string[]): Prisma.OracleCardWhereInput {
   return {
     AND: terms.map(term => ({
       oracleText: { contains: term, mode: 'insensitive' as const },
@@ -119,48 +135,56 @@ function buildOracleTextFilter(terms: string[]): Prisma.CardWhereInput {
   };
 }
 
-function buildLegendaryFilter(flag: boolean): Prisma.CardWhereInput {
+function buildLegendaryFilter(flag: boolean): Prisma.OracleCardWhereInput {
   return { isLegendary: flag };
 }
 
 function buildNumericRangeFilter(
   field: 'numericPower' | 'numericToughness',
   range: NumericRange,
-): Prisma.CardWhereInput {
+): Prisma.OracleCardWhereInput {
   const conditions: Record<string, number> = {};
   if (range.gte !== undefined) conditions['gte'] = range.gte;
   if (range.lte !== undefined) conditions['lte'] = range.lte;
   return { [field]: conditions };
 }
 
-function buildProducedManaFilter(colors: string[]): Prisma.CardWhereInput {
+function buildProducedManaFilter(colors: string[]): Prisma.OracleCardWhereInput {
   return { producedMana: { hasSome: colors } };
 }
 
-function buildCollectionFilter(filter: CollectionFilter): Prisma.CardWhereInput {
+function buildCollectionFilter(filter: CollectionFilter): Prisma.OracleCardWhereInput {
   const quantityClause =
     filter.minQuantity !== undefined ? { quantity: { gte: filter.minQuantity } } : {};
 
   if (filter.collectionId !== undefined) {
     return {
-      collectionCards: {
-        some: { collectionId: filter.collectionId, ...quantityClause },
+      cards: {
+        some: {
+          collectionCards: {
+            some: { collectionId: filter.collectionId, ...quantityClause },
+          },
+        },
       },
     };
   }
 
   return {
-    collectionCards: {
+    cards: {
       some: {
-        collection: { userId: filter.userId },
-        ...quantityClause,
+        collectionCards: {
+          some: {
+            collection: { userId: filter.userId },
+            ...quantityClause,
+          },
+        },
       },
     },
   };
 }
 
-function buildTagFilter(filter: TagFilter): Prisma.CardWhereInput[] {
-  const conditions: Prisma.CardWhereInput[] = [];
+function buildTagFilter(filter: TagFilter): Prisma.OracleCardWhereInput[] {
+  const conditions: Prisma.OracleCardWhereInput[] = [];
 
   if (filter.all !== undefined && filter.all.length > 0) {
     for (const tagSlug of filter.all) {
@@ -181,8 +205,8 @@ function buildTagFilter(filter: TagFilter): Prisma.CardWhereInput[] {
 
 // --- Composer ---
 
-function buildWhereClause(filter: CardSearchFilter): Prisma.CardWhereInput {
-  const conditions: Prisma.CardWhereInput[] = [];
+function buildWhereClause(filter: CardSearchFilter): Prisma.OracleCardWhereInput {
+  const conditions: Prisma.OracleCardWhereInput[] = [];
 
   if (filter.name !== undefined) {
     conditions.push(buildNameFilter(filter.name));
@@ -236,7 +260,7 @@ function buildWhereClause(filter: CardSearchFilter): Prisma.CardWhereInput {
   return { AND: conditions };
 }
 
-function buildOrderBy(filter: CardSearchFilter): Prisma.CardOrderByWithRelationInput {
+function buildOrderBy(filter: CardSearchFilter): Prisma.OracleCardOrderByWithRelationInput {
   if (!filter.sort) return { name: 'asc' };
   return { [filter.sort.field]: filter.sort.direction };
 }
@@ -254,14 +278,14 @@ export async function searchCards(
     const orderBy = buildOrderBy(filter);
 
     const [rawCards, total] = await Promise.all([
-      prisma.card.findMany({
+      prisma.oracleCard.findMany({
         where,
         select: CARD_SUMMARY_SELECT,
         orderBy,
         take: limit,
         skip: offset,
       }),
-      prisma.card.count({ where }),
+      prisma.oracleCard.count({ where }),
     ]);
 
     return ok({

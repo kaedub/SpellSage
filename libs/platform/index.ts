@@ -11,6 +11,7 @@ export {
   findCardsByCollectorInfo,
   insertCards,
   insertOracleCards,
+  upsertOracleCardTags,
   searchCards,
   upsertCardTags,
   findUntaggedCards,
@@ -34,6 +35,7 @@ export type {
   CollectionTagAggregate,
   CollectionCardInventoryStats,
 } from './db/index';
+export type { OracleCardTagSeedInput } from './db/index';
 export type { CardTagError, CardTagInput, UpsertCardTagsResult, TaggingQueueStats } from './db/index';
 export type { KeywordError, KeywordInput, UpsertKeywordsResult } from './db/index';
 export type { SearchError } from './db/index';
