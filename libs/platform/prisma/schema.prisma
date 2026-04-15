@@ -20,7 +20,7 @@ model OracleCard {
   supertypes       String[]
   types            String[]
   subtypes         String[]
-  rarity           String
+  rarity           String?
   isLegendary      Boolean  @map("is_legendary")
   colors           String[]
   colorIdentity    String[] @map("color_identity")
@@ -55,6 +55,8 @@ model OracleCard {
   @@index([isLegendary])
   @@index([gameChanger])
   @@index([cmc])
+  @@index([rarity])
+  @@index([price])
   @@index([colors], type: Gin)
   @@index([colorIdentity], type: Gin)
   @@index([types], type: Gin)
@@ -62,7 +64,6 @@ model OracleCard {
   @@index([supertypes], type: Gin)
   @@index([keywords], type: Gin)
   @@index([producedMana], type: Gin)
-  @@index([rarity])
 }
 
 model CardPrinting {
@@ -86,7 +87,7 @@ model CardPrinting {
   faces            Json?
   power            String?
   toughness        String?
-  rarity           String
+  rarity           String?
   price            String?
   numericPower     Int?     @map("numeric_power")
   numericToughness Int?     @map("numeric_toughness")
@@ -111,6 +112,8 @@ model CardPrinting {
   @@index([gameChanger])
   @@index([cmc])
   @@index([oracleId])
+  @@index([rarity])
+  @@index([price])
   @@index([colors], type: Gin)
   @@index([colorIdentity], type: Gin)
   @@index([types], type: Gin)

@@ -1,7 +1,7 @@
 services:
-  postgres:
+  db:
     image: postgres:16-alpine
-    container_name: spellsage-postgres
+    container_name: spellsage-db
     restart: unless-stopped
     ports:
       - "5432:5432"

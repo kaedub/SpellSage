@@ -14,7 +14,7 @@ const UPSERT_BATCH_SIZE = 500;
 
 function toCreateData(entry: OracleCardTagSeedInput): Prisma.OracleCardTagUncheckedCreateInput {
   return {
-    oracleCardId: entry.oracleCardId,
+    oracleId: entry.oracleCardId,
     tagSlug: entry.tagSlug,
     source: entry.source,
     createdAt: entry.createdAt,
@@ -44,8 +44,8 @@ export async function upsertOracleCardTags(
     const operations = batch.map((entry) =>
       prisma.oracleCardTag.upsert({
         where: {
-          oracleCardId_tagSlug_source: {
-            oracleCardId: entry.oracleCardId,
+          oracleId_tagSlug_source: {
+            oracleId: entry.oracleCardId,
             tagSlug: entry.tagSlug,
             source: entry.source,
           },

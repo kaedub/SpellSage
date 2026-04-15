@@ -13,7 +13,7 @@ export const ColorSchema = z.enum(Color);
 
 export const CardFaceSchema = z.object({
     name: z.string(),
-    typeLine: z.string(),
+    typeLine: z.string().optional(),
     manaCost: z.string().optional(),
     oracleText: z.string().optional(),
     colors: z.array(ColorSchema).optional(),
@@ -22,7 +22,7 @@ export const CardFaceSchema = z.object({
     imageUri: z.string().optional(),
 });
 
-export const CardSchema = z.object({
+export const CardPrintingSchema = z.object({
     // id is the Scryfall card id
     id: z.string(),
     // oracleId is the Scryfall oracle id (unique)
@@ -36,8 +36,8 @@ export const CardSchema = z.object({
     types: z.array(z.string()),
     subtypes: z.array(z.string()),
     isLegendary: z.boolean(),
-    rarity: z.string(),
-    price: z.string(),
+    rarity: z.string().optional(),
+    price: z.string().optional(),
     colors: z.array(ColorSchema).optional(),
     colorIdentity: z.array(ColorSchema).optional(),
     manaCost: z.string().optional(),
@@ -57,6 +57,6 @@ export const CardSchema = z.object({
     rawJson: z.record(z.string(), z.unknown()),
 });
 
-export const OracleCardSchema = CardSchema.omit({
+export const OracleCardSchema = CardPrintingSchema.omit({
     rawJson: true,
 });

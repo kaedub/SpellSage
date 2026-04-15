@@ -37,22 +37,20 @@ function toPrismaData(oracle: OracleCard) {
         gameChanger: oracle.gameChanger,
         scryfallUri: oracle.scryfallUri,
         imageUri: oracle.imageUri,
-        rarity: oracle.rarity,
-        price: oracle.price,
+        rarity: oracle.rarity ?? null,
+        price: oracle.price ?? null,
     };
 }
 
 export async function insertOracleCards(cards: OracleCard[]): Promise<void> {
-    await prisma.$transaction(
-        cards.map(card => {
-            const data = toPrismaData(card);
+    for (const card of cards) {
+        const data = toPrismaData(card);
 
-            return prisma.oracleCard.upsert({
-                where: { oracleId: card.oracleId },
-                update: data,
-                create: data,
-                select: { id: true },
-            });
-        }),
-    );
+        await prisma.oracleCard.upsert({
+            where: { oracleId: card.oracleId },
+            update: data,
+            create: data,
+            select: { id: true },
+        });
+    }
 }

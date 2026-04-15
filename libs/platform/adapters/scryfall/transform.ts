@@ -1,5 +1,5 @@
-import { CardSchema, OracleCardSchema } from '@shared/schemas';
-import type { Card, CardFace, OracleCard } from '@shared/types';
+import { CardPrintingSchema, OracleCardSchema } from '@shared/schemas';
+import type { CardPrinting, CardFace, OracleCard } from '@shared/types';
 import type { ScryfallCard, CardFace as ScryfallCardFace } from './types';
 
 /** Words Scryfall uses as supertypes in `type_line` (for splitting only; not validated). */
@@ -31,6 +31,8 @@ const CARD_TYPES = new Set<string>([
     'Tribal',
     'Vanguard',
 ]);
+
+const ALLOWED_MANA_COLORS = new Set<string>(['W', 'U', 'B', 'R', 'G', 'C']);
 
 function parseTypeLine(typeLine: string): {
     supertypes: string[];
@@ -72,7 +74,7 @@ function transformFace(face: ScryfallCardFace): CardFace {
     return {
         name: face.name,
         manaCost: face.mana_cost,
-        typeLine: face.type_line,
+        typeLine: face.type_line ?? undefined,
         oracleText: face.oracle_text ?? undefined,
         colors: face.colors ?? undefined,
         power: face.power ?? undefined,
@@ -97,22 +99,28 @@ function uniqueColors(faces: ScryfallCardFace[]): string[] {
     return [...seen];
 }
 
+function normalizeProducedMana(rawProducedMana: unknown): string[] {
+    if (!Array.isArray(rawProducedMana)) {
+        return [];
+    }
+
+    const seen = new Set<string>();
+    for (const mana of rawProducedMana) {
+        if (typeof mana !== 'string') {
+            continue;
+        }
+        if (!ALLOWED_MANA_COLORS.has(mana)) {
+            continue;
+        }
+        seen.add(mana);
+    }
+
+    return [...seen];
+}
+
 function pickDisplayPrice(raw: ScryfallCard): string {
     const p = raw.prices;
-    const candidates = [
-        p.usd,
-        p.usd_foil,
-        p.usd_etched,
-        p.eur,
-        p.eur_foil,
-        p.tix,
-    ] as const;
-    for (const c of candidates) {
-        if (c !== null && c !== undefined && c !== '') {
-            return c;
-        }
-    }
-    return '0';
+    return p.usd ?? '???'
 }
 
 /** Shared print/oracle fields from a Scryfall `card` JSON object (default or oracle bulk). */
@@ -155,26 +163,28 @@ function scryfallCardShared(raw: ScryfallCard) {
         numericPower: parseNumericStat(raw.power),
         numericToughness: parseNumericStat(raw.toughness),
         keywords: raw.keywords,
-        producedMana: raw.produced_mana ?? [],
+        producedMana: normalizeProducedMana(raw.produced_mana),
         gameChanger: raw.game_changer,
         scryfallUri: raw.scryfall_uri,
         imageUri: resolveImageUri(raw),
     };
 }
 
-export function toCard(raw: ScryfallCard): Card {
+export function toCard(raw: ScryfallCard): CardPrinting {
     const card = {
         ...scryfallCardShared(raw),
+        rarity: raw.rarity !== undefined && raw.rarity !== '' ? raw.rarity : undefined,
+        price: pickDisplayPrice(raw),
         rawJson: raw as unknown as Record<string, unknown>,
     };
 
-    return CardSchema.parse(card);
+    return CardPrintingSchema.parse(card);
 }
 
 export function toOracleCard(raw: ScryfallCard): OracleCard {
     const oracle = {
         ...scryfallCardShared(raw),
-        rarity: raw.rarity !== undefined && raw.rarity !== '' ? raw.rarity : 'unknown',
+        rarity: raw.rarity !== undefined && raw.rarity !== '' ? raw.rarity : undefined,
         price: pickDisplayPrice(raw),
     };
 

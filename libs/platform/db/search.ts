@@ -159,25 +159,20 @@ function buildCollectionFilter(filter: CollectionFilter): Prisma.OracleCardWhere
 
   if (filter.collectionId !== undefined) {
     return {
-      cards: {
+      collectionPrintings: {
         some: {
-          collectionCards: {
-            some: { collectionId: filter.collectionId, ...quantityClause },
-          },
+          collectionId: filter.collectionId,
+          ...quantityClause,
         },
       },
     };
   }
 
   return {
-    cards: {
+    collectionPrintings: {
       some: {
-        collectionCards: {
-          some: {
-            collection: { userId: filter.userId },
-            ...quantityClause,
-          },
-        },
+        collection: { userId: filter.userId },
+        ...quantityClause,
       },
     },
   };

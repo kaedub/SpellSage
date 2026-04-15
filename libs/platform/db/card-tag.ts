@@ -2,8 +2,8 @@ import type { Prisma } from '@prisma/client';
 
 import { ok, err } from '@shared/result';
 import type { Result } from '@shared/result';
-import { CardSchema } from '@shared/schemas';
-import type { Card } from '@shared/types';
+import { CardPrintingSchema } from '@shared/schemas';
+import type { CardPrinting } from '@shared/types';
 
 import { prisma } from '../adapters/prisma/client';
 
@@ -23,19 +23,19 @@ export const TAGGABLE_CARD_TYPES = [
   'Tribal',
 ] as const;
 
-function whereCardWithOracleText(): Prisma.CardWhereInput {
+function whereCardWithOracleText(): Prisma.CardPrintingWhereInput {
   return {
     AND: [{ oracleText: { not: null } }, { oracleText: { not: '' } }],
   };
 }
 
 /** Non-empty type line (DB cannot trim; whitespace-only lines filtered in `isCardEligibleForLlmTagging`). */
-function whereCardHasTypeLine(): Prisma.CardWhereInput {
+function whereCardHasTypeLine(): Prisma.CardPrintingWhereInput {
   return { typeLine: { not: '' } };
 }
 
 /** Excludes Basic Lands (including snow); non-basic lands are excluded when they have no taggable card type. */
-function whereNotBasicLand(): Prisma.CardWhereInput {
+function whereNotBasicLand(): Prisma.CardPrintingWhereInput {
   return {
     NOT: {
       AND: [{ supertypes: { has: 'Basic' } }, { types: { has: 'Land' } }],
@@ -43,18 +43,18 @@ function whereNotBasicLand(): Prisma.CardWhereInput {
   };
 }
 
-function whereHasTaggableCardType(): Prisma.CardWhereInput {
+function whereHasTaggableCardType(): Prisma.CardPrintingWhereInput {
   return { types: { hasSome: [...TAGGABLE_CARD_TYPES] } };
 }
 
-function whereEligibleForLlmTagging(): Prisma.CardWhereInput {
+function whereEligibleForLlmTagging(): Prisma.CardPrintingWhereInput {
   return {
     AND: [whereCardHasTypeLine(), whereNotBasicLand(), whereHasTaggableCardType()],
   };
 }
 
 export function isCardEligibleForLlmTagging(
-  card: Pick<Card, 'typeLine' | 'supertypes' | 'types'>,
+  card: Pick<CardPrinting, 'typeLine' | 'supertypes' | 'types'>,
 ): boolean {
   if (card.typeLine.trim() === '') {
     return false;
@@ -65,11 +65,15 @@ export function isCardEligibleForLlmTagging(
   return TAGGABLE_CARD_TYPES.some(t => card.types.includes(t));
 }
 
-function wherePendingTaggingForSource(tagSource: string): Prisma.CardWhereInput {
+function wherePendingTaggingForSource(tagSource: string): Prisma.CardPrintingWhereInput {
   return {
     AND: [whereCardWithOracleText(), whereEligibleForLlmTagging()],
-    tags: { none: { source: tagSource } },
-    taggingCompletions: { none: { source: tagSource } },
+    oracleCard: {
+      is: {
+        tags: { none: { source: tagSource } },
+        taggingCompletions: { none: { source: tagSource } },
+      },
+    },
   };
 }
 
@@ -96,36 +100,37 @@ export async function upsertCardTags(
   tags: readonly CardTagInput[],
 ): Promise<Result<UpsertCardTagsResult, CardTagError>> {
   try {
-    const card = await prisma.card.findUnique({ where: { id: cardId }, select: { id: true } });
+    const card = await prisma.cardPrinting.findUnique({
+      where: { id: cardId },
+      select: { id: true, oracleId: true },
+    });
     if (card === null) {
       return err({ kind: 'card_not_found' as const, cardId });
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      const { count: deleted } = await tx.cardTag.deleteMany({
-        where: { cardId, source },
+      const { count: deleted } = await tx.oracleCardTag.deleteMany({
+        where: { oracleId: card.oracleId, source },
       });
 
       if (tags.length === 0) {
-        await tx.cardTaggingCompletion.upsert({
-          where: { cardId_source: { cardId, source } },
-          create: { cardId, source },
+        await tx.oracleCardTaggingCompletion.upsert({
+          where: { oracleId_source: { oracleId: card.oracleId, source } },
+          create: { oracleId: card.oracleId, source },
           update: { completedAt: new Date() },
         });
         return { deleted, inserted: 0 };
       }
 
-      await tx.cardTaggingCompletion.deleteMany({
-        where: { cardId, source },
+      await tx.oracleCardTaggingCompletion.deleteMany({
+        where: { oracleId: card.oracleId, source },
       });
 
-      const { count: inserted } = await tx.cardTag.createMany({
+      const { count: inserted } = await tx.oracleCardTag.createMany({
         data: tags.map(t => ({
-          cardId,
+          oracleId: card.oracleId,
           tagSlug: t.tagSlug,
           source,
-          confidence: t.confidence,
-          evidence: t.evidence,
         })),
       });
 
@@ -162,9 +167,9 @@ export async function getTaggingQueueStats(
 ): Promise<Result<TaggingQueueStats, CardTagError>> {
   try {
     const [totalCards, cardsWithOracleText, pendingForTagSource] = await Promise.all([
-      prisma.card.count(),
-      prisma.card.count({ where: whereCardWithOracleText() }),
-      prisma.card.count({ where: wherePendingTaggingForSource(tagSource) }),
+      prisma.cardPrinting.count(),
+      prisma.cardPrinting.count({ where: whereCardWithOracleText() }),
+      prisma.cardPrinting.count({ where: wherePendingTaggingForSource(tagSource) }),
     ]);
 
     return ok({
@@ -181,15 +186,15 @@ export async function getTaggingQueueStats(
 export async function findUntaggedCards(
   limit: number,
   tagSource: string,
-): Promise<Result<Card[], CardTagError>> {
+): Promise<Result<CardPrinting[], CardTagError>> {
   try {
-    const rows = await prisma.card.findMany({
+    const rows = await prisma.cardPrinting.findMany({
       where: wherePendingTaggingForSource(tagSource),
       take: limit,
     });
 
-    const cards = rows.map((row): Card =>
-      CardSchema.parse({
+    const cards = rows.map((row): CardPrinting =>
+      CardPrintingSchema.parse({
         ...row,
         manaCost: row.manaCost ?? undefined,
         cmc: row.cmc ?? undefined,

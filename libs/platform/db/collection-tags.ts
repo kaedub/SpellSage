@@ -40,11 +40,11 @@ export async function getCollectionTagAggregates(
         oct."tag_slug" AS tag_slug,
         COUNT(DISTINCT cc."card_id")::bigint AS distinct_cards,
         COALESCE(SUM(cc."quantity"), 0)::bigint AS total_quantity
-      FROM "CollectionCard" cc
-      INNER JOIN "Card" c
+      FROM "CollectionCardPrinting" cc
+      INNER JOIN "CardPrinting" c
         ON c."id" = cc."card_id"
       INNER JOIN "OracleCardTag" oct
-        ON oct."oracle_card_id" = c."oracle_id"
+        ON oct."oracle_id" = c."oracle_id"
       WHERE cc."collection_id" = ${collectionId}
       GROUP BY oct."tag_slug"
       ORDER BY distinct_cards DESC, oct."tag_slug" ASC
@@ -95,7 +95,7 @@ export async function getCollectionCardInventoryStats(
         COUNT(*)::bigint AS collection_card_rows,
         COUNT(DISTINCT "card_id")::bigint AS distinct_cards,
         COALESCE(SUM("quantity"), 0)::bigint AS total_quantity
-      FROM "CollectionCard"
+      FROM "CollectionCardPrinting"
       WHERE "collection_id" = ${collectionId}
     `);
 
@@ -120,7 +120,7 @@ export async function getCollectionCardInventoryStats(
 }
 
 /**
- * Distinct cardIds in the collection that have at least one CardTag for the given source.
+ * Distinct cardIds in the collection that have at least one OracleCardTag.
  */
 export async function getCollectionDistinctTaggedCardCount(
   collectionId: number,
@@ -136,11 +136,11 @@ export async function getCollectionDistinctTaggedCardCount(
 
     const rows = await prisma.$queryRaw<Array<{ c: bigint | number }>>(Prisma.sql`
       SELECT COUNT(DISTINCT cc."card_id")::bigint AS c
-      FROM "CollectionCard" cc
-      INNER JOIN "Card" c
+      FROM "CollectionCardPrinting" cc
+      INNER JOIN "CardPrinting" c
         ON c."id" = cc."card_id"
       INNER JOIN "OracleCardTag" oct
-        ON oct."oracle_card_id" = c."oracle_id"
+        ON oct."oracle_id" = c."oracle_id"
       WHERE cc."collection_id" = ${collectionId}
     `);
 

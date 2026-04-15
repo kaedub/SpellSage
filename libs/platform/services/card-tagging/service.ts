@@ -2,7 +2,7 @@ import type { z } from 'zod';
 
 import type { Result } from '@shared/result';
 import { ok, err } from '@shared/result';
-import type { Card } from '@shared/types';
+import type { CardPrinting } from '@shared/types';
 import type {
   ChatMessage,
   CompletionConfig,
@@ -38,7 +38,7 @@ export type TagTaxonomyDep = {
 };
 
 export type CardTaggingService = {
-  tagCard(card: Card): Promise<Result<CardTagResult, CardTaggingError>>;
+  tagCard(card: CardPrinting): Promise<Result<CardTagResult, CardTaggingError>>;
 };
 
 export function createCardTaggingService(deps: {
@@ -57,7 +57,7 @@ export function createCardTaggingService(deps: {
   return { tagCard };
 
   async function tagCard(
-    card: Card,
+    card: CardPrinting,
   ): Promise<Result<CardTagResult, CardTaggingError>> {
     if (!hasTaggableText(card)) {
       return err({ kind: 'no_taggable_text' as const, cardName: card.name });
@@ -94,7 +94,7 @@ export function createCardTaggingService(deps: {
   }
 }
 
-function hasTaggableText(card: Card): boolean {
+function hasTaggableText(card: CardPrinting): boolean {
   if (card.oracleText !== undefined && card.oracleText.length > 0) {
     return true;
   }

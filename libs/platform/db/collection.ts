@@ -1,4 +1,4 @@
-import type { Collection, CollectionCard } from '@prisma/client';
+import type { Collection, CollectionCardPrinting } from '@prisma/client';
 
 import type { CardSummary } from '@shared/search';
 import { ok, err } from '@shared/result';
@@ -84,7 +84,7 @@ export async function getCollectionCards(
       return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
     }
 
-    const rows = await prisma.collectionCard.findMany({
+    const rows = await prisma.collectionCardPrinting.findMany({
       where: { collectionId },
       include: {
         card: {
@@ -140,7 +140,7 @@ export async function getCollectionCardsByTags(
       return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
     }
 
-    const rows = await prisma.collectionCard.findMany({
+    const rows = await prisma.collectionCardPrinting.findMany({
       where: {
         collectionId,
         card: {
@@ -193,7 +193,7 @@ export async function getCollectionLandCards(
       return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
     }
 
-    const rows = await prisma.collectionCard.findMany({
+    const rows = await prisma.collectionCardPrinting.findMany({
       where: {
         collectionId,
         card: {
@@ -240,7 +240,7 @@ export interface CollectionCardEntry {
 export async function addCardsToCollection(
   collectionId: number,
   entries: Array<{ cardId: string; quantity: number; foil?: boolean }>,
-): Promise<Result<CollectionCard[], CollectionError>> {
+): Promise<Result<CollectionCardPrinting[], CollectionError>> {
   try {
     const collection = await prisma.collection.findUnique({
       where: { id: collectionId },
@@ -250,14 +250,23 @@ export async function addCardsToCollection(
       return err({ kind: 'not_found', message: `Collection ${collectionId} not found` });
     }
 
+    const oracleIdByPrintId = await loadOracleIdsByPrintId(entries.map((entry) => entry.cardId));
+    if (oracleIdByPrintId.size !== entries.length) {
+      return err({ kind: 'card_not_found', message: 'One or more card print IDs do not exist' });
+    }
+
     const ops = entries.map(({ cardId, quantity, foil }) => {
       const isFoil = foil ?? false;
-      return prisma.collectionCard.upsert({
+      const oracleId = oracleIdByPrintId.get(cardId);
+      if (oracleId === undefined) {
+        throw new Error(`Missing oracle ID for print ${cardId}`);
+      }
+      return prisma.collectionCardPrinting.upsert({
         where: {
-          collectionId_cardId_foil: { collectionId, cardId, foil: isFoil },
+          collectionId_printId_foil: { collectionId, printId: cardId, foil: isFoil },
         },
         update: { quantity },
-        create: { collectionId, cardId, quantity, foil: isFoil },
+        create: { collectionId, printId: cardId, oracleId, quantity, foil: isFoil },
       });
     });
 
@@ -270,9 +279,9 @@ export async function addCardsToCollection(
 
 export async function removeCardFromCollection(
   collectionCardId: number,
-): Promise<Result<CollectionCard, CollectionError>> {
+): Promise<Result<CollectionCardPrinting, CollectionError>> {
   try {
-    const existing = await prisma.collectionCard.findUnique({
+    const existing = await prisma.collectionCardPrinting.findUnique({
       where: { id: collectionCardId },
     });
     if (!existing) {
@@ -282,7 +291,7 @@ export async function removeCardFromCollection(
       });
     }
 
-    const deleted = await prisma.collectionCard.delete({
+    const deleted = await prisma.collectionCardPrinting.delete({
       where: { id: collectionCardId },
     });
     return ok(deleted);
@@ -325,7 +334,7 @@ export async function findCardsByCollectorInfo(
     collectorNum,
   }));
 
-  const cards = await prisma.card.findMany({
+  const cards = await prisma.cardPrinting.findMany({
     where: { OR: conditions },
     select: { id: true, name: true, set: true, collectorNum: true },
   });
@@ -347,15 +356,21 @@ export async function upsertCollectionEntries(
 ): Promise<number> {
   if (entries.length === 0) return 0;
 
-  const ops = entries.map(({ cardId, quantity, foil }) =>
-    prisma.collectionCard.upsert({
+  const oracleIdByPrintId = await loadOracleIdsByPrintId(entries.map((entry) => entry.cardId));
+
+  const ops = entries.map(({ cardId, quantity, foil }) => {
+    const oracleId = oracleIdByPrintId.get(cardId);
+    if (oracleId === undefined) {
+      throw new Error(`Missing oracle ID for print ${cardId}`);
+    }
+    return prisma.collectionCardPrinting.upsert({
       where: {
-        collectionId_cardId_foil: { collectionId, cardId, foil },
+        collectionId_printId_foil: { collectionId, printId: cardId, foil },
       },
       update: { quantity },
-      create: { collectionId, cardId, quantity, foil },
-    }),
-  );
+      create: { collectionId, printId: cardId, oracleId, quantity, foil },
+    });
+  });
 
   const results = await prisma.$transaction(ops);
   return results.length;
@@ -374,4 +389,13 @@ function isPrismaUniqueViolation(error: unknown): boolean {
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Unknown database error';
+}
+
+async function loadOracleIdsByPrintId(printIds: readonly string[]): Promise<Map<string, string>> {
+  const uniquePrintIds = [...new Set(printIds)];
+  const rows = await prisma.cardPrinting.findMany({
+    where: { id: { in: uniquePrintIds } },
+    select: { id: true, oracleId: true },
+  });
+  return new Map(rows.map((row) => [row.id, row.oracleId]));
 }

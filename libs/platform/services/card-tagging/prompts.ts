@@ -1,4 +1,4 @@
-import type { Card } from '@shared/types';
+import type { CardPrinting } from '@shared/types';
 import type { ChatMessage } from '../../adapters/openai/types';
 import type { CardTagInput } from './types';
 
@@ -16,11 +16,14 @@ export type TagPromptGroup = {
   readonly tags: readonly TagPromptEntry[];
 };
 
-export function projectCardForTagging(card: Card): CardTagInput {
+export function projectCardForTagging(card: CardPrinting): CardTagInput {
   const faces =
     card.faces !== null && card.faces.length > 0
       ? card.faces
-          .filter((f): f is typeof f & { oracleText: string } => f.oracleText !== undefined)
+          .filter(
+            (f): f is typeof f & { oracleText: string; typeLine: string } =>
+              f.oracleText !== undefined && f.typeLine !== undefined,
+          )
           .map(f => ({
             name: f.name,
             typeLine: f.typeLine,

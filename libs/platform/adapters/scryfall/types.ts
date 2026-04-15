@@ -92,7 +92,7 @@ export type CardFace = {
     object: 'card_face';
     name: string;
     mana_cost?: string;
-    type_line: string;
+    type_line?: string;
     oracle_text?: string | null;
     colors: ManaColor[];
     color_indicator?: ManaColor[];
